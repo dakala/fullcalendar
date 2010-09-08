@@ -1,0 +1,73 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Provides a views style plugin for FullCalendar
+ */
+ 
+/**
+* implementation of hook_views_api()
+*/
+function fullcalendar_views_api() {
+  return array(
+    'api' => '2',
+    'path' => drupal_get_path('module', 'fullcalendar'),
+  );
+}
+
+function fullcalendar_init() {
+  drupal_add_css(drupal_get_path('module', 'fullcalendar') .'/fullcalendar.css', 'module');
+  drupal_add_js(drupal_get_path('module', 'fullcalendar') .'/fullcalendar.js', 'module');
+}
+
+//Pass through to template_preprocess_views_view_fields so that fields will be available to template file
+//function template_preprocess_views_view_fields_fullcalendar(&$vars) {	
+//  template_preprocess_views_view_fields($vars);
+//}
+
+//Prepare variables for template file invoked for node row type
+function template_preprocess_views_view_node_fullcalendar(&$vars) {
+  $options = $vars['options'];
+
+  // Make sure the variables are defined.
+    $vars['title'] = '';
+    $vars['start'] = '';
+    $vars['end'] = '';
+    $vars['url'] = '';
+    $vars['node'] = '';
+    
+    $nid = $vars['row']->{$vars['field_alias']};
+      if (!is_numeric($nid)) {
+      return;
+    }
+
+    $node = node_load($nid);
+
+    if (empty($node)) {
+      return;
+    }
+    
+    $vars['node'] = $node;
+    $vars['title'] = $node->title;
+    $vars['url'] = url('node/'. $nid);
+    //echo str_replace(" ","&nbsp;",str_replace("\n","<br>",htmlspecialchars(print_r($node,true))));
+    if ($options['url_field']) {
+      if (isset($node->{$options['url_field']}[0]['value'])) {
+        $vars['url'] = $node->{$options['url_field']}[0]['value'];
+      }
+    }
+    
+    //find datetime field
+    $node_ary = (array) $node;
+    foreach ($node_ary as $key => $value) {
+      if (preg_match('/field_.*/', $key)) {
+        if ((isset($value[0]['date_type'])) and (($value[0]['date_type'] == 'datetime') or ($value[0]['date_type'] == 'date'))) {
+          $vars['start'] = $value[0]['value'];
+          $vars['end'] = $value[0]['value2'];
+          break;
+        }
+      }
+    }
+    
+    //TODO - otherwise use created date for node ???
+}
