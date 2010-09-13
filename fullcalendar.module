@@ -25,6 +25,17 @@ function fullcalendar_init() {
 //  template_preprocess_views_view_fields($vars);
 //}
 
+function fullcalendar_set_display_times($node, $field_name, &$vars){
+  //$vars['start'] = $node->{$field_name}[0]['value'];
+  //$vars['end'] = $node->{$field_name}[0]['value2'];
+  
+  //Pass times through date modules date_formatter_process function to translate them to the right display times
+  $dfp_info = array('#node' => $node, '#field_name' => $field_name, '#formatter' => NULL, '#item' => $node->{$field_name}[0]);
+  $dfp = date_formatter_process($dfp_info);
+  $vars['start'] = $dfp['value']['local']['datetime'];
+  $vars['end'] = $dfp['value2']['local']['datetime'];
+}
+
 //Prepare variables for template file invoked for node row type
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $options = $vars['options'];
@@ -70,21 +81,21 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
     $date_fields = explode("\n", $date_fields);
     foreach ($date_fields as $date_field) {
       if ($date_field == 'node_created') {
-        $vars['start'] = format_date($node->created, 'custom', 'Y-m-j\TH:i:s');
+        $vars['start'] = format_date($node->created, 'custom', 'Y-m-j H:i:s');
         break;
       }
       if ($date_field == 'node_changed') {
-        $vars['start'] = format_date($node->changed, 'custom', 'Y-m-j\TH:i:s');
+        $vars['start'] = format_date($node->changed, 'custom', 'Y-m-j H:i:s');
         break;
       }
       //if field exists and it is a date or datetime
       if ((isset($node->{$date_field})) and (($node->{$date_field}[0]['date_type'] == 'datetime') or ($node->{$date_field}[0]['date_type'] == 'date'))) {
-        $vars['start'] = $node->{$date_field}[0]['value'];
-        $vars['end'] = $node->{$date_field}[0]['value2'];
+        fullcalendar_set_display_times($node, $date_field, &$vars);
         break;
       }
     }
   }
+  //if no specified datetime field then search all fields and use first date or datetime field
   else {
     $node_ary = (array) $node;
     foreach ($node_ary as $key => $value) {
@@ -97,7 +108,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
             if (array_key_exists($key, $fields)) {
               $field = $fields[$key];
               $granularity = date_granularity($field);
-          
+
               //if field granularity does not include hour, then set AllDay
               $fields_info[$key]['allDay'] = FALSE;
               if (!(in_array('hour', $granularity))) {
@@ -105,15 +116,14 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
               }
             }
           }
-        
+          
           $vars['allDay'] = $fields_info[$key]['allDay'];
-          $vars['start'] = $value[0]['value'];
-          $vars['end'] = $value[0]['value2'];
+          
+          fullcalendar_set_display_times($node, $key, &$vars);
+          
           break;
         }
       }
     }
   }
-  
-  //TODO - otherwise use created date for node ???
 }
