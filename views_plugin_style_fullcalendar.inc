@@ -15,6 +15,7 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
     $options['fullcalendar_header_left'] = array('default' => 'today prev,next');
     $options['fullcalendar_header_center'] = array('default' => 'title');
     $options['fullcalendar_header_right'] = array('default' => 'month agendaWeek agendaDay');
+    $options['fullcalendar_weekmode'] = array('default' => 'fixed');
     return $options;
   }
 
@@ -56,6 +57,13 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
       '#title' => t('FullCalendar header right'),
       '#default_value' => $this->options['fullcalendar_header_right'],
       '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
+    );
+    $form['fullcalendar_weekmode'] = array(
+      '#type' => 'select',
+      '#title' => t('weekMode'),
+      '#options' => array("fixed" => "fixed", "liquid" => "liquid", "variable" => "variable"),
+      '#default_value' => $this->options['fullcalendar_weekmode'],
+      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/weekMode/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/weekMode/</a>",
     );
   }
 }

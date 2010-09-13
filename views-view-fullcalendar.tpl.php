@@ -13,6 +13,7 @@
  * -   fullcalendar_header_left : values for the header left region : http://arshaw.com/fullcalendar/docs/display/header/
  * -   fullcalendar_header_center : values for the header center region : http://arshaw.com/fullcalendar/docs/display/header/
  * -   fullcalendar_header_right : values for the header right region : http://arshaw.com/fullcalendar/docs/display/header/
+ * -   fullcalendar_weekmode : number of week rows : http://arshaw.com/fullcalendar/docs/display/weekMode/
  */
  
 ?>
@@ -44,6 +45,7 @@ $(document).ready(function() {
           }
         },
         <?php } ?>
+        weekMode: '<?php echo $options['fullcalendar_weekmode']; ?>',
         events: function(start, end, callback) {
           var events = [];
 
@@ -54,7 +56,8 @@ $(document).ready(function() {
                   start: $(event_details).attr('start'),
                   end: $(event_details).attr('end'),
                   url: $(event_details).attr('href'),
-                  allDay: ($(event_details).attr('allDay') == '1')
+                  allDay: ($(event_details).attr('allDay') == '1'),
+                  className: $(event_details).attr('cn'),
               });
           });
 

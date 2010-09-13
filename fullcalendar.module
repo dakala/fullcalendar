@@ -47,6 +47,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $vars['url'] = '';
   $vars['node'] = '';
   $vars['allDay'] = FALSE;
+  $vars['className'] = '';
   
   $nid = $vars['row']->{$vars['field_alias']};
     if (!is_numeric($nid)) {
@@ -54,11 +55,13 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   }
 
   $node = node_load($nid);
+  
 
   if (empty($node)) {
     return;
   }
   
+  $vars['className'] = $node->type;
   $vars['node'] = $node;
   $vars['title'] = $node->title;
   $vars['url'] = url('node/'. $nid);
