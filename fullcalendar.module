@@ -30,44 +30,90 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $options = $vars['options'];
 
   // Make sure the variables are defined.
-    $vars['title'] = '';
-    $vars['start'] = '';
-    $vars['end'] = '';
-    $vars['url'] = '';
-    $vars['node'] = '';
-    
-    $nid = $vars['row']->{$vars['field_alias']};
-      if (!is_numeric($nid)) {
-      return;
-    }
+  $vars['title'] = '';
+  $vars['start'] = '';
+  $vars['end'] = '';
+  $vars['url'] = '';
+  $vars['node'] = '';
+  $vars['allDay'] = FALSE;
+  
+  $nid = $vars['row']->{$vars['field_alias']};
+    if (!is_numeric($nid)) {
+    return;
+  }
 
-    $node = node_load($nid);
+  $node = node_load($nid);
 
-    if (empty($node)) {
-      return;
+  if (empty($node)) {
+    return;
+  }
+  
+  $vars['node'] = $node;
+  $vars['title'] = $node->title;
+  $vars['url'] = url('node/'. $nid);
+  //echo str_replace(" ","&nbsp;",str_replace("\n","<br>",htmlspecialchars(print_r($node,true))));
+  if ($options['fullcalendar_url_field']) {
+    if (isset($node->{$options['fullcalendar_url_field']}[0]['value'])) {
+      $vars['url'] = $node->{$options['fullcalendar_url_field']}[0]['value'];
     }
-    
-    $vars['node'] = $node;
-    $vars['title'] = $node->title;
-    $vars['url'] = url('node/'. $nid);
-    //echo str_replace(" ","&nbsp;",str_replace("\n","<br>",htmlspecialchars(print_r($node,true))));
-    if ($options['url_field']) {
-      if (isset($node->{$options['url_field']}[0]['value'])) {
-        $vars['url'] = $node->{$options['url_field']}[0]['value'];
+  }
+  
+  //store field info in a static so it doesn't have to be loaded for every row
+  static $fields_info;
+  if (!(is_array($fields_info))) {
+    $fields_info = array();
+  }
+  
+  //find datetime field (strip tags in case one of the wysiwyg's adds tags)
+  $date_fields = trim(strip_tags($options['fullcalendar_date_fields']));
+  if ($date_fields) {
+    $date_fields = explode("\n", $date_fields);
+    foreach ($date_fields as $date_field) {
+      if ($date_field == 'node_created') {
+        $vars['start'] = format_date($node->created, 'custom', 'Y-m-j\TH:i:s');
+        break;
+      }
+      if ($date_field == 'node_changed') {
+        $vars['start'] = format_date($node->changed, 'custom', 'Y-m-j\TH:i:s');
+        break;
+      }
+      //if field exists and it is a date or datetime
+      if ((isset($node->{$date_field})) and (($node->{$date_field}[0]['date_type'] == 'datetime') or ($node->{$date_field}[0]['date_type'] == 'date'))) {
+        $vars['start'] = $node->{$date_field}[0]['value'];
+        $vars['end'] = $node->{$date_field}[0]['value2'];
+        break;
       }
     }
-    
-    //find datetime field
+  }
+  else {
     $node_ary = (array) $node;
     foreach ($node_ary as $key => $value) {
       if (preg_match('/field_.*/', $key)) {
         if ((isset($value[0]['date_type'])) and (($value[0]['date_type'] == 'datetime') or ($value[0]['date_type'] == 'date'))) {
+        
+        
+          if (!(array_key_exists($key, $fields_info))) {
+            $fields = content_fields();
+            if (array_key_exists($key, $fields)) {
+              $field = $fields[$key];
+              $granularity = date_granularity($field);
+          
+              //if field granularity does not include hour, then set AllDay
+              $fields_info[$key]['allDay'] = FALSE;
+              if (!(in_array('hour', $granularity))) {
+                $fields_info[$key]['allDay'] = TRUE;
+              }
+            }
+          }
+        
+          $vars['allDay'] = $fields_info[$key]['allDay'];
           $vars['start'] = $value[0]['value'];
           $vars['end'] = $value[0]['value2'];
           break;
         }
       }
     }
-    
-    //TODO - otherwise use created date for node ???
+  }
+  
+  //TODO - otherwise use created date for node ???
 }

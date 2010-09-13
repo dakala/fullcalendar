@@ -1,11 +1,23 @@
 <?php
+// $Id$
 /**
- * View to display full calendar
+ * @file views-view-fullcalendar.tpl.php
+ * View to display the fullcalendar
+ *
+ * Variables available:
+ * - $rows: The results of the view query, if any
+ * - $options: Options for the fullcalendar style plugin
+ * -   fullcalendar_view : the default view for the calendar
+ * -   fullcalendar_url_colorbox : whether or not to attempt to use colorbox to open events
+ * -   fullcalendar_theme : whether or not to apply a loaded jquery-ui theme
+ * -   fullcalendar_header_left : values for the header left region : http://arshaw.com/fullcalendar/docs/display/header/
+ * -   fullcalendar_header_center : values for the header center region : http://arshaw.com/fullcalendar/docs/display/header/
+ * -   fullcalendar_header_right : values for the header right region : http://arshaw.com/fullcalendar/docs/display/header/
  */
  
 ?>
 <div id="fullcalendar"></div>
-<div id="fullcalendar_content" style="display:none">
+<div id="fullcalendar_content">
 <?php
 for ($i = 0; $i < count($rows); $i++) {
   print $rows[$i];
@@ -14,15 +26,16 @@ for ($i = 0; $i < count($rows); $i++) {
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
+    $('#fullcalendar_content').hide(); //hide the failover display
     $('#fullcalendar').fullCalendar({
         defaultView: '<?php echo $options['fullcalendar_view']; ?>',
         theme: <?php echo $options['fullcalendar_theme'] ? 'true' : 'false'; ?>,
         header: {
-          left: 'today prev,next',
-          center: 'title',
-          right: 'month agendaWeek'
+          left: '<?php echo $options['fullcalendar_header_left']; ?>',
+          center: '<?php echo $options['fullcalendar_header_center']; ?>',
+          right: '<?php echo $options['fullcalendar_header_right']; ?>'
         },
-        <?php if($options['url_colorbox']){ ?>
+        <?php if($options['fullcalendar_url_colorbox']){ ?>
         eventClick: function(calEvent, jsEvent, view) {
           //test for colorbox
           if($.colorbox){
@@ -41,12 +54,14 @@ $(document).ready(function() {
                   start: $(event_details).attr('start'),
                   end: $(event_details).attr('end'),
                   url: $(event_details).attr('href'),
-                  allDay: false
+                  allDay: ($(event_details).attr('allDay') == '1')
               });
           });
 
           callback(events);
         }
     });
+    //trigger a window resize so that calendar will redraw itself as it loads funny in some browsers occasionally
+    $(window).resize();
 });
 </script>

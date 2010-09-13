@@ -33,6 +33,12 @@
 	}
 
 
+/* Custom for Drupal module - undo Drupal default theme link colors */
+.fc-content a:link, .fc-content a:visited {
+color:#FFFFFF;
+text-decoration:none;
+}
+
 
 /* Header
 ------------------------------------------------------------------------*/
