@@ -104,27 +104,56 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
     foreach ($node_ary as $key => $value) {
       if (preg_match('/field_.*/', $key)) {
         if ((isset($value[0]['date_type'])) and (($value[0]['date_type'] == 'datetime') or ($value[0]['date_type'] == 'date'))) {
-        
-        
-          if (!(array_key_exists($key, $fields_info))) {
-            $fields = content_fields();
-            if (array_key_exists($key, $fields)) {
-              $field = $fields[$key];
-              $granularity = date_granularity($field);
 
-              //if field granularity does not include hour, then set AllDay
-              $fields_info[$key]['allDay'] = FALSE;
-              if (!(in_array('hour', $granularity))) {
-                $fields_info[$key]['allDay'] = TRUE;
-              }
+          // If no end date is set, copy start date for processing
+          if (empty($value[0]['value2'])) {
+            $value[0]['value2'] = $value[0]['value'];
+          }
+        
+          if ($field = content_fields($key)) {
+            // Get DateTime objects with timezone support
+            $date1 = date_create($value[0]['value'], timezone_open($value[0]['timezone_db']));
+            date_timezone_set($date1, timezone_open($value[0]['timezone']));
+            $date2 = date_create($value[0]['value2'], timezone_open($value[0]['timezone_db']));
+            date_timezone_set($date2, timezone_open($value[0]['timezone']));
+
+            // Get the max increment for minutes and seconds
+            $increment = isset($field['widget']['increment']) ? $field['widget']['increment'] : 1;
+            $tmp = date_seconds('s', TRUE, $increment);
+            $max_seconds = array_pop($tmp);
+            $tmp = date_minutes('i', TRUE, $increment);
+            $max_minutes = array_pop($tmp);
+
+            // Get the most specific granularity
+            $granularity = date_granularity($field);
+            $granularity = array_pop($granularity);
+            
+            // Mirror date module's handing of all day events
+            switch ($granularity) {
+              case 'second':
+                $min_comp = date_format($date1, 'H:i:s') == '00:00:00';
+                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i:s') == '23:'. $max_minutes .':'. $max_seconds;
+                break;
+              case 'minute':
+                $min_comp = date_format($date1, 'H:i') == '00:00';
+                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i') == '23:'. $max_minutes;
+                break;
+              case 'hour':
+                $min_comp = date_format($date1, 'H') == '00';
+                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H') == '23';
+                break;
+              default:
+                $min_comp = TRUE;
+                $max_comp = FALSE;
             }
+
+            // If granularity did not include time, set to All Day
+            $fields_info[$key]['allDay'] = (date_has_time(date_granularity($field))) ? ($min_comp && $max_comp) : TRUE;
           }
           
           $vars['allDay'] = $fields_info[$key]['allDay'];
           
           fullcalendar_set_display_times($node, $key, &$vars);
-          
-          break;
         }
       }
     }
