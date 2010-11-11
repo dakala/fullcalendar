@@ -120,7 +120,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
         break;
       }
       //if field exists and it is a date or datetime
-      if ((isset($node->{$date_field})) and (($node->{$date_field}[0]['date_type'] == 'datetime') or ($node->{$date_field}[0]['date_type'] == 'date'))) {
+      if ((isset($node->{$date_field})) && in_array($node->{$date_field}[0]['date_type'], array('datetime', 'date', 'datestamp'))) {
         fullcalendar_set_display_times($node, $date_field, &$vars);
         break;
       }
