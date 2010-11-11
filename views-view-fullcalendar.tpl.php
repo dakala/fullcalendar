@@ -45,6 +45,18 @@ $(document).ready(function() {
           }
         },
         <?php } ?>
+        <?php if (!empty($options['fullcalendar_defaultyear'])): ?>
+          year: <?php echo $options['fullcalendar_defaultyear']; ?>,
+        <?php endif; ?>
+        <?php if (!empty($options['fullcalendar_defaultmonth'])): ?>
+          month: <?php echo $options['fullcalendar_defaultmonth'] - 1; ?>,
+        <?php endif; ?>
+        <?php if (!empty($options['fullcalendar_defaultday'])): ?>
+          day: <?php echo $options['fullcalendar_defaultday']; ?>,
+        <?php endif; ?>
+        timeFormat: {
+          agenda: '<?php echo $options['fullcalendar_timeformat']; ?>'
+        },
         weekMode: '<?php echo $options['fullcalendar_weekmode']; ?>',
         events: function(start, end, callback) {
           var events = [];

@@ -16,6 +16,10 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
     $options['fullcalendar_header_center'] = array('default' => 'title');
     $options['fullcalendar_header_right'] = array('default' => 'month agendaWeek agendaDay');
     $options['fullcalendar_weekmode'] = array('default' => 'fixed');
+    $options['fullcalendar_defaultyear'] = array('default' => '');
+    $options['fullcalendar_defaultmonth'] = array('default' => '');
+    $options['fullcalendar_defaultday'] = array('default' => '');
+    $options['fullcalendar_timeformat'] = array('default' => 'h:mm{ - h:mm}');
     return $options;
   }
 
@@ -64,6 +68,30 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
       '#options' => array("fixed" => "fixed", "liquid" => "liquid", "variable" => "variable"),
       '#default_value' => $this->options['fullcalendar_weekmode'],
       '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/weekMode/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/weekMode/</a>",
+    );
+    $form['fullcalendar_defaultyear'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Default year'),
+      '#default_value' => $this->options['fullcalendar_defaultyear'],
+      '#description' => t('A full numeric representation of a year, 4 digits. Leave blank for current year.'),
+    );
+    $form['fullcalendar_defaultmonth'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Default month'),
+      '#default_value' => $this->options['fullcalendar_defaultmonth'],
+      '#description' => t('Numeric representation of a month, without leading zeros. Leave blank for current month.'),
+    );
+    $form['fullcalendar_defaultday'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Default day'),
+      '#default_value' => $this->options['fullcalendar_defaultday'],
+      '#description' => t('Day of the month without leading zeros. Leave blank for current day.'),
+    );
+    $form['fullcalendar_timeformat'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Time format'),
+      '#default_value' => $this->options['fullcalendar_timeformat'],
+      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/text/timeFormat/' target='_blank'>http://arshaw.com/fullcalendar/docs/text/timeFormat/</a>",
     );
   }
 }

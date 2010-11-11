@@ -200,7 +200,7 @@ $.fn.fullCalendar = function(options) {
 			element.addClass('ui-widget');
 		}
 		
-		setYMD(date, options.year, options.month, options.date);
+		setYMD(date, options.year, options.month, options.day);
 		
 		
 		
