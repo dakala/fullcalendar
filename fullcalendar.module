@@ -36,6 +36,34 @@ function fullcalendar_set_display_times($node, $field_name, &$vars){
   $vars['end'] = $dfp['value2']['local']['datetime'];
 }
 
+/**
+ * Implementation of hook_theme().
+ */
+function fullcalendar_theme() {
+  return array(
+    'fullcalendar_classname' => array(
+      'arguments' => array('node' => NULL),
+    ),
+  );
+}
+
+/**
+ * Construct CSS classes for a node.
+ *
+ * @param $node
+ *   An object representing the node.
+ *
+ * @return
+ *   A string suitable for use as a CSS class.
+ */
+function theme_fullcalendar_classname($node) {
+  $className = array(
+    'fc-event-default',
+    $node->type,
+  );
+  return implode(' ', $className);
+}
+
 //Prepare variables for template file invoked for node row type
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $options = $vars['options'];
@@ -61,7 +89,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
     return;
   }
   
-  $vars['className'] = $node->type;
+  $vars['className'] = theme('fullcalendar_classname', $node);
   $vars['node'] = $node;
   $vars['title'] = $node->title;
   $vars['url'] = url('node/'. $nid);

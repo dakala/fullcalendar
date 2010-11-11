@@ -242,9 +242,9 @@ table.fc-header {
 /* Global Event Styles
 ------------------------------------------------------------------------*/
 
-.fc-event,
-.fc-agenda .fc-event-time,
-.fc-event a {
+.fc-event-default,
+.fc-agenda .fc-event-default .fc-event-time,
+.fc-event-default a {
 	border-style: solid; 
 	border-color: #36c;     /* default BORDER color (probably the same as background-color) */
 	background-color: #36c; /* default BACKGROUND color */
