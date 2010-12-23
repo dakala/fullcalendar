@@ -1,97 +1,205 @@
 <?php
 // $Id$
+
 /**
  * @file
  * Contains the fullcalendar style plugin.
  */
 
 class views_plugin_style_fullcalendar extends views_plugin_style {
-    
   function option_definition() {
     $options = parent::option_definition();
-    $options['fullcalendar_view'] = array('default' => 'month');
-    $options['fullcalendar_theme'] = array('default' => FALSE);
-    $options['fullcalendar_url_colorbox'] = array('default' => FALSE);
-    $options['fullcalendar_header_left'] = array('default' => 'today prev,next');
-    $options['fullcalendar_header_center'] = array('default' => 'title');
-    $options['fullcalendar_header_right'] = array('default' => 'month agendaWeek agendaDay');
-    $options['fullcalendar_weekmode'] = array('default' => 'fixed');
-    $options['fullcalendar_defaultyear'] = array('default' => '');
-    $options['fullcalendar_defaultmonth'] = array('default' => '');
-    $options['fullcalendar_defaultday'] = array('default' => '');
-    $options['fullcalendar_timeformat'] = array('default' => 'h:mm{ - h:mm}');
+    $options['display'] = array(
+      'contains' => array(
+        'fc_view' => array('default' => 'month'),
+        'fc_firstday' => array('default' => '0'),
+        'fc_weekmode' => array('default' => 'fixed'),
+      ),
+    );
+    $options['modules'] = array(
+      'contains' => array(
+        'fc_theme' => array('default' => FALSE),
+        'fc_url_colorbox' => array('default' => FALSE),
+      ),
+    );
+    $options['header'] = array(
+      'contains' => array(
+        'fc_left' => array('default' => 'today prev,next'),
+        'fc_center' => array('default' => 'title'),
+        'fc_right' => array('default' => 'month agendaWeek agendaDay'),
+      ),
+    );
+    $options['defaults'] = array(
+      'contains' => array(
+        'fc_year' => array('default' => ''),
+        'fc_month' => array('default' => ''),
+        'fc_day' => array('default' => ''),
+      ),
+    );
+    $options['times'] = array(
+      'contains' => array(
+        'fc_timeformat' => array('default' => 'h:mm{ - h:mm}'),
+        'fc_clock' => array('default' => FALSE),
+      ),
+    );
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
-    //parent::options_form($form, $form_state);
-    $form['fullcalendar_view'] = array(
+    $form['display'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Display settings'),
+      '#description' => 'Blank values will use the current day, month, or year.',
+      '#attributes' => array(
+        'class' => 'clear-block',
+      ),
+    );
+    $form['display']['fc_view'] = array(
       '#type' => 'select',
-      '#title' => t('Default Timespan'),
-      '#options' => array("month" => "month", "basicWeek" => "basicWeek", "basicDay" => "basicDay", "agendaWeek" => "agendaWeek", "agendaDay" => "agendaDay"),
-      '#default_value' => $this->options['fullcalendar_view'],
-      '#description' => t('Default timespan presented to user.'),
+      '#title' => t('Initial display'),
+      '#options' => array(
+        'month' => 'Month',
+        'agendaWeek' => 'Week (Agenda)',
+        'basicWeek' => 'Week (Basic)',
+        'agendaDay' => 'Day (Agenda)',
+        'basicDay' => 'Day (Basic)',
+      ),
+      '#default_value' => $this->options['display']['fc_view'],
+      '#description' => l(t('Default timespan displayed.'), 'http://arshaw.com/fullcalendar/docs/views/Available_Views', array('attributes' => array('target' => '_blank'))),
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
     );
-    $form['fullcalendar_theme'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use JQuery UI Theme'),
-      '#default_value' => $this->options['fullcalendar_theme'],
-      '#description' => t('If checked, the calendar will use any loaded jquery ui themes.'),
-    );
-    $form['fullcalendar_url_colorbox'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Open events in colorbox'),
-      '#default_value' => $this->options['fullcalendar_url_colorbox'],
-      '#description' => t('If checked, each event\'s url will open in a colorbox (if it is installed).'),
-    );
-    $form['fullcalendar_header_left'] = array(
-      '#type' => 'textfield',
-      '#title' => t('FullCalendar header left'),
-      '#default_value' => $this->options['fullcalendar_header_left'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
-    );
-    $form['fullcalendar_header_center'] = array(
-      '#type' => 'textfield',
-      '#title' => t('FullCalendar header center'),
-      '#default_value' => $this->options['fullcalendar_header_center'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
-    );
-    $form['fullcalendar_header_right'] = array(
-      '#type' => 'textfield',
-      '#title' => t('FullCalendar header right'),
-      '#default_value' => $this->options['fullcalendar_header_right'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
-    );
-    $form['fullcalendar_weekmode'] = array(
+    $form['display']['fc_firstday'] = array(
       '#type' => 'select',
-      '#title' => t('weekMode'),
-      '#options' => array("fixed" => "fixed", "liquid" => "liquid", "variable" => "variable"),
-      '#default_value' => $this->options['fullcalendar_weekmode'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/weekMode/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/weekMode/</a>",
+      '#title' => t('First day'),
+      '#options' => array(
+        '0' => 'Sunday',
+        '1' => 'Monday',
+      ),
+      '#default_value' => $this->options['display']['fc_firstday'],
+      '#description' => l(t('The day each week begins.'), 'http://arshaw.com/fullcalendar/docs/display/firstDay', array('attributes' => array('target' => '_blank'))),
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
     );
-    $form['fullcalendar_defaultyear'] = array(
+    $form['display']['fc_weekmode'] = array(
+      '#type' => 'select',
+      '#title' => t('Week mode'),
+      '#options' => array(
+        'fixed' => 'Fixed',
+        'liquid' => 'Liquid',
+        'variable' => 'Variable',
+      ),
+      '#default_value' => $this->options['display']['fc_weekmode'],
+      '#description' => l(t('Number of weeks displayed.'), 'http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank'))),
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+    );
+    $form['header'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Header elements'),
+      '#description' => l(t('Buttons and title to be shown in header.'), 'http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank'))),
+      '#attributes' => array(
+        'class' => 'clear-block',
+      ),
+    );
+    $form['header']['fc_left'] = array(
       '#type' => 'textfield',
-      '#title' => t('Default year'),
-      '#default_value' => $this->options['fullcalendar_defaultyear'],
-      '#description' => t('A full numeric representation of a year, 4 digits. Leave blank for current year.'),
+      '#title' => t('Left header'),
+      '#default_value' => $this->options['header']['fc_left'],
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+      '#size' => '20',
     );
-    $form['fullcalendar_defaultmonth'] = array(
+    $form['header']['fc_center'] = array(
       '#type' => 'textfield',
-      '#title' => t('Default month'),
-      '#default_value' => $this->options['fullcalendar_defaultmonth'],
-      '#description' => t('Numeric representation of a month, without leading zeros. Leave blank for current month.'),
+      '#title' => t('Center header'),
+      '#default_value' => $this->options['header']['fc_center'],
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+      '#size' => '20',
     );
-    $form['fullcalendar_defaultday'] = array(
+    $form['header']['fc_right'] = array(
       '#type' => 'textfield',
-      '#title' => t('Default day'),
-      '#default_value' => $this->options['fullcalendar_defaultday'],
-      '#description' => t('Day of the month without leading zeros. Leave blank for current day.'),
+      '#title' => t('Right header'),
+      '#default_value' => $this->options['header']['fc_right'],
+      '#prefix' => '<div class="views-left-40">',
+      '#suffix' => '</div>',
+      '#size' => '30',
     );
-    $form['fullcalendar_timeformat'] = array(
+    $form['defaults'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Default values'),
+      '#description' => 'Blank values will use the current day, month, or year.',
+      '#attributes' => array(
+        'class' => 'clear-block',
+      ),
+    );
+    $form['defaults']['fc_year'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Year'),
+      '#default_value' => $this->options['defaults']['fc_year'],
+      '#description' => t('Full 4 digits.'),
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+      '#size' => '20',
+    );
+    $form['defaults']['fc_month'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Month'),
+      '#default_value' => $this->options['defaults']['fc_month'],
+      '#description' => t('No leading zeros.'),
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+      '#size' => '20',
+    );
+    $form['defaults']['fc_day'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Day'),
+      '#default_value' => $this->options['defaults']['fc_day'],
+      '#description' => t('No leading zeros.'),
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+      '#size' => '20',
+    );
+    $form['times'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Time display'),
+      '#description' => l(t('Formatting options for time.'), 'http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank'))),
+      '#attributes' => array(
+        'class' => 'clear-block',
+      ),
+    );
+    $form['times']['fc_timeformat'] = array(
       '#type' => 'textfield',
       '#title' => t('Time format'),
-      '#default_value' => $this->options['fullcalendar_timeformat'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/text/timeFormat/' target='_blank'>http://arshaw.com/fullcalendar/docs/text/timeFormat/</a>",
+      '#default_value' => $this->options['times']['fc_timeformat'],
+      '#description' => 'Format of time display on each event.',
+    );
+    $form['times']['fc_clock'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use 24 hour display'),
+      '#default_value' => $this->options['times']['fc_clock'],
+      '#description' => 'Use 24 display (ignores custom time format).',
+    );
+    $form['modules'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Module integration'),
+      '#description' => 'Settings for integration with other modules.',
+      '#attributes' => array(
+        'class' => 'clear-block',
+      ),
+    );
+    $form['modules']['fc_theme'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use jQuery UI Theme'),
+      '#default_value' => $this->options['modules']['fc_theme'],
+      '#description' => t('If checked, the calendar will use any loaded jQuery UI themes.'),
+    );
+    $form['modules']['fc_url_colorbox'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Open events in colorbox'),
+      '#default_value' => $this->options['modules']['fc_url_colorbox'],
+      '#description' => t('If checked, each event will open in colorbox (if it is installed).'),
     );
   }
 }

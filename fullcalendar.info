@@ -5,3 +5,5 @@ core = 6.x
 package = "Views"
 dependencies[] = views
 dependencies[] = date
+dependencies[] = jquery_ui
+dependencies[] = jquery_update

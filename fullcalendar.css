@@ -39,6 +39,15 @@ color:#FFFFFF;
 text-decoration:none;
 }
 
+#fullcalendar-status {
+  background: #ecf8f4;
+  border: 1px solid #fff;
+  color: #687;
+  display: none;
+  margin: 0 0 10px 0;
+  padding: 15px;
+  text-align: center;
+}
 
 /* Header
 ------------------------------------------------------------------------*/

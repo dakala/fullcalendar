@@ -1,13 +1,14 @@
 <?php
 // $Id$
+
 /**
  * @file
  * Provides a views style plugin for FullCalendar
  */
- 
+
 /**
-* implementation of hook_views_api()
-*/
+ * Implementation of hook_views_api().
+ */
 function fullcalendar_views_api() {
   return array(
     'api' => '2',
@@ -15,26 +16,95 @@ function fullcalendar_views_api() {
   );
 }
 
+/**
+ * Implementation of hook_init().
+ */
 function fullcalendar_init() {
-  drupal_add_css(drupal_get_path('module', 'fullcalendar') .'/fullcalendar.css', 'module');
-  drupal_add_js(drupal_get_path('module', 'fullcalendar') .'/fullcalendar.js', 'module');
+  $path = drupal_get_path('module', 'fullcalendar');
+
+  drupal_add_css($path . '/fullcalendar.css', 'module');
+  drupal_add_js($path . '/fullcalendar.js', 'module');
+
+  // We need some jQuery UI files.
+  $files = array(
+    'ui.draggable',
+    'ui.droppable',
+    'ui.resizable',
+    'effects.highlight',
+  );
+  jquery_ui_add($files);
+}
+
+/**
+ * Implementation of hook_perm().
+ *
+ * @return array An array of valid permissions for the fullcalendar module
+ */
+function fullcalendar_perm() {
+  return array('update any fullcalendar event');
+}
+
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function fullcalendar_menu() {
+  $items = array();
+
+  $items['fullcalendar/ajax/update/%/%node'] = array(
+    'title' => 'Update event',
+    'description' => 'Save the updated event datetime.',
+    'page callback' => 'fullcalendar_update',
+    'page arguments' => array(3, 4),
+    'access callback' => '_fullcalendar_update_access',
+    'access arguments' => array(4),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Save the updated fullcalendar event's datetime.
+ *
+ * @param string $action
+ *   Value can be 'drop' or 'resize'.
+ * @param object $node
+ */
+function fullcalendar_update($action, $node) {
+  // Retrieve the post vars form the ajax call.
+  $field = $_POST['field'];
+  $index = $_POST['index'];
+  $all_day = isset($_POST['all_day']) ? $_POST['all_day'] : '';
+  $day_delta = $_POST['day_delta'];
+  $minute_delta = $_POST['minute_delta'];
+
+  if (!empty($field) && isset($index)) {
+    $old_start = $node->{$field}[$index]['value'];
+    $old_end = $node->{$field}[$index]['value2'];
+
+    switch ($action) {
+      case 'drop':
+        $node->{$field}[$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $node->{$field}[$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        break;
+      case 'resize':
+        $node->{$field}[$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        break;
+    }
+
+    // Save the new start/end values.
+    node_save($node);
+
+    drupal_json(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status-close">close</a>]'));
+  }
 }
 
 //Pass through to template_preprocess_views_view_fields so that fields will be available to template file
-//function template_preprocess_views_view_fields_fullcalendar(&$vars) {	
+//function template_preprocess_views_view_fields_fullcalendar(&$vars) {
 //  template_preprocess_views_view_fields($vars);
 //}
-
-function fullcalendar_set_display_times($node, $field_name, &$vars){
-  //$vars['start'] = $node->{$field_name}[0]['value'];
-  //$vars['end'] = $node->{$field_name}[0]['value2'];
-  
-  //Pass times through date modules date_formatter_process function to translate them to the right display times
-  $dfp_info = array('#node' => $node, '#field_name' => $field_name, '#formatter' => NULL, '#item' => $node->{$field_name}[0]);
-  $dfp = date_formatter_process($dfp_info);
-  $vars['start'] = $dfp['value']['local']['datetime'];
-  $vars['end'] = $dfp['value2']['local']['datetime'];
-}
 
 /**
  * Implementation of hook_theme().
@@ -43,6 +113,13 @@ function fullcalendar_theme() {
   return array(
     'fullcalendar_classname' => array(
       'arguments' => array('node' => NULL),
+    ),
+    'fullcalendar_link' => array(
+      'arguments' => array(
+        'node' => NULL,
+        'attributes' => NULL,
+        'index' => NULL,
+      ),
     ),
   );
 }
@@ -64,126 +141,165 @@ function theme_fullcalendar_classname($node) {
   return implode(' ', $className);
 }
 
+/**
+ * Pass settings to JavaScript.
+ */
+function template_preprocess_views_view_fullcalendar(&$vars) {
+  $settings = array(
+    'defaultView' => $vars['options']['display']['fc_view'],
+    'firstDay' => $vars['options']['display']['fc_firstday'],
+    'weekMode' => $vars['options']['display']['fc_weekmode'],
+    'theme' => $vars['options']['modules']['fc_theme'],
+    'colorbox' => $vars['options']['modules']['fc_url_colorbox'],
+    'left' => $vars['options']['header']['fc_left'],
+    'center' => $vars['options']['header']['fc_center'],
+    'right' => $vars['options']['header']['fc_right'],
+    'year' => $vars['options']['defaults']['fc_year'],
+    'month' => $vars['options']['defaults']['fc_month'],
+    'day' => $vars['options']['defaults']['fc_day'],
+    'agenda' => $vars['options']['times']['fc_timeformat'],
+    'clock' => $vars['options']['times']['fc_clock'],
+  );
+  drupal_add_js(array('fullcalendar' => $settings), 'setting');
+  drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js', 'module');
+}
+
 //Prepare variables for template file invoked for node row type
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
-  $options = $vars['options'];
-
-  // Make sure the variables are defined.
-  $vars['title'] = '';
-  $vars['start'] = '';
-  $vars['end'] = '';
-  $vars['url'] = '';
-  $vars['node'] = '';
-  $vars['allDay'] = FALSE;
-  $vars['className'] = '';
-  
-  $nid = $vars['row']->{$vars['field_alias']};
-    if (!is_numeric($nid)) {
+  if (isset($vars['view']->empty)) {
+    $vars['empty_text'] = $vars['view']->empty;
     return;
   }
-
+  $nid = $vars['row']->{$vars['field_alias']};
+  if (!is_numeric($nid)) {
+    return;
+  }
   $node = node_load($nid);
-  
-
   if (empty($node)) {
     return;
   }
-  
-  $vars['className'] = theme('fullcalendar_classname', $node);
+
+  // Allow resize/drag/drop of an event if user has proper permissions.
+  $node->editable = _fullcalendar_update_access($node);
+  $node->class = theme('fullcalendar_classname', $node);
   $vars['node'] = $node;
-  $vars['title'] = $node->title;
-  $vars['url'] = url('node/'. $nid);
-  //echo str_replace(" ","&nbsp;",str_replace("\n","<br>",htmlspecialchars(print_r($node,true))));
-  if ($options['fullcalendar_url_field']) {
-    if (isset($node->{$options['fullcalendar_url_field']}[0]['value'])) {
-      $vars['url'] = $node->{$options['fullcalendar_url_field']}[0]['value'];
+  $vars['data'] = array(); // Contains the start, end & allDay values.
+  $node->url = 'node/' . $nid;
+  if ($url_field = $vars['options']['fullcalendar_url_field']) {
+    if (isset($node->{$url_field}[0]['value'])) {
+      $node->url = $node->{$url_field}[0]['value'];
     }
   }
-  
-  //store field info in a static so it doesn't have to be loaded for every row
-  static $fields_info;
-  if (!(is_array($fields_info))) {
-    $fields_info = array();
+
+  $title_field = $vars['options']['fullcalendar_title_field'];
+  if (!empty($title_field) && !empty($node->{$title_field}[0]['value'])) {
+    $node->title = $node->{$title_field}[0]['value'];
   }
-  
-  //find datetime field (strip tags in case one of the wysiwyg's adds tags)
-  $date_fields = trim(strip_tags($options['fullcalendar_date_fields']));
-  if ($date_fields) {
-    $date_fields = explode("\n", $date_fields);
-    foreach ($date_fields as $date_field) {
-      if ($date_field == 'node_created') {
-        $vars['start'] = format_date($node->created, 'custom', 'Y-m-j H:i:s');
+  $display_field = fullcalendar_date_fields($node);
+  $field_names = trim(strip_tags($vars['options']['fullcalendar_date_fields']));
+  if (!empty($field_names)) {
+    foreach (explode("\n", $field_names) as $field_name) {
+      $field_name = trim(strip_tags($field_name));
+      if (($field_name == 'created') || ($field_name == 'changed')) {
+        $attributes = _fullcalendar_set_display_times($node, $field_name);
+        $vars['data'][] = theme('fullcalendar_link', $node, $attributes);
+        $display_field = array();
         break;
       }
-      if ($date_field == 'node_changed') {
-        $vars['start'] = format_date($node->changed, 'custom', 'Y-m-j H:i:s');
-        break;
-      }
-      //if field exists and it is a date or datetime
-      if ((isset($node->{$date_field})) && in_array($node->{$date_field}[0]['date_type'], array('datetime', 'date', 'datestamp'))) {
-        fullcalendar_set_display_times($node, $date_field, &$vars);
+      // If a date_type field exists
+      if ($display_field[$field_name]) {
+        $display_field = array($field_name => $display_field[$field_name]);
         break;
       }
     }
   }
-  //if no specified datetime field then search all fields and use first date or datetime field
+  // Iterate through available fields, using the first one found.
+  foreach ($display_field as $field_name => $field) {
+    foreach ($node->$field_name as $index => $item) {
+      $attributes = _fullcalendar_set_display_times($node, $field_name, $field, $item);
+      $vars['data'][] = theme('fullcalendar_link', $node, $attributes, $index);
+    }
+    break;
+  }
+}
+
+/**
+ * Pass times through date modules date_formatter_process function to
+ * translate them to the right display times.
+ *
+ * @param object $node
+ * @param string $field_name
+ * @param integer $index
+ * @param array $vars
+ */
+function _fullcalendar_set_display_times($node, $field_name, $field = NULL, $item = NULL) {
+  if (is_array($node->$field_name)) {
+    $dfp_info = array(
+      '#node' => $node,
+      '#field_name' => $field_name,
+      '#formatter' => NULL,
+      '#item' => $item,
+    );
+    $date = date_formatter_process($dfp_info);
+    $date1 = $date['value']['local']['object'];
+    $date2 = $date['value2']['local']['object'];
+  }
   else {
-    $node_ary = (array) $node;
-    foreach ($node_ary as $key => $value) {
-      if (preg_match('/field_.*/', $key)) {
-        if ((isset($value[0]['date_type'])) and (($value[0]['date_type'] == 'datetime') or ($value[0]['date_type'] == 'date'))) {
+    $date1 = date_make_date($node->$field_name, date_default_timezone(), DATE_UNIX);
+    $date2 = $date1;
+  }
+  return array(
+    'field' => $field_name,
+    'allDay' => date_field_all_day($field, $date1, $date2),
+    'start' => $date1,
+    'end' => $date2,
+    'nid' => $node->nid,
+    'cn' => $node->class,
+    'title' => $node->title,
+    'class' => 'fullcalendar_event_details',
+    'editable' => $node->editable,
+  );
+}
 
-          // If no end date is set, copy start date for processing
-          if (empty($value[0]['value2'])) {
-            $value[0]['value2'] = $value[0]['value'];
-          }
-        
-          if ($field = content_fields($key)) {
-            // Get DateTime objects with timezone support
-            $date1 = date_create($value[0]['value'], timezone_open($value[0]['timezone_db']));
-            date_timezone_set($date1, timezone_open($value[0]['timezone']));
-            $date2 = date_create($value[0]['value2'], timezone_open($value[0]['timezone_db']));
-            date_timezone_set($date2, timezone_open($value[0]['timezone']));
+function theme_fullcalendar_link($node, $attributes, $index = 0) {
+  $text = date_format_date($attributes['start']);
+  if (!$attributes['allDay']) {
+    $text .= ' to ' . date_format_date($attributes['end']);
+  }
 
-            // Get the max increment for minutes and seconds
-            $increment = isset($field['widget']['increment']) ? $field['widget']['increment'] : 1;
-            $tmp = date_seconds('s', TRUE, $increment);
-            $max_seconds = array_pop($tmp);
-            $tmp = date_minutes('i', TRUE, $increment);
-            $max_minutes = array_pop($tmp);
+  $attributes['index'] = $index;
+  $attributes['start'] = date_format($attributes['start'], DATE_FORMAT_DATETIME);
+  $attributes['end'] = date_format($attributes['end'], DATE_FORMAT_DATETIME);
 
-            // Get the most specific granularity
-            $granularity = date_granularity($field);
-            $granularity = array_pop($granularity);
-            
-            // Mirror date module's handing of all day events
-            switch ($granularity) {
-              case 'second':
-                $min_comp = date_format($date1, 'H:i:s') == '00:00:00';
-                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i:s') == '23:'. $max_minutes .':'. $max_seconds;
-                break;
-              case 'minute':
-                $min_comp = date_format($date1, 'H:i') == '00:00';
-                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i') == '23:'. $max_minutes;
-                break;
-              case 'hour':
-                $min_comp = date_format($date1, 'H') == '00';
-                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H') == '23';
-                break;
-              default:
-                $min_comp = TRUE;
-                $max_comp = FALSE;
-            }
+  return l($text, $node->url, array('attributes' => $attributes));
+}
 
-            // If granularity did not include time, set to All Day
-            $fields_info[$key]['allDay'] = (date_has_time(date_granularity($field))) ? ($min_comp && $max_comp) : TRUE;
-          }
-          
-          $vars['allDay'] = $fields_info[$key]['allDay'];
-          
-          fullcalendar_set_display_times($node, $key, &$vars);
-        }
-      }
+/**
+ * Check if the user has access to update the given fullcalendar event.
+ *
+ * @param object $node
+ * @return bool
+ */
+function _fullcalendar_update_access($node) {
+  global $user;
+
+  if (!empty($node) && (user_access('administer nodes')
+      || user_access('update any fullcalendar event')
+      || user_access('edit any ' . $node->type . ' content')
+      || (user_access('edit own ' . $node->type . ' content') && $node->uid == $user->uid))) {
+        return TRUE;
+  }
+
+  return FALSE;
+}
+
+function fullcalendar_date_fields($node) {
+  $type = content_types($node->type);
+  $fields = array();
+  foreach ($type['fields'] as $field_name => $field) {
+    if (in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
+      $fields[$field_name] = $field;
     }
   }
+  return $fields;
 }

@@ -1,0 +1,45 @@
+FullCalendar 7.x-1.x, xxxx-xx-xx
+--------------------------------
+
+FullCalendar 6.x-1.x, xxxx-xx-xx
+--------------------------------
+by tim.plunkett: Added CHANGELOG.txt.
+
+FullCalendar 6.x-1.2-beta6, 2010-12-20
+--------------------------------------
+#980180 by geerlingguy: Extra trailing comma breaks fullcalendar in IE 7 & IE 6.
+#906112 by jwhat, tim.plunkett, geerlingguy: Added handle drag and drop: creating events, rescheduling events.
+#910546 by tim.plunkett, bjalford: Fixed support for weekMode.
+#984438 by tim.plunkett: Coding style clean-up.
+#918144 by obrienmd, geerlingguy, Gaara: Documented repeating events support.
+#917988 by tim.plunkett: Added Views options additions and clean-up.
+#992812 by tim.plunkett: Fixed Date field discovery code fails on edge cases.
+#1001688 by tim.plunkett: Moved jQuery out of template file.
+#926344 by tim.plunkett: Added support for overriding event title with an arbitrary field.
+
+FullCalendar 6.x-1.2-beta5, 2010-11-13
+--------------------------------------
+by ablondeau: Attempting to sync head to 6.x-1.0 branch so that snapshots will work.
+
+FullCalendar 6.x-1.2-beta4, 2010-11-11
+--------------------------------------
+#906232 by tim.plunkett: The date module does all it's timezone handling internally and occasionally in the theme layer, so it had to be replicated, instead of reused.
+#910510 by tim.plunkett: CSS changes and addition of a theme function to generate class name for events.
+#932854 by tim.plunkett: Add check for datestamp fields.
+#962474 by tim.plunkett: Add additional fields to view style config for default year, month, day and time format.
+
+FullCalendar 6.x-1.0-beta3, 2010-09-13
+--------------------------------------
+#905746 by ablondeau: passing times through date's date_formatter_process function.
+#910510 by ablondeau: added code to set class based on node type.
+#910546 by bjalford: added week mode.
+
+FullCalendar 6.x-1.0-beta2, 2010-09-13
+--------------------------------------
+#906062 by ablondeau: added agendaDay to defaults, added ability to set header options.
+#906018 by ablondeau: raw events only hidden when js calendar is shown.
+#906232 by ablondeau: date fields that do not have an hour as part of their granularity are flagged as allDay.
+
+FullCalendar 6.x-1.0-beta1, 2010-09-08
+--------------------------------------
+Initial release of fullcalendar module.

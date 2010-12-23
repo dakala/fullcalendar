@@ -1,5 +1,6 @@
 <?php
 // $Id$
+
 /**
  * @file
  * Contains the node view row style plugin.
@@ -19,6 +20,7 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
     $options = parent::option_definition();
     $options['fullcalendar_url_field'] = array('default' => '');
     $options['fullcalendar_date_fields'] = array('default' => '');
+    $options['fullcalendar_title_field'] = array('default' => '');
     return $options;
   }
 
@@ -28,16 +30,22 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
       '#type' => 'textarea',
       '#title' => t('Date Fields'),
       '#default_value' => $this->options['fullcalendar_date_fields'],
-      '#description' => t('Normally this plugin uses the first node field that is either a date or a datetime field type.  However, if you wish to override this behavior, please enter the names of the fields to use instead.  For example "field_scheduled_for".  Enter one per line.  They will be searched in the order listed.  Enter "node_created" or "node_changed" to use the respective node timestamps.'),
+      '#description' => t('Normally this plugin uses the first node field that is either a date or a datetime field type. However, if you wish to override this behavior, please enter the names of the fields to use instead. For example "field_scheduled_for". Enter one per line. They will be searched in the order listed. Enter "created" or "changed" to use the respective node timestamps.'),
+    );
+    $form['fullcalendar_title_field'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title Field'),
+      '#default_value' => $this->options['fullcalendar_title_field'],
+      '#description' => t('The title of the event to be displayed. If blank, the node title will be used. For example: "field_event_title".'),
     );
     $form['fullcalendar_url_field'] = array(
       '#type' => 'textfield',
       '#title' => t('URL Field'),
       '#default_value' => $this->options['fullcalendar_url_field'],
-      '#description' => t('If the calendar items should not link directly to the node, enter the name of the cck field to use for the url instead.  For example "field_url"'),
+      '#description' => t('If the calendar items should not link directly to the node, enter the name of the cck field to use for the url instead. For example: "field_url".'),
     );
   }
-  
+
   function render($row) {
     return theme($this->theme_functions(), $this->view, $this->options, $row, $this->field_alias);
   }

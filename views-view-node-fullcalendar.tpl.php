@@ -1,24 +1,32 @@
 <?php
 // $Id$
+
 /**
- * @file views-view-node-fullcalendar.tpl.php
+ * @file
  * View to display the fullcalendar rows (events)
  *
  * Variables available:
+ * - $node: The node object.
  * - $url: The url for the event
- * - $title : The event node's title
- * - $allDay : If the event is all day (does not include hour and minute granularity)
- * - $start : When the event start
- * - $end : When the event ends
+ * - $data['field']: The field that contains the event date and time.
+ * - $data['index']: The index of the event date and time (to support multiple values).
+ * - $data['allDay']: If the event is all day (does not include hour and minute granularity).
+ * - $data['start'] : When the event starts.
+ * - $data['end'] : When the event ends.
  * - $className : The node type that the event came from
  *
  * Note that if you use className for the event's className attribute then you'll get weird results from jquery!
  */
- 
+
 ?>
-<div class="fullcalendar_event">
-  <a class="fullcalendar_event_details" cn="<?php echo $className; ?>" href="<?php echo $url; ?>" title="<?php echo $title; ?>" allDay="<?php echo $allDay; ?>" start="<?php echo $start; ?>" end="<?php echo $end; ?>"><?php echo $title; ?></a> : <?php echo format_date(strtotime($start)); ?>
-  <?php if((!$allDay) and ($end)){ ?>
-    to <?php echo format_date(strtotime($end)); ?>
-  <?php } ?>
-</div>
+<?php if (isset($empty_text)): ?>
+  <?php print $empty_text; ?>
+<?php elseif (!empty($data)): ?>
+  <h3 class="title"><?php echo $node->title; ?></h3>
+  <?php foreach ($data as $row): ?>
+    <div class="fullcalendar-instance">
+      <?php print $row; ?>
+    </div>
+  <?php endforeach; ?>
+  </h3>
+<?php endif; ?>
