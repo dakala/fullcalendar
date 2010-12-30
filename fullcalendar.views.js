@@ -1,3 +1,4 @@
+// $Id$
 (function ($) {
 
 Drupal.behaviors.fullCalendar = function(context) {

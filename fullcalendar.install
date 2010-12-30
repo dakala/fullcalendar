@@ -1,0 +1,63 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Install, update and uninstall functions for the fullcalendar module.
+ */
+
+/**
+ * Implementation of hook_requirements().
+ */
+function fullcalendar_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    $t = get_t();
+    $status = _fullcalendar_status();
+
+    if (!$status['jquery_version']) {
+      $requirements['fullcalendar_jquery_version'] = array(
+        'title' => $t('FullCalendar required jQuery version'),
+        'value' => $t('Between @a and @b', array('@a' => FULLCALENDAR_MIN_JQUERY_VERSION, '@b' => FULLCALENDAR_MAX_JQUERY_VERSION)),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('You need to download and install a 6.x-2.x version of the !jquery_update module.', array('!jquery_update' => l(t('jQuery Update'), 'http://drupal.org/project/jquery_update'))),
+      );
+    }
+
+    if (!$status['jqueryui_version']) {
+      $requirements['fullcalendar_jqueryui_version'] = array(
+        'title' => $t('FullCalendar required jQuery UI version'),
+        'value' => $t('Between @a and @b', array('@a' => FULLCALENDAR_MIN_JQUERYUI_VERSION, '@b' => FULLCALENDAR_MAX_JQUERYUI_VERSION)),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('You need to download and install a 6.x-1.x version of the !jquery_ui module.', array('!jquery_ui' => l(t('jQuery UI'), 'http://drupal.org/project/jquery_ui'))),
+      );
+    }
+
+    if (!$status['fullcalendar_plugin']) {
+      $requirements['fullcalendar_plugin'] = array(
+        'title' => $t('FullCalendar plugin'),
+        'value' => $t('At least @a', array('@a' => FULLCALENDAR_MIN_PLUGIN_VERSION)),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('You need to download the !fullcalendar and extract the entire contents of the archive into the %path folder of your server.', array('!fullcalendar' => l(t('FullCalendar plugin'), 'http://arshaw.com/fullcalendar/download'), '%path' => 'sites/all/libraries')),
+      );
+    }
+    else {
+      $requirements['fullcalendar_plugin'] = array(
+        'title' => $t('FullCalendar plugin'),
+        'severity' => REQUIREMENT_OK,
+        'value' => fullcalendar_get_version(),
+      );
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function fullcalendar_uninstall() {
+  variable_del('fullcalendar_path');
+  variable_del('fullcalendar_compression_type');
+}

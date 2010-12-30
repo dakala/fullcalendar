@@ -1,4 +1,4 @@
-; $Id$ 
+; $Id$
 name = FullCalendar
 description = Provides a views style plugin for FullCalendar
 core = 6.x

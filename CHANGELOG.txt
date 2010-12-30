@@ -3,6 +3,12 @@ FullCalendar 7.x-1.x, xxxx-xx-xx
 
 FullCalendar 6.x-1.x, xxxx-xx-xx
 --------------------------------
+
+FullCalendar 6.x-1.2-rc1, 2010-12-30
+------------------------------------
+#984438 by tim.plunkett: Final coding clean-up before RC1.
+#980810 by tim.plunkett | geerlingguy: Added option to use fullcalendar.min.js.
+#980886 by tim.plunkett, jwhat: Move FullCalendar plugin out of module into sites/all/libraries.
 by tim.plunkett: Added CHANGELOG.txt.
 
 FullCalendar 6.x-1.2-beta6, 2010-12-20

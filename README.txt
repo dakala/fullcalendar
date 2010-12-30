@@ -1,3 +1,8 @@
+This module requires the 3rd party library for FullCalendar located at
+http://arshaw.com/fullcalendar. Download and unzip this library into the
+sites/all/libraries/fullcalendar directory, or use the Libraries API module for
+site specific libraries.
+
 This version of FullCalendar requires specific versions of the following:
   The 6.x-2.x branch of jQuery Update (http://drupal.org/project/jquery_update)
   Version 1.7 of jQuery UI (http://drupal.org/project/jquery_ui)

@@ -7,6 +7,16 @@
  */
 
 /**
+ * The default path to the FullCalender plugin.
+ */
+define('FULLCALENDAR_PATH', 'sites/all/libraries/fullcalendar');
+define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.9');
+define('FULLCALENDAR_MIN_JQUERY_VERSION', '1.3.2');
+define('FULLCALENDAR_MAX_JQUERY_VERSION', '1.4+');
+define('FULLCALENDAR_MIN_JQUERYUI_VERSION', '1.7.3');
+define('FULLCALENDAR_MAX_JQUERYUI_VERSION', '1.8+');
+
+/**
  * Implementation of hook_views_api().
  */
 function fullcalendar_views_api() {
@@ -20,10 +30,9 @@ function fullcalendar_views_api() {
  * Implementation of hook_init().
  */
 function fullcalendar_init() {
-  $path = drupal_get_path('module', 'fullcalendar');
-
-  drupal_add_css($path . '/fullcalendar.css', 'module');
-  drupal_add_js($path . '/fullcalendar.js', 'module');
+  drupal_add_js(fullcalendar_get_path());
+  drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
+  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
 
   // We need some jQuery UI files.
   $files = array(
@@ -52,6 +61,14 @@ function fullcalendar_perm() {
 function fullcalendar_menu() {
   $items = array();
 
+  $items['admin/settings/fullcalendar'] = array(
+    'title' => 'FullCalendar',
+    'description' => 'Adjust FullCalendar settings.',
+    'file' => 'fullcalendar.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fullcalendar_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+  );
   $items['fullcalendar/ajax/update/%/%node'] = array(
     'title' => 'Update event',
     'description' => 'Save the updated event datetime.',
@@ -100,11 +117,6 @@ function fullcalendar_update($action, $node) {
     drupal_json(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status-close">close</a>]'));
   }
 }
-
-//Pass through to template_preprocess_views_view_fields so that fields will be available to template file
-//function template_preprocess_views_view_fields_fullcalendar(&$vars) {
-//  template_preprocess_views_view_fields($vars);
-//}
 
 /**
  * Implementation of hook_theme().
@@ -164,7 +176,9 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js', 'module');
 }
 
-//Prepare variables for template file invoked for node row type
+/**
+ * Prepare variables for template file invoked for node row type
+ */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   if (isset($vars['view']->empty)) {
     $vars['empty_text'] = $vars['view']->empty;
@@ -261,6 +275,9 @@ function _fullcalendar_set_display_times($node, $field_name, $field = NULL, $ite
   );
 }
 
+/**
+ * Set the text for the fallback display.
+ */
 function theme_fullcalendar_link($node, $attributes, $index = 0) {
   $text = date_format_date($attributes['start']);
   if (!$attributes['allDay']) {
@@ -293,6 +310,9 @@ function _fullcalendar_update_access($node) {
   return FALSE;
 }
 
+/**
+ * Find all date fields for a given node.
+ */
 function fullcalendar_date_fields($node) {
   $type = content_types($node->type);
   $fields = array();
@@ -302,4 +322,69 @@ function fullcalendar_date_fields($node) {
     }
   }
   return $fields;
+}
+
+/**
+ * Check Colorbox dependencies, jQuery version and Colorbox plugin.
+ *
+ * @return
+ *   array with TRUE/FALSE for each dependency.
+ *
+ * @see fullcalendar_requirements()
+ */
+function _fullcalendar_status() {
+  $status = array();
+  $status['jquery_version'] = FALSE;
+  $status['fullcalendar_plugin'] = FALSE;
+
+  if (function_exists('jquery_update_get_version')) {
+    if (version_compare(jquery_update_get_version(), FULLCALENDAR_MIN_JQUERY_VERSION, '>=')) {
+      $status['jquery_version'] = TRUE;
+    }
+  }
+  if (function_exists('jquery_ui_get_version')) {
+    if (version_compare(jquery_ui_get_version(), FULLCALENDAR_MIN_JQUERYUI_VERSION, '>=')) {
+      $status['jqueryui_version'] = TRUE;
+    }
+  }
+
+  if (version_compare(fullcalendar_get_version(), FULLCALENDAR_MIN_PLUGIN_VERSION, '>=')) {
+    $status['fullcalendar_plugin'] = TRUE;
+  }
+
+  return $status;
+}
+
+/**
+ * Return the version of Colorbox plugin that is installed.
+ *
+ * This can be used by other modules' hook_requirements() to ensure that the
+ * proper version of Colorbox plugin is installed.
+ *
+ * @see version_compare()
+ */
+function fullcalendar_get_version($fullcalendar_path = NULL) {
+  $version = 0;
+  $pattern = '#FullCalendar v([0-9\.a-z]+)#';
+
+  // No file is passed in so use the default location.
+  if (is_null($fullcalendar_path)) {
+    $fullcalendar_path = fullcalendar_get_path();
+  }
+
+  // Return the version of Colorbox plugin.
+  $fullcalendar_plugin = file_get_contents($fullcalendar_path, NULL, NULL, 0, 40);
+  if (preg_match($pattern, $fullcalendar_plugin, $matches)) {
+    $version = $matches[1];
+  }
+
+  return $version;
+}
+
+/**
+ * Return the path to the Colorbox plugin.
+ */
+function fullcalendar_get_path() {
+  $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
+  return variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
 }
