@@ -13,7 +13,7 @@ include_once('fullcalendar.module');
 define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-' . FULLCALENDAR_MIN_PLUGIN_VERSION . '.zip');
 
 /**
- * Implementation of hook_drush_command().
+ * Implements hook_drush_command().
  */
 function fullcalendar_drush_command() {
   $items = array();
@@ -30,7 +30,7 @@ function fullcalendar_drush_command() {
 }
 
 /**
- * Implementation of hook_drush_help().
+ * Implements hook_drush_help().
  */
 function fullcalendar_drush_help($section) {
   switch ($section) {
@@ -40,7 +40,7 @@ function fullcalendar_drush_help($section) {
 }
 
 /**
- * Command to download the FullCalendar plugin.
+ * Commands to download the FullCalendar plugin.
  */
 function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
   if (!drush_shell_exec('type unzip')) {
@@ -96,4 +96,3 @@ function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
     drush_log(dt('Drush was unable to download the FullCalendar plugin to @path', array('@path' => $path)), 'error');
   }
 }
-

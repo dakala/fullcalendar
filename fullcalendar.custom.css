@@ -36,3 +36,30 @@
   padding: 15px;
   text-align: center;
 }
+
+.fc table {
+  margin: 0;
+}
+
+table.fc-header {
+  margin-bottom: 10px;
+}
+
+.fc-header tr {
+  background-color: transparent;
+}
+
+.fc-header-title {
+  text-align: center;
+}
+
+.fc-header tbody,
+.fc-header th,
+.fc-header td {
+  border: 0;
+}
+
+.fc-header .fc-state-default,
+.fc-header .ui-state-default {
+  margin-bottom: 0;
+}

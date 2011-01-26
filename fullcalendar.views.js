@@ -1,9 +1,9 @@
-// $Id$
 (function ($) {
 
-Drupal.behaviors.fullCalendar = function(context) {
+Drupal.behaviors.fullCalendar = {
+attach: function(context) {
   $('#fullcalendar-content').hide(); //hide the failover display
-  $('#fullcalendar').fullCalendar({
+  $('#fullcalendar').once().fullCalendar({
     defaultView: Drupal.settings.fullcalendar.defaultView,
     theme: Drupal.settings.fullcalendar.theme,
     header: {
@@ -34,6 +34,17 @@ Drupal.behaviors.fullCalendar = function(context) {
     axisFormat: (Drupal.settings.fullcalendar.clock) ? 'HH:mm' : 'h(:mm)tt',
     weekMode: Drupal.settings.fullcalendar.weekMode,
     firstDay: Drupal.settings.fullcalendar.firstDay,
+    monthNames: Drupal.settings.fullcalendar.monthNames,
+    monthNamesShort: Drupal.settings.fullcalendar.monthNamesShort,
+    dayNames: Drupal.settings.fullcalendar.dayNames,
+    dayNamesShort: Drupal.settings.fullcalendar.dayNamesShort,
+    allDayText: Drupal.settings.fullcalendar.allDayText,
+    buttonText: {
+      today:  Drupal.settings.fullcalendar.todayString,
+      day: Drupal.settings.fullcalendar.dayString,
+      week: Drupal.settings.fullcalendar.weekString,
+      month: Drupal.settings.fullcalendar.monthString
+    },
     events: function(start, end, callback) {
       var events = [];
 
@@ -47,7 +58,7 @@ Drupal.behaviors.fullCalendar = function(context) {
             start: $(this).attr('start'),
             end: $(this).attr('end'),
             url: $(this).attr('href'),
-            allDay: ($(this).attr('allDay') == '1'),
+            allDay: ($(this).attr('allDay') === '1'),
             className: $(this).attr('cn'),
             editable: $(this).attr('editable')
           });
@@ -57,28 +68,27 @@ Drupal.behaviors.fullCalendar = function(context) {
       callback(events);
     },
     eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
-      $.post('/fullcalendar/ajax/update/drop/'+ event.nid,
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.nid,
         'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
         fullcalendarUpdate);
       return false;
     },
     eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
-      $.post('/fullcalendar/ajax/update/resize/'+ event.nid,
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/'+ event.nid,
         'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta,
         fullcalendarUpdate);
       return false;
     }
   });
 
-  var fullcalendarUpdate = function(response) {
-    var result = Drupal.parseJson(response);
-    if ($('#fullcalendar-status').text() == '') {
+  var fullcalendarUpdate = function(result) {
+    if ($('#fullcalendar-status').text() === '') {
       $('#fullcalendar-status').html(result.msg).slideDown();
     } else {
       $('#fullcalendar-status').html(result.msg).effect('highlight', {}, 5000);
     }
     return false;
-  }
+  };
 
   $('.fullcalendar-status-close').live('click', function() {
     $('#fullcalendar-status').slideUp();
@@ -87,6 +97,7 @@ Drupal.behaviors.fullCalendar = function(context) {
 
   //trigger a window resize so that calendar will redraw itself as it loads funny in some browsers occasionally
   $(window).resize();
+}
 };
 
 })(jQuery);

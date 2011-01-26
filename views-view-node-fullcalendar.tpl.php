@@ -28,5 +28,4 @@
       <?php print $row; ?>
     </div>
   <?php endforeach; ?>
-  </h3>
 <?php endif; ?>

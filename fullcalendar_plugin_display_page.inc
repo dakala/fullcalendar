@@ -11,9 +11,9 @@
  */
 class fullcalendar_plugin_display_page extends views_plugin_display_page {
   function render() {
-    if ($this->view->total_rows == 0) {
+    if (empty($this->view->result)) {
       $this->view->result[] = new stdClass();
-      $this->view->empty = $this->render_textarea('empty');
+      $this->view->empty_text = $this->render_area('empty');
     }
     return parent::render();
   }

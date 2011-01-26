@@ -1,9 +1,12 @@
-; $Id$
+; $Id$ 
 name = FullCalendar
 description = Provides a views style plugin for FullCalendar
-core = 6.x
+core = 7.x
 package = "Views"
+configure = admin/config/calendar/fullcalendar
 dependencies[] = views
 dependencies[] = date
-dependencies[] = jquery_ui
-dependencies[] = jquery_update
+
+files[] = fullcalendar_plugin_display_page.inc
+files[] = views_plugin_node_fullcalendar.inc
+files[] = views_plugin_style_fullcalendar.inc

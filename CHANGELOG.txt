@@ -1,8 +1,51 @@
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
+#1038822 by wildpoppy: Fixed extra closing H3 tag.
+#1038442 by aspilicious: JS clean-up.
+#1039912 by tim.plunkett: Fixed FullCalendar doubling on page.
+#1011696 by aspilicious: Fixed drag-and-drop for subdomains.
+#980180 follow-up by aspilicious: Extra trailing comma breaks fullcalendar in IE 7 & IE 6.
+#1033110 by tim.plunkett | geerlingguy: Added link to configuration page.
+#1033858 by aspilicious: Added translation support.
+
+FullCalendar 7.x-1.2, 2011-01-19
+--------------------------------
+#1033010 by tim.plunkett: Provide a default view as an example.
+#1032980 by tim.plunkett, aspilicious: Improved default styling for Bartik.
+#1013456 by tim.plunkett: Documentation clean-up.
+#1031924 by tim.plunkett | Jody Lynn: Fixed call to deprecated Drupal.parseJson.
+#980886 follow-up by tim.plunkett: Add call to new fullcalendar.custom.css.
+#980810 by tim.plunkett: Added option to use fullcalendar.min.js.
+#980886 by aspilicious, tim.plunkett: Move FullCalendar plugin out of module into sites/all/libraries.
+#933622 by tim.plunkett: Port drag-and-drop to Drupal 7.
+#933622 by tim.plunkett: Port to Drupal 7.
+
+FullCalendar 6.x-2.x, xxxx-xx-xx
+--------------------------------
+#1038822 by wildpoppy: Fixed extra closing H3 tag.
+#1038442 by aspilicious: JS clean-up.
+#1039912 by tim.plunkett: Fixed FullCalendar doubling on page.
+#1011696 by aspilicious: Fixed drag-and-drop for subdomains.
+#980180 follow-up by aspilicious: Extra trailing comma breaks fullcalendar in IE 7 & IE 6.
+#1033858 by aspilicious: Added translation support.
+by tim.plunkett: Updated CHANGELOG.txt.
 
 FullCalendar 6.x-1.x, xxxx-xx-xx
 --------------------------------
+#1038822 by wildpoppy: Fixed extra closing H3 tag.
+#1038442 by aspilicious: JS clean-up.
+#1039912 by tim.plunkett: Fixed FullCalendar doubling on page.
+#1011696 by aspilicious: Fixed drag-and-drop for subdomains.
+#980180 follow-up by aspilicious: Extra trailing comma breaks fullcalendar in IE 7 & IE 6.
+#1033858 by aspilicious: Added translation support.
+
+FullCalendar 6.x-1.3, 2011-01-05
+--------------------------------
+#1016466 by tim.plunkett: Fix call to undefined function fullcalendar_get_path().
+
+FullCalendar 6.x-1.2, 2011-01-05
+--------------------------------
+#1013456 by aspilicious, tim.plunkett: Documentation clean-up.
 
 FullCalendar 6.x-1.2-rc1, 2010-12-30
 ------------------------------------
