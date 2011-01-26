@@ -1,3 +1,7 @@
+FullCalendar 7.x-2.x, xxxx-xx-xx
+--------------------------------
+#1036444 by aspilicious, tim.plunkett: Overhauled the Views UI.
+
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
 #1038822 by wildpoppy: Fixed extra closing H3 tag.

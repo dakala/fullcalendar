@@ -197,9 +197,6 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'left' => $vars['options']['header']['fc_left'],
     'center' => $vars['options']['header']['fc_center'],
     'right' => $vars['options']['header']['fc_right'],
-    'year' => $vars['options']['defaults']['fc_year'],
-    'month' => $vars['options']['defaults']['fc_month'],
-    'day' => $vars['options']['defaults']['fc_day'],
     'agenda' => $vars['options']['times']['fc_timeformat'],
     'clock' => $vars['options']['times']['fc_clock'],
     'monthNames' => array_values(date_month_names(TRUE)),
@@ -212,6 +209,13 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'monthString' => t('Month'),
     'todayString' => t('Today'),
   );
+
+  if ($vars['options']['times']['fc_default_date']) {
+    $settings['year'] = $vars['options']['times']['fc_date']['year'];
+    $settings['month'] = $vars['options']['times']['fc_date']['month'];
+    $settings['day'] = $vars['options']['times']['fc_date']['day'];
+  }
+
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js');
@@ -222,10 +226,16 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
  */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $entity_type = 'node';
+  // If the view has no availble nodes, exit.
   if (isset($vars['view']->empty_text)) {
     $vars['empty_text'] = $vars['view']->empty_text;
     return;
   }
+
+  // Fetch the available fields in this view.
+  $fields = $vars['view']->display_handler->get_field_labels();
+
+  // Get the node and return if not found or empty.
   $nid = $vars['row']->{$vars['field_alias']};
   if (!is_numeric($nid)) {
     return;
@@ -238,49 +248,48 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Allow resize/drag/drop of an event if user has proper permissions.
   $node->editable = _fullcalendar_update_access($node);
   $node->class = theme('fullcalendar_classname', array('node' => $node));
+
+  // Prepare structures.
   $vars['node'] = $node;
   $vars['data'] = array(); // Contains the start, end & allDay values.
+
+  // Default URL.
   $node->url = 'node/' . $nid;
-  if ($url_field = $vars['options']['fullcalendar_url_field']) {
-    if ($url_field = field_get_items('node', $node, $url_field)) {
-      $vars['url'] = $url_field[0]['value'];
+  // Fetch custom URL if needed.
+  if (!empty($vars['options']['fullcalendar_custom_url'])) {
+    $url_field = field_get_items($entity_type, $node, $fields[$vars['options']['fullcalendar_url_field']]);
+    if (!empty($url_field[0]['value'])) {
+      $node->url = $url_field[0]['value'];
     }
   }
 
-  $title_field = $vars['options']['fullcalendar_title_field'];
-  if (!empty($title_field) && !empty($node->{$title_field}[0]['value'])) {
-    $node->title = $node->{$title_field}[0]['value'];
-  }
-  $display_field = fullcalendar_date_fields($node);
-  $field_names = trim(strip_tags($vars['options']['fullcalendar_date_fields']));
-  if (!empty($field_names)) {
-    foreach (explode("\n", $field_names) as $field_name) {
-      $field_name = trim(strip_tags($field_name));
-      if (($field_name == 'created') || ($field_name == 'changed')) {
-        $attributes = _fullcalendar_set_display_times($entity_type, $node, $field_name);
-        $vars['data'][] = theme('fullcalendar_link',
-          array('node' => $node, 'attributes' => $attributes, 'index' => 0)
-        );
-        $display_field = array();
-        break;
-      }
-      // If a date_type field exists
-      if (isset($display_field[$field_name])) {
-        $display_field = array($field_name => $display_field[$field_name]);
-        break;
-      }
+  // Fetch custom title if needed.
+  if (!empty($vars['options']['fullcalendar_custom_title'])) {
+    $title_field = field_get_items($entity_type, $node, $fields[$vars['options']['fullcalendar_title_field']]);
+    if (!empty($title_field[0]['value'])) {
+      $node->title = $title_field[0]['value'];
     }
   }
-  // Iterate through available fields, using the first one found.
-  foreach ($display_field as $field_name => $field) {
+
+  // Fetch custom dates if needed.
+  if (!empty($vars['options']['fullcalendar_custom_date'])) {
+    $fields = array_intersect_key($fields, $vars['options']['fullcalendar_date_fields']);
+  }
+
+  // Iterate through all available fields.
+  foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
     $instance = field_info_instance($entity_type, $field_name, $node->type);
-    foreach (field_get_items($entity_type, $node, $field_name) as $index => $item) {
-      $attributes = _fullcalendar_set_display_times($entity_type, $node, $field_name, $instance, $field, $item);
-      $vars['data'][] = theme('fullcalendar_link',
-        array('node' => $node, 'attributes' => $attributes, 'index' => $index)
-      );
+    $items = field_get_items($entity_type, $node, $field_name);
+    // Filter fields without value.
+    if (!empty($items)) {
+      foreach ($items as $index => $item) {
+        $vars['data'][] = theme('fullcalendar_link', array(
+          'node' => $node,
+          'attributes' => _fullcalendar_set_display_times($entity_type, $node, $field_name, $instance, $field, $item),
+          'index' => $index,
+        ));
+      }
     }
-    break;
   }
 }
 
@@ -368,21 +377,14 @@ function _fullcalendar_update_access($node) {
 }
 
 /**
- * Find all date fields in this instance.
+ * Filters the date fields.
  *
- * Field type is not in the $field array we get from
- * field_info_instances(), we need to call
- * field_info_field() to find that.
+ * @param $view_fields
+ *   Array of possible date fields.
  */
-function fullcalendar_date_fields($entity, $entity_type = 'node') {
-  $bundle = '';
-  switch ($entity_type) {
-    case 'node':
-      $bundle = $entity->type;
-      break;
-  }
+function fullcalendar_date_fields($field_options) {
   $fields = array();
-  foreach (array_keys(field_info_instances($entity_type, $bundle)) as $field_name) {
+  foreach ($field_options as $entity_name => $field_name) {
     $field = field_info_field($field_name);
     if (in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
       $fields[$field_name] = $field;

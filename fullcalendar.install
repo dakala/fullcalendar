@@ -37,7 +37,7 @@ function fullcalendar_requirements($phase) {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function fullcalendar_uninstall() {
   variable_del('fullcalendar_path');
