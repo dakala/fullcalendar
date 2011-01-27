@@ -77,11 +77,11 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
       '#title' => t('Use a custom date field.'),
       '#default_value' => $this->options['custom']['fc_date'],
     );
-    $form['custom']['fc_date_fields'] = array(
+    $form['custom']['fc_date_field'] = array(
       '#type' => 'select',
       '#title' => t('Date Fields'),
       '#options' => $date_fields,
-      '#default_value' => $this->options['custom']['fc_date_fields'],
+      '#default_value' => $this->options['custom']['fc_date_field'],
       '#description' => t('Select one or more date fields.'),
       '#multiple' => TRUE,
       '#size' => count($date_fields),

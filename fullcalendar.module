@@ -276,7 +276,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
 
   // Fetch custom dates if needed.
   if (!empty($vars['options']['custom']['fc_date'])) {
-    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_fields']);
+    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_field']);
   }
 
   // Iterate through all available fields.

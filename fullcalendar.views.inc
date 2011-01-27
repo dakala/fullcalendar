@@ -34,6 +34,7 @@ function fullcalendar_views_plugins() {
         'parent' => 'page',
         'theme' => 'views_view',
         'uses hook menu' => TRUE,
+        'uses pager',
       ),
     ),
     'style' => array(
