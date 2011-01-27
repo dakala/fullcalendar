@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1036444 follow-up by aspilicious: Correct option names for Views UI overhaul.
 #1036444 by aspilicious, tim.plunkett: Overhauled the Views UI.
 
 FullCalendar 7.x-1.x, xxxx-xx-xx

@@ -256,24 +256,24 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Default URL.
   $node->url = 'node/' . $nid;
   // Fetch custom URL if needed.
-  if (!empty($vars['options']['fullcalendar_custom_url'])) {
-    $url_field = field_get_items($entity_type, $node, $fields[$vars['options']['fullcalendar_url_field']]);
+  if (!empty($vars['options']['custom']['fc_url'])) {
+    $url_field = field_get_items($entity_type, $node, $fields[$vars['options']['custom']['fc_url_field']]);
     if (!empty($url_field[0]['value'])) {
       $node->url = $url_field[0]['value'];
     }
   }
 
   // Fetch custom title if needed.
-  if (!empty($vars['options']['fullcalendar_custom_title'])) {
-    $title_field = field_get_items($entity_type, $node, $fields[$vars['options']['fullcalendar_title_field']]);
+  if (!empty($vars['options']['custom']['fc_title'])) {
+    $title_field = field_get_items($entity_type, $node, $fields[$vars['options']['custom']['fc_title_field']]);
     if (!empty($title_field[0]['value'])) {
       $node->title = $title_field[0]['value'];
     }
   }
 
   // Fetch custom dates if needed.
-  if (!empty($vars['options']['fullcalendar_custom_date'])) {
-    $fields = array_intersect_key($fields, $vars['options']['fullcalendar_date_fields']);
+  if (!empty($vars['options']['custom']['fc_date'])) {
+    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_fields']);
   }
 
   // Iterate through all available fields.
