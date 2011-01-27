@@ -21,9 +21,9 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
     $options['custom'] = array(
       'contains' => array(
         'fc_title_field' => array('default' => ''),
-        'fc_title_field' => array('default' => ''),
         'fc_url_field' => array('default' => ''),
-        'fc_date' => array('default' => FALSE),
+        'fc_date_field' => array('default' => ''),
+        'fc_title' => array('default' => FALSE),
         'fc_url' => array('default' => FALSE),
         'fc_date' => array('default' => FALSE),
       ),
