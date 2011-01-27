@@ -1,10 +1,12 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#910494 by aspilicious: Colorbox custom settings.
 #1036444 follow-up by aspilicious: Correct option names for Views UI overhaul.
 #1036444 by aspilicious, tim.plunkett: Overhauled the Views UI.
 
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
+#1040596 by aspilicious: Fixed error on calendar page.
 #1038822 by wildpoppy: Fixed extra closing H3 tag.
 #1038442 by aspilicious: JS clean-up.
 #1039912 by tim.plunkett: Fixed FullCalendar doubling on page.

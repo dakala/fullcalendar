@@ -20,6 +20,9 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
       'contains' => array(
         'fc_theme' => array('default' => FALSE),
         'fc_url_colorbox' => array('default' => FALSE),
+        'fc_url_colorbox_class' => array('default' => '#content'),
+        'fc_url_colorbox_width' => array('default' => '80%'),
+        'fc_url_colorbox_height' => array('default' => '80%'),
       ),
     );
     $options['header'] = array(
@@ -173,6 +176,27 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
         '#type' => 'checkbox',
         '#title' => t('Open events in colorbox'),
         '#default_value' => $this->options['modules']['fc_url_colorbox'],
+      );
+      $form['modules']['fc_url_colorbox_class'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Classname or ID selector'),
+        '#default_value' => $this->options['modules']['fc_url_colorbox_class'],
+        '#process' => array('ctools_dependent_process'),
+        '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
+      );
+      $form['modules']['fc_url_colorbox_width'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Width'),
+        '#default_value' => $this->options['modules']['fc_url_colorbox_width'],
+        '#process' => array('ctools_dependent_process'),
+        '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
+      );
+      $form['modules']['fc_url_colorbox_height'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Height'),
+        '#default_value' => $this->options['modules']['fc_url_colorbox_height'],
+        '#process' => array('ctools_dependent_process'),
+        '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
       );
     }
   }

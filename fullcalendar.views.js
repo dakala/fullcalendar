@@ -15,7 +15,15 @@ attach: function(context) {
       if (Drupal.settings.fullcalendar.colorbox) {
       // Open in colorbox if exists, else open in new window.
         if ($.colorbox) {
-          $.colorbox({href:calEvent.url, iframe:true, width:'80%', height:'80%'});
+          var url = calEvent.url;
+          if (Drupal.settings.fullcalendar.colorboxClass !== '') {
+            url += ' ' + Drupal.settings.fullcalendar.colorboxClass;
+          }
+          $.colorbox({
+            href: url,
+            width: Drupal.settings.fullcalendar.colorboxWidth,
+            height: Drupal.settings.fullcalendar.colorboxHeight
+          });
         } else {
           window.open(calEvent.url);
         }
