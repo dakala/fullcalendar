@@ -6,7 +6,7 @@
  * View to display the fullcalendar rows (events)
  *
  * Variables available:
- * - $node: The node object.
+ * - $entity: The entity object.
  * - $url: The url for the event
  * - $data['field']: The field that contains the event date and time.
  * - $data['index']: The index of the event date and time (to support multiple values).
@@ -22,7 +22,7 @@
 <?php if (isset($empty_text)): ?>
   <?php print $empty_text; ?>
 <?php elseif (!empty($data)): ?>
-  <h3 class="title"><?php echo $node->title; ?></h3>
+  <h3 class="title"><?php echo $entity->title; ?></h3>
   <?php foreach ($data as $row): ?>
     <div class="fullcalendar-instance">
       <?php print $row; ?>

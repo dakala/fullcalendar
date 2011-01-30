@@ -154,11 +154,11 @@ function fullcalendar_update($action, $node) {
 function fullcalendar_theme() {
   return array(
     'fullcalendar_classname' => array(
-      'variables' => array('node' => NULL),
+      'variables' => array('entity' => NULL),
     ),
     'fullcalendar_link' => array(
       'variables' => array(
-        'node' => NULL,
+        'entity' => NULL,
         'attributes' => NULL,
         'index' => NULL,
       ),
@@ -167,19 +167,19 @@ function fullcalendar_theme() {
 }
 
 /**
- * Constructs CSS classes for a node.
+ * Constructs CSS classes for a entity.
  *
  * @param $node
- *   An object representing the node.
+ *   An object representing the entity.
  *
  * @return
  *   A string suitable for use as a CSS class.
  */
 function theme_fullcalendar_classname($variables) {
-  $node = $variables['node'];
+  $entity = $variables['entity'];
   $className = array(
     'fc-event-default',
-    $node->type,
+    $entity->type,
   );
   return implode(' ', $className);
 }
@@ -228,7 +228,6 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
  * Prepares variables for template file invoked for node row type.
  */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
-  $entity_type = 'node';
   // If the view has no availble nodes, exit.
   if (isset($vars['view']->empty_text)) {
     $vars['empty_text'] = $vars['view']->empty_text;
@@ -238,41 +237,38 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Fetch the available fields in this view.
   $fields = $vars['view']->display_handler->get_field_labels();
 
-  // Get the node and return if not found or empty.
-  $nid = $vars['row']->{$vars['field_alias']};
-  if (!is_numeric($nid)) {
-    return;
-  }
-  $node = node_load($nid);
-  if (empty($node)) {
-    return;
-  }
+  // Check if the entity is empty.
+  $entity = $vars['row']->_field_data[$vars['field_alias']]['entity'];
+  if (empty($entity)) {
+     return;
+   }
 
-  // Allow resize/drag/drop of an event if user has proper permissions.
-  $node->editable = _fullcalendar_update_access($node);
-  $node->class = theme('fullcalendar_classname', array('node' => $node));
-
-  // Prepare structures.
-  $vars['node'] = $node;
   $vars['data'] = array(); // Contains the start, end & allDay values.
 
+  $entity_type = $vars['row']->_field_data[$vars['field_alias']]['entity_type'];
+  $entity->editable = _fullcalendar_update_access($entity);
+  $entity->class = theme('fullcalendar_classname', array('entity' => $entity));
+
   // Default URL.
-  $node->url = 'node/' . $nid;
+  $entity->url = 'node/' . $vars['row']->{$vars['field_alias']};
   // Fetch custom URL if needed.
   if (!empty($vars['options']['custom']['fc_url'])) {
-    $url_field = field_get_items($entity_type, $node, $fields[$vars['options']['custom']['fc_url_field']]);
+    $url_field = field_get_items($entity_type, $entity, $fields[$vars['options']['custom']['fc_url_field']]);
     if (!empty($url_field[0]['value'])) {
-      $node->url = $url_field[0]['value'];
+      $entity->url = $url_field[0]['value'];
     }
   }
 
   // Fetch custom title if needed.
   if (!empty($vars['options']['custom']['fc_title'])) {
-    $title_field = field_get_items($entity_type, $node, $fields[$vars['options']['custom']['fc_title_field']]);
+    $title_field = field_get_items($entity_type, $entity, $fields[$vars['options']['custom']['fc_title_field']]);
     if (!empty($title_field[0]['value'])) {
-      $node->title = $title_field[0]['value'];
+      $entity->title = $title_field[0]['value'];
     }
   }
+
+  // Entity is build, add it to the preprocess variables
+  $vars['entity'] = $entity;
 
   // Fetch custom dates if needed.
   if (!empty($vars['options']['custom']['fc_date'])) {
@@ -281,14 +277,14 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
 
   // Iterate through all available fields.
   foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
-    $instance = field_info_instance($entity_type, $field_name, $node->type);
-    $items = field_get_items($entity_type, $node, $field_name);
+    $instance = field_info_instance($entity_type, $field_name, $entity->type);
+    $items = field_get_items($entity_type, $entity, $field_name);
     // Filter fields without value.
     if (!empty($items)) {
       foreach ($items as $index => $item) {
         $vars['data'][] = theme('fullcalendar_link', array(
-          'node' => $node,
-          'attributes' => _fullcalendar_set_display_times($entity_type, $node, $field_name, $instance, $field, $item),
+          'entity' => $entity,
+          'attributes' => _fullcalendar_set_display_times($entity_type, $entity, $field_name, $instance, $field, $item),
           'index' => $index,
         ));
       }
@@ -302,8 +298,8 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
  * This is done by passing times through date modules date_formatter_process
  * function.
  *
- * @param $node
- *   The node that will be updated.
+ * @param $entity
+ *   The entity that will be updated.
  * @param $field_name
  *   The name of the date field.
  * @param $field
@@ -341,7 +337,7 @@ function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $in
  * Sets the text for the fallback display.
  */
 function theme_fullcalendar_link($variables) {
-  $node = $variables['node'];
+  $entity = $variables['entity'];
   $attributes = $variables['attributes'];
   $index = $variables['index'];
   $text = date_format_date($attributes['start']);
@@ -353,26 +349,26 @@ function theme_fullcalendar_link($variables) {
   $attributes['start'] = $attributes['start']->format(DATE_FORMAT_DATETIME);
   $attributes['end'] = $attributes['end']->format(DATE_FORMAT_DATETIME);
 
-  return l($text, $node->url, array('attributes' => $attributes));
+  return l($text, $entity->url, array('attributes' => $attributes));
 }
 
 /**
  * Checks if the user has access to update the given FullCalendar event.
  *
- * @param $node
- *   The node that will be updated.
+ * @param $entity
+ *   The entity that will be updated.
  *
  * @return
- *   TRUE if the user is allowed to update the node;
- *   FALSE if the user is not permitted to update the node.
+ *   TRUE if the user is allowed to update the entity;
+ *   FALSE if the user is not permitted to update the entity.
  */
-function _fullcalendar_update_access($node) {
+function _fullcalendar_update_access($entity) {
   global $user;
 
-  if (!empty($node) && (user_access('administer nodes')
+  if (!empty($entity) && (user_access('administer content')
       || user_access('update any fullcalendar event')
-      || user_access('edit any ' . $node->type . ' content')
-      || (user_access('edit own ' . $node->type . ' content') && $node->uid == $user->uid))) {
+      || user_access('edit any ' . $entity->type . ' content')
+      || (user_access('edit own ' . $entity->type . ' content') && $entity->uid == $user->uid))) {
         return TRUE;
   }
 

@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1043222 by aspilicious, tim.plunkett: Removed the node (load) dependency.
 #910494 by aspilicious: Colorbox custom settings.
 #1036444 follow-up by aspilicious: Correct option names for Views UI overhaul.
 #1036444 by aspilicious, tim.plunkett: Overhauled the Views UI.
@@ -29,6 +30,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1035246 by aspilicious: Fixed incompatiblity with Views 6.x-3.x.
 #1038822 by wildpoppy: Fixed extra closing H3 tag.
 #1038442 by aspilicious: JS clean-up.
 #1039912 by tim.plunkett: Fixed FullCalendar doubling on page.
