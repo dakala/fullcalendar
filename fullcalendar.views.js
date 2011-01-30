@@ -11,6 +11,7 @@ attach: function(context) {
       center: Drupal.settings.fullcalendar.center,
       right: Drupal.settings.fullcalendar.right
     },
+    isRTL: Drupal.settings.fullcalendar.isRTL === '1',
     eventClick: function(calEvent, jsEvent, view) {
       if (Drupal.settings.fullcalendar.colorbox) {
       // Open in colorbox if exists, else open in new window.

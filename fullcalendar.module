@@ -188,6 +188,8 @@ function theme_fullcalendar_classname($variables) {
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_views_view_fullcalendar(&$vars) {
+  global $language;
+
   $settings = array(
     'defaultView' => $vars['options']['display']['fc_view'],
     'firstDay' => $vars['options']['display']['fc_firstday'],
@@ -211,6 +213,7 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'weekString' => t('Week'),
     'monthString' => t('Month'),
     'todayString' => t('Today'),
+    'isRTL' => $language->direction,
   );
 
   if ($vars['options']['times']['fc_default_date']) {
