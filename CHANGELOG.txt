@@ -8,12 +8,18 @@ FullCalendar 7.x-2.x, xxxx-xx-xx
 
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
+
+FullCalendar 7.x-1.4, 2011-01-31
+--------------------------------
 #1040596 by aspilicious: Fixed error on calendar page.
 #1038822 by wildpoppy: Fixed extra closing H3 tag.
 #1038442 by aspilicious: JS clean-up.
 #1039912 by tim.plunkett: Fixed FullCalendar doubling on page.
 #1011696 by aspilicious: Fixed drag-and-drop for subdomains.
 #980180 follow-up by aspilicious: Extra trailing comma breaks fullcalendar in IE 7 & IE 6.
+
+FullCalendar 7.x-1.3, 2011-01-22
+--------------------------------
 #1033110 by tim.plunkett | geerlingguy: Added link to configuration page.
 #1033858 by aspilicious: Added translation support.
 
@@ -31,6 +37,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1032980 by aspilicious: Improved default styling for fullcalendar.
 #1035246 by aspilicious: Fixed incompatiblity with Views 6.x-3.x.
 #1038822 by wildpoppy: Fixed extra closing H3 tag.
 #1038442 by aspilicious: JS clean-up.
