@@ -62,7 +62,8 @@ attach: function(context) {
           events.push({
             field: $(this).attr('field'),
             index: $(this).attr('index'),
-            nid: $(this).attr('nid'),
+            eid: $(this).attr('eid'),
+            entity_type: $(this).attr('entity_type'),
             title: $(this).attr('title'),
             start: $(this).attr('start'),
             end: $(this).attr('end'),
@@ -77,14 +78,14 @@ attach: function(context) {
       callback(events);
     },
     eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
-      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.nid,
-        'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.eid,
+        'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
         fullcalendarUpdate);
       return false;
     },
     eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
-      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/'+ event.nid,
-        'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta,
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.eid,
+        'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
         fullcalendarUpdate);
       return false;
     }

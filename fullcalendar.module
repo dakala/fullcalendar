@@ -97,7 +97,7 @@ function fullcalendar_menu() {
     'page arguments' => array('fullcalendar_admin_settings'),
     'access arguments' => array('administer site configuration'),
   );
-  $items['fullcalendar/ajax/update/%/%node'] = array(
+  $items['fullcalendar/ajax/update/%/%'] = array(
     'title' => 'Update event',
     'description' => 'Save the updated event datetime.',
     'page callback' => 'fullcalendar_update',
@@ -118,31 +118,33 @@ function fullcalendar_menu() {
  * @param $node
  *   The node that will be updated.
  */
-function fullcalendar_update($action, $node) {
+function fullcalendar_update($action, $eid) {
   // Retrieve the post vars form the ajax call.
   $field = $_POST['field'];
   $index = $_POST['index'];
   $all_day = isset($_POST['all_day']) ? $_POST['all_day'] : '';
   $day_delta = $_POST['day_delta'];
   $minute_delta = $_POST['minute_delta'];
+  $entity_type = $_POST['entity_type'];
+  $entity = reset(entity_load($entity_type, array($eid)));
 
   if (!empty($field) && isset($index)) {
-    $langcode = field_language('node', $node, $field);
-    $old_start = $node->{$field}[$langcode][$index]['value'];
-    $old_end = $node->{$field}[$langcode][$index]['value2'];
+    $langcode = field_language($entity_type, $entity, $field);
+    $old_start = $entity->{$field}[$langcode][$index]['value'];
+    $old_end = $entity->{$field}[$langcode][$index]['value2'];
 
     switch ($action) {
       case 'drop':
-        $node->{$field}[$langcode][$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
-        $node->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $entity->{$field}[$langcode][$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $entity->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
         break;
       case 'resize':
-        $node->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $entity->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
         break;
     }
 
     // Save the new start/end values.
-    node_save($node);
+    field_attach_update($entity_type, $entity);
 
     drupal_json_output(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status-close">close</a>]'));
   }
@@ -179,7 +181,7 @@ function theme_fullcalendar_classname($variables) {
   $entity = $variables['entity'];
   $className = array(
     'fc-event-default',
-    $entity->type,
+    $entity->bundle,
   );
   return implode(' ', $className);
 }
@@ -240,33 +242,54 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Fetch the available fields in this view.
   $fields = $vars['view']->display_handler->get_field_labels();
 
-  // Check if the entity is empty.
-  $entity = $vars['row']->_field_data[$vars['field_alias']]['entity'];
-  if (empty($entity)) {
+  // Check if we have field data.
+  if (!isset($vars['row']->_field_data)) {
      return;
    }
 
+  $entity = $vars['row']->_field_data[$vars['view']->base_field]['entity'];
+
   $vars['data'] = array(); // Contains the start, end & allDay values.
 
-  $entity_type = $vars['row']->_field_data[$vars['field_alias']]['entity_type'];
-  $entity->editable = _fullcalendar_update_access($entity);
+  $entity_type = $vars['row']->_field_data[$vars['view']->base_field]['entity_type'];
+  $entity->eid = $vars['row']->{$vars['view']->base_field};
+
+  list(, , $bundle) = entity_extract_ids($entity_type, $entity);
+  $entity->bundle = $bundle;
   $entity->class = theme('fullcalendar_classname', array('entity' => $entity));
+  $entity->editable = _fullcalendar_update_access($entity);
 
   // Default URL.
-  $entity->url = 'node/' . $vars['row']->{$vars['field_alias']};
+  $uri = entity_uri($entity_type, $entity);
+  $entity->url = $uri['path'];
   // Fetch custom URL if needed.
   if (!empty($vars['options']['custom']['fc_url'])) {
-    $url_field = field_get_items($entity_type, $entity, $fields[$vars['options']['custom']['fc_url_field']]);
-    if (!empty($url_field[0]['value'])) {
-      $entity->url = $url_field[0]['value'];
+    $field_name = $vars['options']['custom']['fc_url_field'];
+    if (!empty($entity->$field_name)) {
+      $entity->url = $entity->$field_name;
+    }
+    else {
+      $url_field = field_get_items($entity_type, $entity, $fields[$field_name]);
+      if (!empty($url_field[0]['value'])) {
+        $entity->url = $url_field[0]['value'];
+      }
     }
   }
 
   // Fetch custom title if needed.
+  if (!isset($entity->title)) {
+    $entity->title = '';
+  }
   if (!empty($vars['options']['custom']['fc_title'])) {
-    $title_field = field_get_items($entity_type, $entity, $fields[$vars['options']['custom']['fc_title_field']]);
-    if (!empty($title_field[0]['value'])) {
-      $entity->title = $title_field[0]['value'];
+    $field_name = $vars['options']['custom']['fc_title_field'];
+    if (!empty($entity->$field_name)) {
+      $entity->title = $entity->$field_name;
+    }
+    else {
+      $title_field = field_get_items($entity_type, $entity, $fields[$field_name]);
+      if (!empty($title_field[0]['value'])) {
+        $entity->title = $title_field[0]['value'];
+      }
     }
   }
 
@@ -280,7 +303,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
 
   // Iterate through all available fields.
   foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
-    $instance = field_info_instance($entity_type, $field_name, $entity->type);
+    $instance = field_info_instance($entity_type, $field_name, $bundle);
     $items = field_get_items($entity_type, $entity, $field_name);
     // Filter fields without value.
     if (!empty($items)) {
@@ -315,7 +338,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
  */
 function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $instance = NULL, $field = NULL, $item = NULL) {
   if (is_array($entity->$field_name)) {
-    $date = date_formatter_process(NULL, $entity_type, $entity, $field, $instance, $entity->language, $item, NULL);
+    $date = date_formatter_process(NULL, $entity_type, $entity, $field, $instance, NULL, $item, NULL);
     $date1 = $date['value']['local']['object'];
     $date2 = $date['value2']['local']['object'];
   }
@@ -328,7 +351,8 @@ function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $in
     'allDay' => date_field_all_day($field, $instance, $date1, $date2),
     'start' => $date1,
     'end' => $date2,
-    'nid' => $entity->nid,
+    'eid' => $entity->eid,
+    'entity_type' => $entity_type,
     'cn' => $entity->class,
     'title' => $entity->title,
     'class' => 'fullcalendar_event_details',
@@ -370,8 +394,8 @@ function _fullcalendar_update_access($entity) {
 
   if (!empty($entity) && (user_access('administer content')
       || user_access('update any fullcalendar event')
-      || user_access('edit any ' . $entity->type . ' content')
-      || (user_access('edit own ' . $entity->type . ' content') && $entity->uid == $user->uid))) {
+      || user_access('edit any ' . $entity->bundle . ' content')
+      || (user_access('edit own ' . $entity->bundle . ' content') && $entity->uid == $user->uid))) {
         return TRUE;
   }
 

@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1043222 by aspilicious, tim.plunkett, proffy: Remove node-specific code in favor of entities.
 #1044426 by aspilicious: Added RTL support.
 #1043222 by aspilicious, tim.plunkett: Removed the node (load) dependency.
 #910494 by aspilicious: Colorbox custom settings.
