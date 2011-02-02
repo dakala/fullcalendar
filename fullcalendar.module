@@ -190,22 +190,25 @@ function theme_fullcalendar_classname($variables) {
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_views_view_fullcalendar(&$vars) {
+  fullcalendar_get_settings($vars['options']);
+}
+function fullcalendar_get_settings($options) {
   global $language;
 
   $settings = array(
-    'defaultView' => $vars['options']['display']['fc_view'],
-    'firstDay' => $vars['options']['display']['fc_firstday'],
-    'weekMode' => $vars['options']['display']['fc_weekmode'],
-    'theme' => $vars['options']['modules']['fc_theme'],
-    'colorbox' => $vars['options']['modules']['fc_url_colorbox'],
-    'colorboxClass' => $vars['options']['modules']['fc_url_colorbox_class'],
-    'colorboxWidth' => $vars['options']['modules']['fc_url_colorbox_width'],
-    'colorboxHeight' => $vars['options']['modules']['fc_url_colorbox_height'],
-    'left' => $vars['options']['header']['fc_left'],
-    'center' => $vars['options']['header']['fc_center'],
-    'right' => $vars['options']['header']['fc_right'],
-    'agenda' => $vars['options']['times']['fc_timeformat'],
-    'clock' => $vars['options']['times']['fc_clock'],
+    'defaultView' => $options['display']['fc_view'],
+    'firstDay' => $options['display']['fc_firstday'],
+    'weekMode' => $options['display']['fc_weekmode'],
+    'theme' => $options['modules']['fc_theme'],
+    'colorbox' => $options['modules']['fc_url_colorbox'],
+    'colorboxClass' => $options['modules']['fc_url_colorbox_class'],
+    'colorboxWidth' => $options['modules']['fc_url_colorbox_width'],
+    'colorboxHeight' => $options['modules']['fc_url_colorbox_height'],
+    'left' => $options['header']['fc_left'],
+    'center' => $options['header']['fc_center'],
+    'right' => $options['header']['fc_right'],
+    'agenda' => $options['times']['fc_timeformat'],
+    'clock' => $options['times']['fc_clock'],
     'monthNames' => array_values(date_month_names(TRUE)),
     'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
     'dayNames' => date_week_days(TRUE),
@@ -218,10 +221,10 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'isRTL' => $language->direction,
   );
 
-  if ($vars['options']['times']['fc_default_date']) {
-    $settings['year'] = $vars['options']['times']['fc_date']['year'];
-    $settings['month'] = $vars['options']['times']['fc_date']['month'];
-    $settings['day'] = $vars['options']['times']['fc_date']['day'];
+  if ($options['times']['fc_default_date']) {
+    $settings['year'] = $options['times']['fc_date']['year'];
+    $settings['month'] = $options['times']['fc_date']['month'];
+    $settings['day'] = $options['times']['fc_date']['day'];
   }
 
   drupal_add_library('fullcalendar', 'fullcalendar');
@@ -233,12 +236,6 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
  * Prepares variables for template file invoked for node row type.
  */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
-  // If the view has no availble nodes, exit.
-  if (isset($vars['view']->empty_text)) {
-    $vars['empty_text'] = $vars['view']->empty_text;
-    return;
-  }
-
   // Fetch the available fields in this view.
   $fields = $vars['view']->display_handler->get_field_labels();
 

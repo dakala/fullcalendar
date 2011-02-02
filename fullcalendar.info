@@ -7,6 +7,6 @@ configure = admin/config/calendar/fullcalendar
 dependencies[] = views
 dependencies[] = date
 
-files[] = fullcalendar_plugin_display_page.inc
+files[] = fullcalendar_handler_empty.inc
 files[] = views_plugin_node_fullcalendar.inc
 files[] = views_plugin_style_fullcalendar.inc
