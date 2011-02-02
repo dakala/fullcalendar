@@ -84,8 +84,8 @@ attach: function(context) {
       return false;
     },
     eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
-      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.eid,
-        'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/'+ event.eid,
+        'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta,
         fullcalendarUpdate);
       return false;
     }

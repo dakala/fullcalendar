@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1043222 follow-up by proffy, tim.plunkett: Fix resize AJAX.
 #1047962 by tim.plunkett: Deprecate custom display plugin in favor of custom empty text.
 #1043222 by aspilicious, tim.plunkett, proffy: Remove node-specific code in favor of entities.
 #1044426 by aspilicious: Added RTL support.
