@@ -11,8 +11,32 @@
  */
 function fullcalendar_views_plugins() {
   $path = drupal_get_path('module', 'fullcalendar');
+  $views_path = drupal_get_path('module', 'views');
   return array(
     'module' => 'fullcalendar',
+    'display' => array(
+      'parent' => array(
+        'no ui' => TRUE,
+        'handler' => 'views_plugin_display',
+        'path' => "$views_path/plugins",
+        'parent' => '',
+      ),
+      'page' => array(
+        'handler' => 'views_plugin_display_page',
+        'path' => "$views_path/plugins",
+        'parent' => 'parent',
+      ),
+      'fullcalendar' => array(
+        'title' => t('FullCalendar'),
+        'handler' => 'fullcalendar_plugin_display_page',
+        'help' => t('For use with FullCalendar style'),
+        'path' => $path,
+        'parent' => 'page',
+        'theme' => 'views_view',
+        'uses hook menu' => TRUE,
+        'use pager' => TRUE,
+      ),
+    ),
     'style' => array(
       'fullcalendar' => array(
       'title' => t('FullCalendar'),
