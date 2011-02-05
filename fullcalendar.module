@@ -158,13 +158,6 @@ function fullcalendar_theme() {
     'fullcalendar_classname' => array(
       'variables' => array('entity' => NULL),
     ),
-    'fullcalendar_link' => array(
-      'variables' => array(
-        'entity' => NULL,
-        'attributes' => NULL,
-        'index' => NULL,
-      ),
-    ),
   );
 }
 
@@ -305,11 +298,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
     // Filter fields without value.
     if (!empty($items)) {
       foreach ($items as $index => $item) {
-        $vars['data'][] = theme('fullcalendar_link', array(
-          'entity' => $entity,
-          'attributes' => _fullcalendar_set_display_times($entity_type, $entity, $field_name, $instance, $field, $item),
-          'index' => $index,
-        ));
+        $vars['data'][] = _fullcalendar_set_display_times($entity_type, $entity, $instance, $field, $item, $index);
       }
     }
   }
@@ -333,21 +322,29 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
  * @return
  *   Array of event attributes to pass to the FullCalendar plugin.
  */
-function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $instance = NULL, $field = NULL, $item = NULL) {
-  if (is_array($entity->$field_name)) {
-    $date = date_formatter_process(NULL, $entity_type, $entity, $field, $instance, NULL, $item, NULL);
-    $date1 = $date['value']['local']['object'];
-    $date2 = $date['value2']['local']['object'];
-  }
-  else {
-    $date1 = new DateObject($entity->$field_name, date_default_timezone(), DATE_FORMAT_UNIX);
-    $date2 = $date1;
-  }
-  return array(
-    'field' => $field_name,
-    'allDay' => date_field_all_day($field, $instance, $date1, $date2),
-    'start' => $date1,
-    'end' => $date2,
+function _fullcalendar_set_display_times($entity_type, $entity, $instance, $field, $item, $index) {
+  $date = date_formatter_process($instance['display']['default']['type'], $entity_type, $entity, $field, $instance, LANGUAGE_NONE, $item, $instance['display']['default']);
+  $date1 = $date['value']['local']['object'];
+  $date2 = $date['value2']['local']['object'];
+  $all_day = date_field_all_day($field, $instance, $date1, $date2);
+  $text = theme('date_display_combination', array(
+    'entity_type' => $entity_type,
+    'entity' => $entity,
+    'field' => $field,
+    'instance' => $instance,
+    'langcode' => LANGUAGE_NONE,
+    'item' => $item,
+    'delta' => $index,
+    'display' => $instance['display']['default'],
+    'field_name' => $field['field_name'],
+    'dates' => $date
+  ));
+  $attributes = array(
+    'field' => $field['field_name'],
+    'allDay' => $all_day,
+    'start' => $date1->format(DATE_FORMAT_DATETIME),
+    'end' => $date2->format(DATE_FORMAT_DATETIME),
+    'index' => $index,
     'eid' => $entity->eid,
     'entity_type' => $entity_type,
     'cn' => $entity->class,
@@ -355,25 +352,7 @@ function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $in
     'class' => 'fullcalendar_event_details',
     'editable' => $entity->editable,
   );
-}
-
-/**
- * Sets the text for the fallback display.
- */
-function theme_fullcalendar_link($variables) {
-  $entity = $variables['entity'];
-  $attributes = $variables['attributes'];
-  $index = $variables['index'];
-  $text = date_format_date($attributes['start']);
-  if (!$attributes['allDay']) {
-    $text .= ' to ' . date_format_date($attributes['end']);
-  }
-
-  $attributes['index'] = $index;
-  $attributes['start'] = $attributes['start']->format(DATE_FORMAT_DATETIME);
-  $attributes['end'] = $attributes['end']->format(DATE_FORMAT_DATETIME);
-
-  return l($text, $entity->url, array('attributes' => $attributes));
+  return l($text, $entity->url, array('attributes' => $attributes, 'html' => TRUE));
 }
 
 /**
