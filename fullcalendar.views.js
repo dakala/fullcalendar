@@ -25,11 +25,15 @@ attach: function(context) {
             width: Drupal.settings.fullcalendar.colorboxWidth,
             height: Drupal.settings.fullcalendar.colorboxHeight
           });
-        } else {
+        }
+      }
+      else {
+        if (Drupal.settings.fullcalendar.sameWindow) {
+          window.open(calEvent.url, _self);
+        }
+        else {
           window.open(calEvent.url);
         }
-      } else {
-        window.open(calEvent.url);
       }
       return false;
     },

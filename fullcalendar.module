@@ -193,6 +193,7 @@ function fullcalendar_get_settings($options) {
     'firstDay' => $options['display']['fc_firstday'],
     'weekMode' => $options['display']['fc_weekmode'],
     'theme' => $options['modules']['fc_theme'],
+    'sameWindow' => $options['modules']['fc_window'],
     'colorbox' => $options['modules']['fc_url_colorbox'],
     'colorboxClass' => $options['modules']['fc_url_colorbox_class'],
     'colorboxWidth' => $options['modules']['fc_url_colorbox_width'],

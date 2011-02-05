@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1050530 by aspilicious: Added customizable window target.
 #1049028 by tim.plunkett: Removed theme_fullcalendar_link().
 #1047962 follow-up by tim.plunkett: Re-add custom display plugin for upgrade path and future features.
 #1043222 follow-up by proffy, tim.plunkett: Fix resize AJAX.

@@ -23,6 +23,7 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
         'fc_url_colorbox_class' => array('default' => '#content'),
         'fc_url_colorbox_width' => array('default' => '80%'),
         'fc_url_colorbox_height' => array('default' => '80%'),
+        'fc_window' => array('default' => FALSE),
       ),
     );
     $options['header'] = array(
@@ -199,6 +200,13 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
       );
     }
+    $form['modules']['fc_window'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Open events in same window'),
+      '#default_value' => $this->options['modules']['fc_window'],
+      '#process' => array('ctools_dependent_process'),
+      '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(0)),
+    );
   }
   function validate() {
     $errors = parent::validate();
