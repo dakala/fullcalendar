@@ -31,7 +31,7 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $field_options = $this->display->handler->get_field_labels();
-    $date_fields = array_intersect($field_options, array_keys(fullcalendar_date_fields($field_options)));
+    $date_fields = _fullcalendar_parse_fields($this->display->handler->get_handlers('field'), $field_options);
 
     $form['custom'] = array(
       '#type' => 'fieldset',

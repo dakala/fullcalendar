@@ -212,7 +212,7 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
     $errors = parent::validate();
 
     $field_options = $this->display->handler->get_field_labels();
-    $date_fields = fullcalendar_date_fields($field_options);
+    $date_fields = _fullcalendar_parse_fields($this->display->handler->get_handlers('field'), $field_options);
 
     if (empty($date_fields)) {
       $errors[] = t('Display "@display" requires at least one date field.', array('@display' => $this->display->display_title));

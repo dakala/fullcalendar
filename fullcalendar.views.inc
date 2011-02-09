@@ -87,3 +87,26 @@ function fullcalendar_views_data() {
 
   return $data;
 }
+
+/**
+ * Implements hook_views_data_alter().
+ *
+ * Find all date fields and assign them our handler.
+ */
+function fullcalendar_views_data_alter(&$data) {
+  foreach ($data as $module => &$table) {
+    if (isset($table['entity_id'])) {
+      $fields = fullcalendar_date_fields(array($table['entity_id']['field']['field_name']));
+      if (!empty($fields)) {
+        $table['entity_id']['field']['handler'] = 'fullcalendar_handler_field_field';
+      }
+    }
+    else {
+      foreach ($table as $id => &$field) {
+        if (isset($field['field']) && isset($field['field']['handler']) && ($field['field']['handler'] == 'views_handler_field_date')) {
+          $field['field']['handler'] = 'fullcalendar_handler_field_date';
+        }
+      }
+    }
+  }
+}

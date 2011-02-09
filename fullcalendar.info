@@ -1,4 +1,4 @@
-; $Id$ 
+; $Id$
 name = FullCalendar
 description = Provides a views style plugin for FullCalendar
 core = 7.x
@@ -9,5 +9,7 @@ dependencies[] = date
 
 files[] = fullcalendar_plugin_display_page.inc
 files[] = fullcalendar_handler_empty.inc
+files[] = fullcalendar_handler_field_date.inc
+files[] = fullcalendar_handler_field_field.inc
 files[] = views_plugin_node_fullcalendar.inc
 files[] = views_plugin_style_fullcalendar.inc

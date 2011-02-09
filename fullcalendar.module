@@ -230,14 +230,17 @@ function fullcalendar_get_settings($options) {
  * Prepares variables for template file invoked for node row type.
  */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
-  // Fetch the available fields in this view.
-  $fields = $vars['view']->display_handler->get_field_labels();
-
   // Check if we have field data.
   if (!isset($vars['row']->_field_data)) {
      return;
    }
 
+  foreach ($vars['view']->field as $id => $field) {
+    $fields[$id] = $vars['view']->style_plugin->get_field($vars['view']->row_index, $id);
+    if (method_exists($field, 'fullcalendar_render')) {
+      $date_fields[$id] = $field->fullcalendar_render($vars['row']);
+    }
+  }
   $entity = $vars['row']->_field_data[$vars['view']->base_field]['entity'];
 
   $vars['data'] = array(); // Contains the start, end & allDay values.
@@ -256,14 +259,8 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Fetch custom URL if needed.
   if (!empty($vars['options']['custom']['fc_url'])) {
     $field_name = $vars['options']['custom']['fc_url_field'];
-    if (!empty($entity->$field_name)) {
-      $entity->url = $entity->$field_name;
-    }
-    else {
-      $url_field = field_get_items($entity_type, $entity, $fields[$field_name]);
-      if (!empty($url_field[0]['value'])) {
-        $entity->url = $url_field[0]['value'];
-      }
+    if (!empty($fields[$field_name])) {
+      $entity->url = ltrim($fields[$field_name], '/');
     }
   }
 
@@ -273,14 +270,8 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   }
   if (!empty($vars['options']['custom']['fc_title'])) {
     $field_name = $vars['options']['custom']['fc_title_field'];
-    if (!empty($entity->$field_name)) {
-      $entity->title = $entity->$field_name;
-    }
-    else {
-      $title_field = field_get_items($entity_type, $entity, $fields[$field_name]);
-      if (!empty($title_field[0]['value'])) {
-        $entity->title = $title_field[0]['value'];
-      }
+    if (!empty($fields[$field_name])) {
+      $entity->title = $fields[$field_name];
     }
   }
 
@@ -289,17 +280,17 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
 
   // Fetch custom dates if needed.
   if (!empty($vars['options']['custom']['fc_date'])) {
-    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_field']);
+    $date_fields = array_intersect_key($date_fields, $vars['options']['custom']['fc_date_field']);
   }
 
   // Iterate through all available fields.
-  foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
-    $instance = field_info_instance($entity_type, $field_name, $bundle);
-    $items = field_get_items($entity_type, $entity, $field_name);
+  foreach ($date_fields as $field) {
+    $instance = field_info_instance($entity_type, $field['field_name'], $bundle);
+    $field_data = field_info_field($field['field_name']);
     // Filter fields without value.
-    if (!empty($items)) {
-      foreach ($items as $index => $item) {
-        $vars['data'][] = _fullcalendar_set_display_times($entity_type, $entity, $instance, $field, $item, $index);
+    if (!empty($field['value'])) {
+      foreach ($field['value'] as $index => $item) {
+        $vars['data'][] = _fullcalendar_set_display_times($entity_type, $entity, $instance, $field_data, $item, $index);
       }
     }
   }
@@ -324,22 +315,18 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
  *   Array of event attributes to pass to the FullCalendar plugin.
  */
 function _fullcalendar_set_display_times($entity_type, $entity, $instance, $field, $item, $index) {
-  $date = date_formatter_process($instance['display']['default']['type'], $entity_type, $entity, $field, $instance, LANGUAGE_NONE, $item, $instance['display']['default']);
-  $date1 = $date['value']['local']['object'];
-  $date2 = $date['value2']['local']['object'];
-  $all_day = date_field_all_day($field, $instance, $date1, $date2);
-  $text = theme('date_display_combination', array(
-    'entity_type' => $entity_type,
-    'entity' => $entity,
-    'field' => $field,
-    'instance' => $instance,
-    'langcode' => LANGUAGE_NONE,
-    'item' => $item,
-    'delta' => $index,
-    'display' => $instance['display']['default'],
-    'field_name' => $field['field_name'],
-    'dates' => $date
-  ));
+  if (!isset($item['raw']['date_type'])) {
+    $date1 = new DateObject($item['raw']['value'], date_default_timezone(), DATE_FORMAT_UNIX);
+    $date2 = $date1;
+    $all_day = FALSE;
+    $entity->editable = FALSE;
+  }
+  else {
+    $date = date_formatter_process($instance['display']['default']['type'], $entity_type, $entity, $field, $instance, LANGUAGE_NONE, $item['raw'], $instance['display']['default']);
+    $date1 = $date['value']['local']['object'];
+    $date2 = $date['value2']['local']['object'];
+    $all_day = date_field_all_day($field, $instance, $date1, $date2);
+  }
   $attributes = array(
     'field' => $field['field_name'],
     'allDay' => $all_day,
@@ -353,7 +340,7 @@ function _fullcalendar_set_display_times($entity_type, $entity, $instance, $fiel
     'class' => 'fullcalendar_event_details',
     'editable' => $entity->editable,
   );
-  return l($text, $entity->url, array('attributes' => $attributes, 'html' => TRUE));
+  return l($item['rendered']['#markup'], $entity->url, array('attributes' => $attributes, 'html' => TRUE));
 }
 
 /**
@@ -382,18 +369,53 @@ function _fullcalendar_update_access($entity) {
 /**
  * Filters the date fields.
  *
- * @param $view_fields
+ * @param $fields
  *   Array of possible date fields.
+ *
+ * @return
+ *   Array of valid date fields.
  */
-function fullcalendar_date_fields($field_options) {
-  $fields = array();
-  foreach ($field_options as $entity_name => $field_name) {
-    $field = field_info_field($field_name);
-    if (in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
-      $fields[$field_name] = $field;
+function fullcalendar_date_fields($fields) {
+  foreach ($fields as $id => $field_name) {
+    switch ($id) {
+      case 'created':
+      case 'changed':
+      case 'access':
+      case 'login':
+      case 'timestamp':
+        break;
+      default:
+        $field = field_info_field($field_name);
+        if (!in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
+          unset($fields[$id]);
+        }
     }
   }
   return $fields;
+}
+
+/**
+ * Helper function to resolve entity_id, field_name, and field_label.
+ *
+ * @param $fields
+ *   Array of Views fields.
+ * @param $labels
+ *   Array of Views field labels.
+ *
+ * @return
+ *  Array of date field labels, keyed by entity_id.
+ */
+function _fullcalendar_parse_fields($fields, $labels) {
+  $field_options = array();
+  foreach ($fields as $id => $field) {
+    if (isset($field->definition['field_name'])) {
+      $field_options[$id] = $field->definition['field_name'];
+    }
+    else {
+      $field_options[$id] = $field->definition['title'];
+    }
+  }
+  return array_intersect_key($labels, fullcalendar_date_fields($field_options));
 }
 
 /**
