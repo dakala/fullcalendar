@@ -1,3 +1,10 @@
+// $Id$
+
+/**
+ * @file
+ * Integrates Views data with the FullCalendar plugin.
+ */
+
 (function ($) {
 
 Drupal.behaviors.fullCalendar = {
@@ -58,7 +65,8 @@ attach: function(context) {
       week: Drupal.settings.fullcalendar.weekString,
       month: Drupal.settings.fullcalendar.monthString
     },
-    events: function(start, end, callback) {
+    eventSources: [
+    function(start, end, callback) {
       var events = [];
 
       $('.fullcalendar_event').each(function() {
@@ -81,6 +89,8 @@ attach: function(context) {
 
       callback(events);
     },
+    $.fullCalendar.gcalFeedArray(Drupal.settings.fullcalendar.gcal)
+    ],
     eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
       $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.eid,
         'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,

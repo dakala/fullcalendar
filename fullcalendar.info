@@ -11,5 +11,6 @@ files[] = fullcalendar_plugin_display_page.inc
 files[] = fullcalendar_handler_empty.inc
 files[] = fullcalendar_handler_field_date.inc
 files[] = fullcalendar_handler_field_field.inc
+files[] = fullcalendar_handler_field_gcal.inc
 files[] = views_plugin_node_fullcalendar.inc
 files[] = views_plugin_style_fullcalendar.inc

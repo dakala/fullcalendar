@@ -183,6 +183,13 @@ function theme_fullcalendar_classname($variables) {
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_views_view_fullcalendar(&$vars) {
+  $gcal = array();
+  foreach ($vars['view']->field as $field) {
+    if ($field->field == 'gcal') {
+      $gcal[] = $field->render(array());
+    }
+  }
+  $vars['options']['gcal'] = $gcal;
   fullcalendar_get_settings($vars['options']);
 }
 function fullcalendar_get_settings($options) {
@@ -213,6 +220,7 @@ function fullcalendar_get_settings($options) {
     'monthString' => t('Month'),
     'todayString' => t('Today'),
     'isRTL' => $language->direction,
+    'gcal' => $options['gcal'],
   );
 
   if ($options['times']['fc_default_date']) {
@@ -224,6 +232,7 @@ function fullcalendar_get_settings($options) {
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js');
+  drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/gcal.js');
 }
 
 /**
@@ -383,6 +392,7 @@ function fullcalendar_date_fields($fields) {
       case 'access':
       case 'login':
       case 'timestamp':
+      case 'gcal':
         break;
       default:
         $field = field_info_field($field_name);

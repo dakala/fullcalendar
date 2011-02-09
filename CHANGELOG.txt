@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#981522 by aspilicious, tim.plunkett, xjolanx007: Added Google Calendar integration.
 #1049080 by tim.plunkett: Support non-Field API fields and relationships.
 #1050530 by aspilicious: Added customizable window target.
 #1049028 by tim.plunkett: Removed theme_fullcalendar_link().
