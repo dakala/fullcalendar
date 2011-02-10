@@ -85,6 +85,21 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
       '#process' => array('form_process_select', 'ctools_dependent_process'),
       '#dependency' => array('edit-row-options-custom-fc-date' => array(1)),
     );
+
+    // Disable form elements when not needed.
+    if (empty($field_options)) {
+      $form['custom']['#description'] = t('All the options are hidden, you need to add fields first.');
+      $form['custom']['fc_title']['#type'] = 'hidden';
+      $form['custom']['fc_title_field']['#disabled'] = TRUE;
+      $form['custom']['fc_url']['#type'] = 'hidden';
+      $form['custom']['fc_url_field']['#disabled'] = TRUE;
+      $form['custom']['fc_date']['#type'] = 'hidden';
+      $form['custom']['fc_date_field']['#disabled'] = TRUE;
+    }
+    if (empty($date_fields)) {
+      $form['custom']['fc_date']['#type'] = 'hidden';
+      $form['custom']['fc_date_field']['#disabled'] = TRUE;
+    }
   }
 
   function render($row) {
