@@ -9,6 +9,6 @@
 class fullcalendar_handler_empty extends views_handler {
   function render() {
     fullcalendar_get_settings($this->view->style_options);
-    return '<div id="fullcalendar"></div>';
+    return '<div class="fullcalendar"></div>';
   }
 }

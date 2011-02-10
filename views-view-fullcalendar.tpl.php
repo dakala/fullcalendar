@@ -18,12 +18,12 @@
  */
 
 ?>
-<div id="fullcalendar-status"></div>
-<div id="fullcalendar"></div>
-<div id="fullcalendar-content">
+<div class="fullcalendar-status"></div>
+<div class="fullcalendar"></div>
+<div class="fullcalendar-content">
 <?php foreach ($rows as $event): ?>
   <?php if (!empty($event)): ?>
-  <div class="fullcalendar_event">
+  <div class="fullcalendar-event">
     <?php print $event; ?>
   </div>
   <?php endif; ?>

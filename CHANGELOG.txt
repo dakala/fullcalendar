@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1055978 by tim.plunkett: Support multiple calendars per page.
 #1057156 by aspilicious: Hide row style date fields until date fields are added.
 #981522 by aspilicious, tim.plunkett, xjolanx007: Added Google Calendar integration.
 #1049080 by tim.plunkett: Support non-Field API fields and relationships.

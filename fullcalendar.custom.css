@@ -27,7 +27,7 @@
 }
 
 /* Styling for updated message */
-#fullcalendar-status {
+.fullcalendar-status {
   background: #ecf8f4;
   border: 1px solid #fff;
   color: #687;
@@ -35,6 +35,9 @@
   margin: 0 0 10px 0;
   padding: 15px;
   text-align: center;
+}
+.fullcalendar-status-close {
+  text-transform: lowercase;
 }
 
 .fc table {

@@ -122,6 +122,7 @@ function fullcalendar_update($action, $eid) {
   // Retrieve the post vars form the ajax call.
   $field = $_POST['field'];
   $index = $_POST['index'];
+  $dom_id = $_POST['dom_id'];
   $all_day = isset($_POST['all_day']) ? $_POST['all_day'] : '';
   $day_delta = $_POST['day_delta'];
   $minute_delta = $_POST['minute_delta'];
@@ -146,7 +147,7 @@ function fullcalendar_update($action, $eid) {
     // Save the new start/end values.
     field_attach_update($entity_type, $entity);
 
-    drupal_json_output(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status-close">close</a>]'));
+    drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $dom_id));
   }
 }
 
@@ -190,43 +191,46 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     }
   }
   $vars['options']['gcal'] = $gcal;
+  $vars['options']['dom_id'] = '.view-dom-id-' . $vars['id'];
   fullcalendar_get_settings($vars['options']);
 }
 function fullcalendar_get_settings($options) {
   global $language;
 
   $settings = array(
-    'defaultView' => $options['display']['fc_view'],
-    'firstDay' => $options['display']['fc_firstday'],
-    'weekMode' => $options['display']['fc_weekmode'],
-    'theme' => $options['modules']['fc_theme'],
-    'sameWindow' => $options['modules']['fc_window'],
-    'colorbox' => $options['modules']['fc_url_colorbox'],
-    'colorboxClass' => $options['modules']['fc_url_colorbox_class'],
-    'colorboxWidth' => $options['modules']['fc_url_colorbox_width'],
-    'colorboxHeight' => $options['modules']['fc_url_colorbox_height'],
-    'left' => $options['header']['fc_left'],
-    'center' => $options['header']['fc_center'],
-    'right' => $options['header']['fc_right'],
-    'agenda' => $options['times']['fc_timeformat'],
-    'clock' => $options['times']['fc_clock'],
-    'monthNames' => array_values(date_month_names(TRUE)),
-    'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
-    'dayNames' => date_week_days(TRUE),
-    'dayNamesShort' => date_week_days_abbr(TRUE),
-    'allDayText' => t('All day'),
-    'dayString' => t('Day'),
-    'weekString' => t('Week'),
-    'monthString' => t('Month'),
-    'todayString' => t('Today'),
-    'isRTL' => $language->direction,
-    'gcal' => $options['gcal'],
+    $options['dom_id'] => array(
+      'defaultView' => $options['display']['fc_view'],
+      'firstDay' => $options['display']['fc_firstday'],
+      'weekMode' => $options['display']['fc_weekmode'],
+      'theme' => $options['modules']['fc_theme'],
+      'sameWindow' => $options['modules']['fc_window'],
+      'colorbox' => $options['modules']['fc_url_colorbox'],
+      'colorboxClass' => $options['modules']['fc_url_colorbox_class'],
+      'colorboxWidth' => $options['modules']['fc_url_colorbox_width'],
+      'colorboxHeight' => $options['modules']['fc_url_colorbox_height'],
+      'left' => $options['header']['fc_left'],
+      'center' => $options['header']['fc_center'],
+      'right' => $options['header']['fc_right'],
+      'agenda' => $options['times']['fc_timeformat'],
+      'clock' => $options['times']['fc_clock'],
+      'monthNames' => array_values(date_month_names(TRUE)),
+      'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
+      'dayNames' => date_week_days(TRUE),
+      'dayNamesShort' => date_week_days_abbr(TRUE),
+      'allDayText' => t('All day'),
+      'dayString' => t('Day'),
+      'weekString' => t('Week'),
+      'monthString' => t('Month'),
+      'todayString' => t('Today'),
+      'isRTL' => $language->direction,
+      'gcal' => $options['gcal'],
+    ),
   );
 
   if ($options['times']['fc_default_date']) {
-    $settings['year'] = $options['times']['fc_date']['year'];
-    $settings['month'] = $options['times']['fc_date']['month'];
-    $settings['day'] = $options['times']['fc_date']['day'];
+    $settings[$options['dom_id']]['year'] = $options['times']['fc_date']['year'];
+    $settings[$options['dom_id']]['month'] = $options['times']['fc_date']['month'];
+    $settings[$options['dom_id']]['day'] = $options['times']['fc_date']['day'];
   }
 
   drupal_add_library('fullcalendar', 'fullcalendar');
@@ -346,7 +350,7 @@ function _fullcalendar_set_display_times($entity_type, $entity, $instance, $fiel
     'entity_type' => $entity_type,
     'cn' => $entity->class,
     'title' => $entity->title,
-    'class' => 'fullcalendar_event_details',
+    'class' => array('fullcalendar-event-details'),
     'editable' => $entity->editable,
   );
   return l($item['rendered']['#markup'], $entity->url, array('attributes' => $attributes, 'html' => TRUE));
