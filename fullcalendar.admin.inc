@@ -16,7 +16,7 @@ function fullcalendar_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('Path to FullCalendar'),
     '#default_value' => $fullcalendar_path,
-    '#description' => t('Enter the path relative to Drupal root where the FullCalendar plugin directory is located. NO trailing slash!'),
+    '#description' => t('Enter the path relative to Drupal root where the FullCalendar plugin directory is located.'),
   );
   $form['fullcalendar_compression_type'] = array(
     '#type' => 'radios',
@@ -29,4 +29,8 @@ function fullcalendar_admin_settings() {
   );
 
   return system_settings_form($form);
+}
+
+function fullcalendar_admin_settings_validate($form, &$form_state) {
+  form_set_value($form['fullcalendar_path'], rtrim($form['fullcalendar_path']['#value'], "/"), $form_state);
 }

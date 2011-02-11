@@ -43,7 +43,7 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
     );
     $form['custom']['fc_title'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom title.'),
+      '#title' => t('Use a custom title'),
       '#default_value' => $this->options['custom']['fc_title'],
     );
     $form['custom']['fc_title_field'] = array(
@@ -57,7 +57,7 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
     );
     $form['custom']['fc_url'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom redirect URL.'),
+      '#title' => t('Use a custom redirect URL'),
       '#default_value' => $this->options['custom']['fc_url'],
     );
     $form['custom']['fc_url_field'] = array(
@@ -71,7 +71,7 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
     );
     $form['custom']['fc_date'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom date field.'),
+      '#title' => t('Use a custom date field'),
       '#default_value' => $this->options['custom']['fc_date'],
     );
     $form['custom']['fc_date_field'] = array(
