@@ -1,5 +1,8 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+
+FullCalendar 7.x-2.0-alpha2, 2011-02-13
+---------------------------------------
 #1033010 follow-up by tim.plunkett: Provide a default view as an example.
 #1049080 follow-up by tim.plunkett: Support non-Field API fields and relationships.
 #1045114 by aspilicious: Cleaned up interface strings.
