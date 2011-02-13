@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1049080 follow-up by tim.plunkett: Support non-Field API fields and relationships.
 #1045114 by aspilicious: Cleaned up interface strings.
 #1055978 by tim.plunkett: Support multiple calendars per page.
 #1057156 by aspilicious: Hide row style date fields until date fields are added.

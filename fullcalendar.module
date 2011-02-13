@@ -127,7 +127,8 @@ function fullcalendar_update($action, $eid) {
   $day_delta = $_POST['day_delta'];
   $minute_delta = $_POST['minute_delta'];
   $entity_type = $_POST['entity_type'];
-  $entity = reset(entity_load($entity_type, array($eid)));
+  $entity = entity_load($entity_type, array($eid));
+  $entity = reset($entity);
 
   if (!empty($field) && isset($index)) {
     $langcode = field_language($entity_type, $entity, $field);
@@ -244,9 +245,9 @@ function fullcalendar_get_settings($options) {
  */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Check if we have field data.
-  if (!isset($vars['row']->_field_data)) {
-     return;
-   }
+  if (empty($vars['row'])) {
+    return;
+  }
 
   foreach ($vars['view']->field as $id => $field) {
     $fields[$id] = $vars['view']->style_plugin->get_field($vars['view']->row_index, $id);
@@ -254,12 +255,24 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
       $date_fields[$id] = $field->fullcalendar_render($vars['row']);
     }
   }
-  $entity = $vars['row']->_field_data[$vars['view']->base_field]['entity'];
 
   $vars['data'] = array(); // Contains the start, end & allDay values.
 
-  $entity_type = $vars['row']->_field_data[$vars['view']->base_field]['entity_type'];
-  $entity->eid = $vars['row']->{$vars['view']->base_field};
+  $eid = $vars['row']->{$vars['view']->base_field};
+  if (isset($vars['row']->_field_data)) {
+    $entity = $vars['row']->_field_data[$vars['view']->base_field]['entity'];
+    $entity_type = $vars['row']->_field_data[$vars['view']->base_field]['entity_type'];
+  }
+  else {
+    foreach (entity_get_info() as $entity_type => $entity_info) {
+      if ($entity_info['base table'] == $vars['view']->base_table) {
+        break;
+      }
+    }
+    $entity = entity_load($entity_type, array($eid));
+    $entity = reset($entity);
+  }
+  $entity->eid = $eid;
 
   list(, , $bundle) = entity_extract_ids($entity_type, $entity);
   $entity->bundle = $bundle;

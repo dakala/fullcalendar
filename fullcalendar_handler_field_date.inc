@@ -18,4 +18,9 @@ class fullcalendar_handler_field_date extends views_handler_field_date {
       'field_name' => $this->field_alias,
     );
   }
+
+  function query() {
+    parent::query();
+    $this->query->add_field($this->view->base_table, $this->view->base_field);
+  }
 }
