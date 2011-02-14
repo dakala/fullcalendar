@@ -7,7 +7,11 @@
  */
 class fullcalendar_handler_field_gcal extends views_handler_field {
   function query() {
-    // do nothing -- to override the parent query.
+    $this->query->add_field($this->view->base_table, $this->view->base_field);
+  }
+
+  function fullcalendar_render($values) {
+    return;
   }
 
   function allow_advanced_render() {
