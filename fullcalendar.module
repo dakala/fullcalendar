@@ -422,19 +422,17 @@ function fullcalendar_date_fields($fields) {
 }
 
 /**
- * Helper function to resolve entity_id, field_name, and field_label.
+ * Helper function to resolve field_name and field_label.
  *
- * @param $fields
- *   Array of Views fields.
- * @param $labels
- *   Array of Views field labels.
+ * @param $display
+ *   Object representing the View display.
  *
  * @return
- *  Array of date field labels, keyed by entity_id.
+ *  Array of date field labels, keyed by field_name.
  */
-function _fullcalendar_parse_fields($fields, $labels) {
+function _fullcalendar_parse_fields($display) {
   $field_options = array();
-  foreach ($fields as $id => $field) {
+  foreach ($display->get_handlers('field') as $id => $field) {
     if (isset($field->definition['field_name'])) {
       $field_options[$id] = $field->definition['field_name'];
     }
@@ -442,7 +440,7 @@ function _fullcalendar_parse_fields($fields, $labels) {
       $field_options[$id] = $field->definition['title'];
     }
   }
-  return array_intersect_key($labels, fullcalendar_date_fields($field_options));
+  return array_intersect_key($display->get_field_labels(), fullcalendar_date_fields($field_options));
 }
 
 /**

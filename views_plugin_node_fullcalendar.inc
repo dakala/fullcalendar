@@ -14,7 +14,6 @@
 class views_plugin_node_fullcalendar extends views_plugin_row {
 
   function option_definition() {
-    $options = parent::option_definition();
     $options['custom'] = array(
       'contains' => array(
         'fc_title_field' => array('default' => ''),
@@ -29,9 +28,10 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
   }
 
   function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
+    // Get the regular fields.
     $field_options = $this->display->handler->get_field_labels();
-    $date_fields = _fullcalendar_parse_fields($this->display->handler->get_handlers('field'), $field_options);
+    // Get the date fields.
+    $date_fields = _fullcalendar_parse_fields($this->display->handler);
 
     $form['custom'] = array(
       '#type' => 'fieldset',
