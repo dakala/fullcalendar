@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1063714 by tim.plunkett: Fix error when checking for editable.
 #1062656 by tim.plunkett: Remove usage of entity_id_N.
 #981522 follow-up by aspilicious: Removed hacks from Google Calendar integration.
 #1061546 by tim.plunkett: Support using only Google Calendar.

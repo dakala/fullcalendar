@@ -345,13 +345,14 @@ function _fullcalendar_set_display_times($entity_type, $entity, $instance, $fiel
     $date1 = new DateObject($item['raw']['value'], date_default_timezone(), DATE_FORMAT_UNIX);
     $date2 = $date1;
     $all_day = FALSE;
-    $entity->editable = FALSE;
+    $editable = FALSE;
   }
   else {
     $date = date_formatter_process($instance['display']['default']['type'], $entity_type, $entity, $field, $instance, LANGUAGE_NONE, $item['raw'], $instance['display']['default']);
     $date1 = $date['value']['local']['object'];
     $date2 = $date['value2']['local']['object'];
     $all_day = date_field_all_day($field, $instance, $date1, $date2);
+    $editable = $entity->editable;
   }
   $attributes = array(
     'field' => $field['field_name'],
@@ -364,7 +365,7 @@ function _fullcalendar_set_display_times($entity_type, $entity, $instance, $fiel
     'cn' => $entity->class,
     'title' => $entity->title,
     'class' => array('fullcalendar-event-details'),
-    'editable' => $entity->editable,
+    'editable' => $editable,
   );
   return l($item['rendered']['#markup'], $entity->url, array('attributes' => $attributes, 'html' => TRUE));
 }
@@ -382,11 +383,11 @@ function _fullcalendar_set_display_times($entity_type, $entity, $instance, $fiel
 function _fullcalendar_update_access($entity) {
   global $user;
 
-  if (!empty($entity) && (user_access('administer content')
+  if (!empty($entity) && ((user_access('administer content')
       || user_access('update any fullcalendar event')
       || user_access('edit any ' . $entity->bundle . ' content')
-      || (user_access('edit own ' . $entity->bundle . ' content') && $entity->uid == $user->uid))) {
-        return TRUE;
+      || (user_access('edit own ' . $entity->bundle . ' content') && $entity->uid == $user->uid)))) {
+    return TRUE;
   }
 
   return FALSE;
