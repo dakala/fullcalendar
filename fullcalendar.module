@@ -36,6 +36,7 @@ function fullcalendar_library() {
     'version' => FULLCALENDAR_MIN_PLUGIN_VERSION,
     'js' => array(
       fullcalendar_get_js_path() => array(),
+      variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/gcal.js' => array(),
     ),
     'css' => array(
       variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css' => array(
@@ -237,7 +238,6 @@ function fullcalendar_get_settings($options) {
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js');
-  drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/gcal.js');
 }
 
 /**
