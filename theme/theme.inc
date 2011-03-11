@@ -3,7 +3,7 @@
 /**
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
-function template_preprocess_views_view_fullcalendar(&$vars) {
+function template_preprocess_fullcalendar(&$vars) {
   $gcal = array();
   foreach ($vars['view']->field as $field) {
     if ($field->field == 'gcal') {
@@ -18,7 +18,7 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
 /**
  * Prepares variables for template file invoked for node row type.
  */
-function template_preprocess_views_view_node_fullcalendar(&$vars) {
+function template_preprocess_fullcalendar_fields(&$vars) {
   // Check if we have field data.
   if (empty($vars['row'])) {
     return;

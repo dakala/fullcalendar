@@ -35,9 +35,9 @@ function fullcalendar_views_plugins() {
       'fullcalendar' => array(
         'title' => t('FullCalendar'),
         'help' => t('Displays items on a calendar.'),
-        'handler' => 'views_plugin_style_fullcalendar',
+        'handler' => 'fullcalendar_plugin_style_fullcalendar',
         'path' => "$path/includes",
-        'theme' => 'views_view_fullcalendar',
+        'theme' => 'fullcalendar',
         'theme file' => 'theme.inc',
         'theme path' => "$path/theme",
         'uses row plugin' => TRUE,
@@ -51,9 +51,9 @@ function fullcalendar_views_plugins() {
       'fullcalendar_node' => array(
         'title' => t('Fields (FullCalendar)'),
         'help' => t('For use with FullCalendar style'),
-        'handler' => 'views_plugin_node_fullcalendar',
+        'handler' => 'fullcalendar_plugin_row_fields',
         'path' => "$path/includes",
-        'theme' => 'views_view_node_fullcalendar',
+        'theme' => 'fullcalendar_fields',
         'theme file' => 'theme.inc',
         'theme path' => "$path/theme",
         'uses fields' => TRUE,
@@ -75,10 +75,10 @@ function fullcalendar_views_data() {
       'join' => array('#global' => array()),
     ),
     'area' => array(
-      'title' => t('Emtpy calendar'),
+      'title' => t('Empty calendar'),
       'help' => t('Provide empty calendar.'),
       'area' => array(
-        'handler' => 'fullcalendar_handler_empty',
+        'handler' => 'fullcalendar_handler_area_empty',
       ),
     ),
     'gcal' => array(

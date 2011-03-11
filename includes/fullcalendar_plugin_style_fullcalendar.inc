@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains the fullcalendar style plugin.
+ * Contains the FullCalendar style plugin.
  */
 
-class views_plugin_style_fullcalendar extends views_plugin_style {
+class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
   function option_definition() {
     $options['display'] = array(
       'contains' => array(

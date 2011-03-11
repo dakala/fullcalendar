@@ -10,7 +10,7 @@
  *
  * Most of the code on this object is in the theme function.
  */
-class views_plugin_node_fullcalendar extends views_plugin_row {
+class fullcalendar_plugin_row_fields extends views_plugin_row {
 
   function option_definition() {
     $options['custom'] = array(
