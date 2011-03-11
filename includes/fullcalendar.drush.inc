@@ -8,7 +8,6 @@
 /**
  * The FullCalendar plugin URI.
  */
-include_once('fullcalendar.module');
 define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-' . FULLCALENDAR_MIN_PLUGIN_VERSION . '.zip');
 
 /**
