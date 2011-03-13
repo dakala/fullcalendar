@@ -6,10 +6,10 @@ configure = admin/config/calendar/fullcalendar
 dependencies[] = views
 dependencies[] = date
 
-files[] = includes/fullcalendar_plugin_display_page.inc
-files[] = includes/fullcalendar_handler_area_empty.inc
-files[] = includes/fullcalendar_handler_field_date.inc
-files[] = includes/fullcalendar_handler_field_field.inc
-files[] = includes/fullcalendar_handler_field_gcal.inc
-files[] = includes/fullcalendar_plugin_row_fields.inc
-files[] = includes/fullcalendar_plugin_style_fullcalendar.inc
+files[] = includes/views/handlers/fullcalendar_handler_area_empty.inc
+files[] = includes/views/handlers/fullcalendar_handler_field_date.inc
+files[] = includes/views/handlers/fullcalendar_handler_field_field.inc
+files[] = includes/views/handlers/fullcalendar_handler_field_gcal.inc
+files[] = includes/views/plugins/fullcalendar_plugin_display_page.inc
+files[] = includes/views/plugins/fullcalendar_plugin_row_fields.inc
+files[] = includes/views/plugins/fullcalendar_plugin_style_fullcalendar.inc

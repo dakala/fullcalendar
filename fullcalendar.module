@@ -21,7 +21,7 @@ define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.10');
 function fullcalendar_views_api() {
   return array(
     'api' => '3',
-    'path' => drupal_get_path('module', 'fullcalendar') . '/includes',
+    'path' => drupal_get_path('module', 'fullcalendar') . '/includes/views',
   );
 }
 
@@ -42,7 +42,7 @@ function fullcalendar_library() {
         'type' => 'file',
         'media' => 'screen',
       ),
-      drupal_get_path('module', 'fullcalendar') . '/fullcalendar.theme.css' => array(
+      drupal_get_path('module', 'fullcalendar') . '/css/fullcalendar.theme.css' => array(
         'type' => 'file',
         'media' => 'screen',
       ),
