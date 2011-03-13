@@ -93,6 +93,7 @@ function fullcalendar_menu() {
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
     'file' => 'fullcalendar.admin.inc',
+    'file path' => drupal_get_path('module', 'fullcalendar') . '/includes',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_settings'),
     'access arguments' => array('administer site configuration'),
