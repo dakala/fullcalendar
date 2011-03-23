@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ *
+ * @return
+ *   An array of menu items.
+ */
+function fullcalendar_colors_menu() {
+  $items = array();
+
+  /**
+   * @todo - Delete the comments below after these paths are changed in
+   * the main FullCalendar module on drupal.org.
+   */
+  // The two items below need to be put in fullcalendar.module...
+  // $items['admin/config/calendar/fullcalendar'] = array(
+  //   'title' => 'FullCalendar',
+  //   'description' => 'Adjust FullCalendar settings.',
+  //   'file' => 'fullcalendar.admin.inc',
+  //   'page callback' => 'drupal_get_form',
+  //   'page arguments' => array('fullcalendar_admin_settings'),
+  //   'access arguments' => array('administer site configuration'),
+  //   'type' => MENU_NORMAL_ITEM,
+  //   'weight' => 0,
+  // );
+  // $items['admin/config/calendar/fullcalendar/default'] = array(
+  //   'title' => 'FullCalendar',
+  //   'type' => MENU_DEFAULT_LOCAL_TASK,
+  //   'weight' => 0,
+  // );
+
+  $items['admin/config/calendar/fullcalendar/colors'] = array(
+    'title' => 'Colors',
+    'description' => 'Adjust FullCalendar color settings for entities.',
+    'file' => 'fullcalendar_colors.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fullcalendar_admin_color_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+
+  return $items;
+}
+
+/**
+ * @todo - Theme the fullcalendar events to add term names, etc. if things are
+ * enabled to do so.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function fullcalendar_colors_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#fullcalendar_colors':
+      return '<p>' . t('You can configure colors for your fullcalendar events based on taxonomy terms, node types, etc. on the <a href="@link">FullCalendar Colors administration page</a>.', array('@link' => '/admin/config/calendar/fullcalendar/colors')) . '</p>';
+      break;
+  }
+}
