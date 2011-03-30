@@ -97,6 +97,13 @@ function fullcalendar_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_settings'),
     'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 0,
+  );
+  $items['admin/config/calendar/fullcalendar/default'] = array(
+    'title' => 'FullCalendar',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
   );
   $items['fullcalendar/ajax/update/%/%'] = array(
     'title' => 'Update event',
