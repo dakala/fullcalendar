@@ -70,7 +70,7 @@ Drupal.behaviors.fullCalendar = {
           }
           else {
             if (settings.sameWindow) {
-              window.open(calEvent.url, _self);
+              window.open(calEvent.url, '_self');
             }
             else {
               window.open(calEvent.url);

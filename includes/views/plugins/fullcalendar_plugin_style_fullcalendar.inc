@@ -202,9 +202,12 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'checkbox',
       '#title' => t('Open events in same window'),
       '#default_value' => $this->options['modules']['fc_window'],
-      '#process' => array('ctools_dependent_process'),
-      '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(0)),
     );
+
+    if (module_exists('colorbox')) {
+      $form['modules']['fc_window']['#process'] = array('ctools_dependent_process');
+      $form['modules']['fc_window']['#dependency'] = array('edit-style-options-modules-fc-url-colorbox' => array(0));
+    }
   }
   function validate() {
     $errors = parent::validate();
