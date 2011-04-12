@@ -68,6 +68,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#default_value' => $this->options['display']['fc_view'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
+      '#fieldset' => 'display',
     );
     $form['display']['fc_firstday'] = array(
       '#type' => 'select',
@@ -79,6 +80,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#default_value' => $this->options['display']['fc_firstday'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
+      '#fieldset' => 'display',
     );
     $form['display']['fc_weekmode'] = array(
       '#type' => 'select',
@@ -92,6 +94,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank'))),
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
+      '#fieldset' => 'display',
     );
     $form['header'] = array(
       '#type' => 'fieldset',
@@ -108,6 +111,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
       '#size' => '20',
+      '#fieldset' => 'header',
     );
     $form['header']['fc_center'] = array(
       '#type' => 'textfield',
@@ -116,6 +120,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
       '#size' => '20',
+      '#fieldset' => 'header',
     );
     $form['header']['fc_right'] = array(
       '#type' => 'textfield',
@@ -124,6 +129,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#prefix' => '<div class="views-left-40">',
       '#suffix' => '</div>',
       '#size' => '30',
+      '#fieldset' => 'header',
     );
     $form['times'] = array(
       '#type' => 'fieldset',
@@ -137,16 +143,19 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#title' => t('Time format'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank'))),
       '#default_value' => $this->options['times']['fc_timeformat'],
+      '#fieldset' => 'times',
     );
     $form['times']['fc_clock'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use 24 hour display'),
       '#default_value' => $this->options['times']['fc_clock'],
+      '#fieldset' => 'times',
     );
     $form['times']['fc_default_date'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use a custom default date'),
       '#default_value' => $this->options['times']['fc_default_date'],
+      '#fieldset' => 'times',
     );
     $form['times']['fc_date'] = array(
       '#type' => 'date',
@@ -157,6 +166,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#suffix' => '</div></div>',
       '#process' => array('form_process_date', 'ctools_dependent_process'),
       '#dependency' => array('edit-style-options-times-fc-default-date' => array(1)),
+      '#fieldset' => 'times',
     );
     $form['modules'] = array(
       '#type' => 'fieldset',
@@ -169,12 +179,14 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'checkbox',
       '#title' => t('Use jQuery UI Theme'),
       '#default_value' => $this->options['modules']['fc_theme'],
+      '#fieldset' => 'modules',
     );
     if (module_exists('colorbox')) {
       $form['modules']['fc_url_colorbox'] = array(
         '#type' => 'checkbox',
         '#title' => t('Open events in colorbox'),
         '#default_value' => $this->options['modules']['fc_url_colorbox'],
+        '#fieldset' => 'modules',
       );
       $form['modules']['fc_url_colorbox_class'] = array(
         '#type' => 'textfield',
@@ -182,6 +194,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#default_value' => $this->options['modules']['fc_url_colorbox_class'],
         '#process' => array('ctools_dependent_process'),
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
+        '#fieldset' => 'modules',
       );
       $form['modules']['fc_url_colorbox_width'] = array(
         '#type' => 'textfield',
@@ -189,6 +202,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#default_value' => $this->options['modules']['fc_url_colorbox_width'],
         '#process' => array('ctools_dependent_process'),
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
+        '#fieldset' => 'modules',
       );
       $form['modules']['fc_url_colorbox_height'] = array(
         '#type' => 'textfield',
@@ -196,29 +210,19 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#default_value' => $this->options['modules']['fc_url_colorbox_height'],
         '#process' => array('ctools_dependent_process'),
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
+        '#fieldset' => 'modules',
       );
     }
     $form['modules']['fc_window'] = array(
       '#type' => 'checkbox',
       '#title' => t('Open events in same window'),
       '#default_value' => $this->options['modules']['fc_window'],
+      '#fieldset' => 'modules',
     );
 
     if (module_exists('colorbox')) {
       $form['modules']['fc_window']['#process'] = array('ctools_dependent_process');
       $form['modules']['fc_window']['#dependency'] = array('edit-style-options-modules-fc-url-colorbox' => array(0));
     }
-  }
-  function validate() {
-    $errors = parent::validate();
-
-    // Get the date fields.
-    $date_fields = _fullcalendar_parse_fields($this->display->handler);
-
-    if (empty($date_fields)) {
-      $errors[] = t('Display "@display" requires at least one date field.', array('@display' => $this->display->display_title));
-    }
-
-    return $errors;
   }
 }

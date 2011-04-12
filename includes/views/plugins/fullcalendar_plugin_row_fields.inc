@@ -44,6 +44,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#type' => 'checkbox',
       '#title' => t('Use a custom title'),
       '#default_value' => $this->options['custom']['fc_title'],
+      '#fieldset' => 'custom',
     );
     $form['custom']['fc_title_field'] = array(
       '#type' => 'select',
@@ -53,11 +54,13 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#description' => t('Choose the field with the custom title.'),
       '#process' => array('form_process_select', 'ctools_dependent_process'),
       '#dependency' => array('edit-row-options-custom-fc-title' => array(1)),
+      '#fieldset' => 'custom',
     );
     $form['custom']['fc_url'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use a custom redirect URL'),
       '#default_value' => $this->options['custom']['fc_url'],
+      '#fieldset' => 'custom',
     );
     $form['custom']['fc_url_field'] = array(
       '#type' => 'select',
@@ -67,11 +70,13 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#description' => t('Choose the field with the custom link.'),
       '#process' => array('form_process_select', 'ctools_dependent_process'),
       '#dependency' => array('edit-row-options-custom-fc-url' => array(1)),
+      '#fieldset' => 'custom',
     );
     $form['custom']['fc_date'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use a custom date field'),
       '#default_value' => $this->options['custom']['fc_date'],
+      '#fieldset' => 'custom',
     );
     $form['custom']['fc_date_field'] = array(
       '#type' => 'select',
@@ -83,6 +88,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#size' => count($date_fields),
       '#process' => array('form_process_select', 'ctools_dependent_process'),
       '#dependency' => array('edit-row-options-custom-fc-date' => array(1)),
+      '#fieldset' => 'custom',
     );
 
     // Disable form elements when not needed.
@@ -107,5 +113,18 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       'options' => $this->options,
       'row' => $row,
     ));
+  }
+
+  function validate() {
+    $errors = parent::validate();
+
+    // Get the date fields.
+    $date_fields = _fullcalendar_parse_fields($this->display->handler);
+
+    if (empty($date_fields)) {
+      $errors[] = t('Display "@display" requires at least one date field.', array('@display' => $this->display->display_title));
+    }
+
+    return $errors;
   }
 }
