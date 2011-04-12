@@ -1,5 +1,11 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1124882 by tim.plunkett: Fixed notices caused by Google Calendar options.
+#1050530 by aspilcious: Window layout fix.
+#1041068 by geerlingguy: Add default menu item to help sub-modules.
+
+FullCalendar 7.x-2.0-alpha2, 2011-03-15
+---------------------------------------
 #1003602 by tim.plunkett: Rename and reorganize files.
 #1063714 by tim.plunkett: Fix error when checking for editable.
 #1062656 by tim.plunkett: Remove usage of entity_id_N.
