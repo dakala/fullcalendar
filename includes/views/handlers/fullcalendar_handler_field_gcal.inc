@@ -18,6 +18,7 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
   }
 
   function option_definition() {
+    $options = parent::option_definition();
     $options['label'] = array('default' => $this->definition['title'], 'translatable' => TRUE);
     $options['gcal'] = array('default' => '');
     $options['class'] = array('default' => 'fc-event-default fc-event-gcal');
