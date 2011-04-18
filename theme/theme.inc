@@ -47,12 +47,18 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     $entity = entity_load($entity_type, array($eid));
     $entity = reset($entity);
   }
-  $entity->eid = $eid;
 
   list(, , $bundle) = entity_extract_ids($entity_type, $entity);
   $entity->bundle = $bundle;
-  $entity->class = theme('fullcalendar_classname', array('entity' => $entity));
+  $entity->eid = $eid;
+  $entity->entity_type = $entity_type;
+
   $entity->editable = _fullcalendar_update_access($entity);
+
+  // Create a string of class names
+  $classes = module_invoke_all('fullcalendar_classes', $entity);
+  drupal_alter('fullcalendar_classes', $classes, $entity);
+  $entity->class = implode(' ', array_unique($classes));
 
   // Default URL.
   $uri = entity_uri($entity_type, $entity);

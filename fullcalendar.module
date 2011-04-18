@@ -161,32 +161,14 @@ function fullcalendar_update($action, $eid) {
 }
 
 /**
- * Implements hook_theme().
+ * Implements hook_fullcalendar_classes().
  */
-function fullcalendar_theme() {
-  return array(
-    'fullcalendar_classname' => array(
-      'variables' => array('entity' => NULL),
-    ),
-  );
-}
-
-/**
- * Constructs CSS classes for a entity.
- *
- * @param $node
- *   An object representing the entity.
- *
- * @return
- *   A string suitable for use as a CSS class.
- */
-function theme_fullcalendar_classname($variables) {
-  $entity = $variables['entity'];
-  $className = array(
+function fullcalendar_fullcalendar_classes($entity) {
+  $classes = array(
     'fc-event-default',
     $entity->bundle,
   );
-  return implode(' ', $className);
+  return $classes;
 }
 
 function fullcalendar_get_settings($options) {
