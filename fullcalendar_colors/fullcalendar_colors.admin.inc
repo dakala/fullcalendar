@@ -68,7 +68,7 @@ function fullcalendar_admin_color_node_type_settings() {
 function fullcalendar_admin_color_taxonomy_settings() {
 
   $form = _load_colorpicker();
-  
+
   /**
    * Taxonomies - show fieldset per taxonomy.
    */
@@ -93,7 +93,7 @@ function fullcalendar_admin_color_taxonomy_settings() {
       '#default_value' => variable_get('fullcalendar_color_taxo_' . $vid . '_enabled', FALSE),
     );
 
-    if(variable_get('fullcalendar_color_taxo_' . $vid . '_enabled')) {
+    if (variable_get('fullcalendar_color_taxo_' . $vid . '_enabled')) {
       // If enabled, get all the terms in the taxonomy.
       $term_ids = taxonomy_get_tree($vid);
       // Print textfield for each term, where user can add a hex value for a color.
@@ -108,7 +108,7 @@ function fullcalendar_admin_color_taxonomy_settings() {
           '#maxlength' => 7,
         );
       }
-    } 
+    }
   }
 
   return system_settings_form($form);
@@ -130,7 +130,7 @@ function fullcalendar_admin_color_og_settings() {
    * @todo - Allow user to enable/disable group color selection.
    * @todo - Allow user to set colors per group.
    */
-  if(module_exists('og')) {
+  if (module_exists('og')) {
     $form['og_colors'] = array(
       '#type' => 'fieldset',
       '#title' => t('Group Colors'),
@@ -175,6 +175,6 @@ function _load_colorpicker() {
     '#type' => 'item',
     '#markup' => '<div id="colorpicker"></div>'
   );
-  
+
   return $form;
 }

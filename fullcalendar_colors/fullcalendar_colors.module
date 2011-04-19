@@ -16,7 +16,7 @@ function fullcalendar_colors_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
-  
+
   $items['admin/config/calendar/fullcalendar/colors/node'] = array(
     'title' => 'node type',
     'file' => 'fullcalendar_colors.admin.inc',
@@ -26,7 +26,7 @@ function fullcalendar_colors_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => -10,
   );
-  
+
   $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
     'title' => 'taxonomy',
     'file' => 'fullcalendar_colors.admin.inc',
@@ -36,8 +36,8 @@ function fullcalendar_colors_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => -8,
   );
-  
-  if(module_exists('og')) {
+
+  if (module_exists('og')) {
     $items['admin/config/calendar/fullcalendar/colors/og'] = array(
       'title' => 'og',
       'file' => 'fullcalendar_colors.admin.inc',
@@ -51,13 +51,6 @@ function fullcalendar_colors_menu() {
 
   return $items;
 }
-
-/**
- * Implements hook_help().
- *
- * @todo - Theme the fullcalendar events to add term names, etc. if things are
- * enabled to do so.
- */
 
 /**
  * Implements hook_help().

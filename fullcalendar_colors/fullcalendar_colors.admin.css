@@ -1,16 +1,18 @@
-
-/* Styles for Fullcalendar Colors Admin page */
+/**
+ * @file
+ * Styles for Fullcalendar Colors Admin page
+ */
 
 .fieldset-wrapper {
   overflow: auto;
 }
 
 .fieldset-wrapper .form-item {
-  width: 33%;
-  float: left;
   display: block;
+  float: left;
+  width: 33%;
 }
 
 .fieldset-wrapper .form-type-checkbox {
   width: 100%;
-}}
+}
