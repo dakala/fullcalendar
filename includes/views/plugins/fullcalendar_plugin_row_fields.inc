@@ -107,14 +107,6 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
     }
   }
 
-  function render($row) {
-    return theme($this->theme_functions(), array(
-      'view' => $this->view,
-      'options' => $this->options,
-      'row' => $row,
-    ));
-  }
-
   function validate() {
     $errors = parent::validate();
 

@@ -28,12 +28,6 @@ function fullcalendar_views_plugins() {
       ),
     ),
     'style' => array(
-      'parent' => array(
-        'no ui' => TRUE,
-        'handler' => 'views_plugin_style',
-        'path' => "$views_path/plugins",
-        'parent' => '',
-      ),
       'fullcalendar' => array(
         'title' => t('FullCalendar'),
         'help' => t('Displays items on a calendar.'),
@@ -46,7 +40,6 @@ function fullcalendar_views_plugins() {
         'uses options' => TRUE,
         'uses grouping' => TRUE,
         'type' => 'normal',
-        'parent' => 'default',
       ),
     ),
     'row' => array(

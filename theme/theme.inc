@@ -4,15 +4,23 @@
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_fullcalendar(&$vars) {
-  $gcal = array();
-  foreach ($vars['view']->field as $field) {
+  $view = $vars['view'];
+  $options = $vars['options'];
+
+  static $dom_id = 1;
+  if (empty($view->dom_id)) {
+    $view->dom_id = 'fc-' . $dom_id++;
+  }
+  $options['dom_id'] = '.view-dom-id-' . $view->dom_id;
+
+  $options['gcal'] = array();
+  foreach ($view->field as $field) {
     if ($field->field == 'gcal') {
-      $gcal[] = $field->render(array());
+      $options['gcal'][] = $field->render(array());
     }
   }
-  $vars['options']['gcal'] = $gcal;
-  $vars['options']['dom_id'] = '.view-dom-id-' . $vars['id'];
-  fullcalendar_get_settings($vars['options']);
+
+  fullcalendar_get_settings($options);
 }
 
 /**
