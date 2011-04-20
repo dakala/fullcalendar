@@ -65,3 +65,8 @@ table.fc-header {
 .fc-header .ui-state-default {
   margin-bottom: 0;
 }
+
+/* Hide plain text events when javascript is enabled */
+html.js .fullcalendar-content {
+  display: none;
+}

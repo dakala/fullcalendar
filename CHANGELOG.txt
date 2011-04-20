@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1081488 by tim.plunkett: Fix calculation of the views dom id.
 #1131028 by tim.plunkett: Add API documentation.
@@ -74,6 +75,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1130956 by tim.plunkett: Re-add support for timestamps.
 #1131028 by aspilicious, tim.plunkett: Replace theme_fullcalendar_classname with hook and alter.
