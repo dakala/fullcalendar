@@ -36,7 +36,7 @@ function fullcalendar_admin_color_node_type_settings() {
       '#title' => t($type->name),
       '#type' => 'textfield',
       '#attributes' => array('class' => array('colorpicker-input')),
-      '#default_value' => variable_get('fullcalendar_color_node_type_' . $type->type, '#ffffff'),
+      '#default_value' => variable_get('fullcalendar_color_node_type_' . $type->type, '#3366CC'),
       '#size' => 7,
       '#maxlength' => 7,
       '#states' => array(
@@ -88,7 +88,7 @@ function fullcalendar_admin_color_taxonomy_settings() {
           '#title' => t($term->name),
           '#type' => 'textfield',
           '#attributes' => array('class' => array('colorpicker-input')),
-          '#default_value' => variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#ffffff'),
+          '#default_value' => variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#3366CC'),
           '#size' => 7,
           '#maxlength' => 7,
         );
@@ -160,7 +160,7 @@ function fullcalendar_admin_color_user_role_settings() {
       '#title' => t($role),
       '#type' => 'textfield',
       '#attributes' => array('class' => array('colorpicker-input')),
-      '#default_value' => variable_get('fullcalendar_color_user_role_' . $role_id, '#ffffff'),
+      '#default_value' => variable_get('fullcalendar_color_user_role_' . $role_id, '#3366CC'),
       '#size' => 7,
       '#maxlength' => 7,
       '#states' => array(
