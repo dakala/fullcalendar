@@ -6,21 +6,12 @@
  */
 
 /**
- * General configuration form for setting colors for Fullcalendar events.
- *
- * @see - http://drupal.org/node/1041068
- * @see - patch for fullcalendar.module at http://drupal.org/node/1041068#comment-4196492
+ * Configuration form for coloring node types.
  */
 function fullcalendar_admin_color_node_type_settings() {
 
   $form = _load_colorpicker();
 
-  /**
-   * Node types
-   *
-   * @todo - Allow user to enable/disable node type color selection.
-   * @todo - Allow user to set colors per node type.
-   */
   $form['node_type_colors'] = array(
     '#type' => 'item',
     '#title' => t('Node Type Colors'),
@@ -60,18 +51,12 @@ function fullcalendar_admin_color_node_type_settings() {
 }
 
 /**
- * General configuration form for setting colors for Fullcalendar events.
- *
- * @see - http://drupal.org/node/1041068
- * @see - patch for fullcalendar.module at http://drupal.org/node/1041068#comment-4196492
+ * Configuration form for coloring taxonomy
  */
 function fullcalendar_admin_color_taxonomy_settings() {
 
   $form = _load_colorpicker();
 
-  /**
-   * Taxonomies - show fieldset per taxonomy.
-   */
   $form['taxonomy_colors'] = array(
     '#type' => 'item',
     '#title' => t('Taxonomy Colors'),
@@ -98,12 +83,12 @@ function fullcalendar_admin_color_taxonomy_settings() {
       $term_ids = taxonomy_get_tree($vid);
       // Print textfield for each term, where user can add a hex value for a color.
       // @todo - Look into moving these into a custom db table, rather than variables...
-      foreach ($term_ids as $tid => $term) {
-        $form[$vid]['fullcalendar_color_taxo_term_' . $tid] = array(
+      foreach ($term_ids as $term) {
+        $form[$vid]['fullcalendar_color_taxo_term_' . $term->tid] = array(
           '#title' => t($term->name),
           '#type' => 'textfield',
           '#attributes' => array('class' => array('colorpicker-input')),
-          '#default_value' => variable_get('fullcalendar_color_taxo_term_' . $tid, '#ffffff'),
+          '#default_value' => variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#ffffff'),
           '#size' => 7,
           '#maxlength' => 7,
         );
@@ -115,21 +100,12 @@ function fullcalendar_admin_color_taxonomy_settings() {
 }
 
 /**
- * General configuration form for setting colors for Fullcalendar events.
- *
- * @see - http://drupal.org/node/1041068
- * @see - patch for fullcalendar.module at http://drupal.org/node/1041068#comment-4196492
+ * Configuration form for coloring organic groups (og)
  */
 function fullcalendar_admin_color_og_settings() {
 
   $form = _load_colorpicker();
 
-  /**
-   * Groups (og)
-   *
-   * @todo - Allow user to enable/disable group color selection.
-   * @todo - Allow user to set colors per group.
-   */
   if (module_exists('og')) {
     $form['og_colors'] = array(
       '#type' => 'fieldset',
@@ -156,6 +132,49 @@ function fullcalendar_admin_color_og_settings() {
 }
 
 /**
+ * Configuration form for coloring user roles
+ */
+function fullcalendar_admin_color_user_role_settings() {
+
+  $form = _load_colorpicker();
+
+  $form['user_role_colors'] = array(
+    '#type' => 'item',
+    '#title' => t('User Role Colors'),
+    '#description' => t('Colors for user roles. If enabled, you may set colors for each user role below.'),
+  );
+  $form['fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('User Roles Colors'),
+    '#collapsible' => TRUE,
+    '#collapsed' => !variable_get('fullcalendar_color_user_roles_enabled', FALSE),
+  );
+  $form['fieldset']['fullcalendar_color_user_roles_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable colors for user_roles.'),
+    '#default_value' => variable_get('fullcalendar_color_user_roles_enabled', FALSE),
+  );
+  $roles = user_roles();
+  foreach ($roles as $role_id => $role) {
+    $form['fieldset']['fullcalendar_color_user_role_' . $role_id] = array(
+      '#title' => t($role),
+      '#type' => 'textfield',
+      '#attributes' => array('class' => array('colorpicker-input')),
+      '#default_value' => variable_get('fullcalendar_color_user_role_' . $role_id, '#ffffff'),
+      '#size' => 7,
+      '#maxlength' => 7,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="fullcalendar_color_user_roles_enabled"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+  }
+
+  return system_settings_form($form);
+}
+
+/**
  * Loads a farbtastic colorpicker on top of the page.
  */
 function _load_colorpicker() {
@@ -168,9 +187,7 @@ function _load_colorpicker() {
   // JS for Farbtastic color picker.
   drupal_add_js('misc/farbtastic/farbtastic.js');
 
-  /**
-   * Colorpicker
-   */
+  // Colorpicker
   $form['color_picker'] = array(
     '#type' => 'item',
     '#markup' => '<div id="colorpicker"></div>'
