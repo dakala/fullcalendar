@@ -83,7 +83,7 @@ Drupal.behaviors.fullCalendar = {
         day: (settings.day) ? settings.day : undefined,
         timeFormat: {
           agenda: (settings.clock) ? 'HH:mm{ - HH:mm}' : settings.agenda,
-          '': (settings.clock) ? 'HH:mm' : 'h(:mm)t'
+          '': (settings.clock) ? 'HH:mm' : settings.agenda
         },
         axisFormat: (settings.clock) ? 'HH:mm' : 'h(:mm)tt',
         weekMode: settings.weekMode,
