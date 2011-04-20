@@ -1,5 +1,8 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1081488 by tim.plunkett: Fix calculation of the views dom id.
+#1131028 by tim.plunkett: Add API documentation.
+#1131028 by aspilicious, tim.plunkett: Replace theme_fullcalendar_classname with hook and alter.
 #1130950 by tim.plunkett: Fix strict OO compatibility for fullcalendar_handler_area_empty::render().
 #1003602 by tim.plunkett: Follow-up with renaming fullcalendar_handler_area_empty.
 #1125264 by aspilicious, tim.plunkett: Improved compatibility with new Views UI.
@@ -70,6 +73,19 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1130956 by tim.plunkett: Re-add support for timestamps.
+#1131028 by aspilicious, tim.plunkett: Replace theme_fullcalendar_classname with hook and alter.
+#1081488 by tim.plunkett: Fix calculation of the views dom id.
+#1047962 by tim.plunkett: Use new area handler for empty calendars.
+#1003602 by tim.plunkett: Rename views plugins and reorganize files.
+#1123398 by tim.plunkett: Add JS/CSS only when needed.
+#1050530 by aspilicious: Added target window.
+#1045114 by aspilicious: Improved UI strings.
+#910494 by aspilicious: Improved Colorbox support.
+#1044426 by aspilicious: Added RTL support.
+#1055978 by tim.plunket: Cleanup for multiple calendars fix.
+#1055978 by aspilicious: Fix multiple calendars per page.
+#1036444 by aspilicious, tim.plunkett: Backport fields row style from D7.
 #1032980 by aspilicious: Improved default styling for fullcalendar.
 #1035246 by aspilicious: Fixed incompatiblity with Views 6.x-3.x.
 #1038822 by wildpoppy: Fixed extra closing H3 tag.
