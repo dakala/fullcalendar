@@ -119,9 +119,8 @@ function fullcalendar_colors_fullcalendar_classes($entity) {
  */
 function _fullcalendar_colors_node_type_create_css(&$classes, &$css, $entity) {
   $class = "node-type-" . $entity->type;
-  $color = variable_get('fullcalendar_color_node_type_' . $entity->type, '#ffffff');
-  $css .= ' .' . $class . ' {background-color: ' . $color . '; border-color: ' . $color . ';}';
-  $css .= ' .' . $class . ' a {background-color: ' . $color . '; border-color: ' . $color . ';}';
+  $color = variable_get('fullcalendar_color_node_type_' . $entity->type, '#3366CC');
+  _fullcalendar_colors_build_css_string($css, $class, $color);
   $classes[] = $class;
 }
 
@@ -141,9 +140,8 @@ function _fullcalendar_colors_node_type_create_css(&$classes, &$css, $entity) {
 function _fullcalendar_colors_user_role_create_css(&$classes, &$css, $entity) {
   foreach ($entity->roles as $role_id => $role) {
     $class = "user-role-" . $role_id;
-    $color = variable_get('fullcalendar_color_user_role_' . $role_id, '#ffffff');
-    $css .= ' .' . $class . ' {background-color: ' . $color . '; border-color: ' . $color . ';}';
-    $css .= ' .' . $class . ' a {background-color: ' . $color . '; border-color: ' . $color . ';}';
+    $color = variable_get('fullcalendar_color_user_role_' . $role_id, '#3366CC');
+    _fullcalendar_colors_build_css_string($css, $class, $color);
     $classes[] = $class;
   }
 }
@@ -170,9 +168,8 @@ function _fullcalendar_colors_taxonomy_create_css(&$classes, &$css, $tids) {
       foreach ($terms as $term) {
         if (in_array($term->tid, $tids)) {
           $class = "taxonomy-term-" . $term->tid;
-          $color = variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#ffffff');
-          $css .= ' .' . $class . ' {background-color: ' . $color . '; border-color: ' . $color . ';}';
-          $css .= ' .' . $class . ' a {background-color: ' . $color . '; border-color: ' . $color . ';}';
+          $color = variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#3366CC');
+          _fullcalendar_colors_build_css_string($css, $class, $color);
           $classes[] = $class;
         }
       }
@@ -201,4 +198,19 @@ function _fullcalendar_colors_filter_term_ids($fields) {
     }
   }
   return $term_ids;
+}
+
+/**
+ * Builds a css string.
+ *
+ * @param $css
+ *   Array containing css.
+ * @param $class
+ *   Classname used for the new css selectors.
+ * @param $color
+ *   The new background color.
+ */
+function _fullcalendar_colors_build_css_string(&$css, $class, $color) {
+  $css .= ' .' . $class . ', .' . $class . ' .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
+  $css .= ' .' . $class . 'a, .' . $class . 'a .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
 }
