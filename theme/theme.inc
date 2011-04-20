@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Preprocess functions for FullCalendar.
+ */
+
+/**
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_fullcalendar(&$vars) {
@@ -24,7 +29,7 @@ function template_preprocess_fullcalendar(&$vars) {
 }
 
 /**
- * Prepares variables for template file invoked for node row type.
+ * Prepares variables for template file invoked for row type.
  */
 function template_preprocess_fullcalendar_fields(&$vars) {
   // Check if we have field data.
@@ -38,8 +43,6 @@ function template_preprocess_fullcalendar_fields(&$vars) {
       $date_fields[$id] = $field->fullcalendar_render($vars['row']);
     }
   }
-
-  $vars['data'] = array(); // Contains the start, end & allDay values.
 
   $eid = $vars['row']->{$vars['view']->base_field};
   if (isset($vars['row']->_field_data)) {
@@ -61,9 +64,10 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   $entity->eid = $eid;
   $entity->entity_type = $entity_type;
 
+  // Allow resize/drag/drop of an event if user has proper permissions.
   $entity->editable = _fullcalendar_update_access($entity);
 
-  // Create a string of class names
+  // Create a string of class names.
   $classes = module_invoke_all('fullcalendar_classes', $entity);
   drupal_alter('fullcalendar_classes', $classes, $entity);
   $entity->class = implode(' ', array_unique($classes));
@@ -90,7 +94,7 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     }
   }
 
-  // Entity is build, add it to the preprocess variables
+  // Entity is built, add it to the preprocess variables.
   $vars['entity'] = $entity;
 
   // Fetch custom dates if needed.
@@ -98,6 +102,7 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     $date_fields = array_intersect_key($date_fields, $vars['options']['custom']['fc_date_field']);
   }
 
+  $vars['data'] = array();
   // Iterate through all available fields.
   foreach ($date_fields as $field) {
     $instance = field_info_instance($entity_type, $field['field_name'], $bundle);

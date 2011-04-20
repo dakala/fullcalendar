@@ -6,12 +6,12 @@
  */
 
 /**
- * The default path to the FullCalender plugin.
+ * The default path to the FullCalendar plugin.
  */
 define('FULLCALENDAR_PATH', 'sites/all/libraries/fullcalendar');
 
 /**
- * The minimum supported version of the FullCalender plugin.
+ * The minimum supported version of the FullCalendar plugin.
  */
 define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.10');
 
@@ -123,8 +123,8 @@ function fullcalendar_menu() {
  *
  * @param $action
  *   Value can be 'drop' or 'resize'.
- * @param $node
- *   The node that will be updated.
+ * @param $eid
+ *   The id of the entity that will be updated.
  */
 function fullcalendar_update($action, $eid) {
   // Retrieve the post vars form the ajax call.
@@ -221,17 +221,23 @@ function fullcalendar_get_settings($options) {
  * This is done by passing times through date modules date_formatter_process
  * function.
  *
+ * @param $entity_type
+ *   The type of entity that will be updated.
  * @param $entity
  *   The entity that will be updated.
+ * @param $instance
+ *   A field instance.
  * @param $field_name
  *   The name of the date field.
  * @param $field
  *   The field structure for the date field.
  * @param $item
  *   The field value for the date field.
+ * @param $index
+ *   The current index of the date field.
  *
  * @return
- *   Array of event attributes to pass to the FullCalendar plugin.
+ *   String containing specially formatted link for the FullCalendar plugin.
  */
 function _fullcalendar_set_display_times($entity_type, $entity, $instance, $field, $item, $index) {
   if (!isset($item['raw']['date_type'])) {
@@ -357,12 +363,12 @@ function _fullcalendar_status() {
 }
 
 /**
- * Returns the version of FullCalender plugin that is installed.
+ * Returns the version of FullCalendar plugin that is installed.
  *
  * This can be used by other modules' hook_requirements() to ensure that the
- * proper version of Colorbox plugin is installed.
+ * proper version of FullCalendar plugin is installed.
  *
- * @see version_compare
+ * @see version_compare()
  */
 function fullcalendar_get_version($fullcalendar_path = NULL) {
   $version = 0;
@@ -383,7 +389,7 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
 }
 
 /**
- * Returns the path to the FullCalender plugin.
+ * Returns the path to the FullCalendar plugin.
  */
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');

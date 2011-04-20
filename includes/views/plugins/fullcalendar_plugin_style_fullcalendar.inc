@@ -161,7 +161,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'date',
       '#title' => t('Custom default date'),
       '#default_value' => $this->options['times']['fc_date'],
-
       '#prefix' => '<div id="edit-style-options-times-fc-date-wrapper"><div id="edit-style-options-times-fc-date">',
       '#suffix' => '</div></div>',
       '#process' => array('form_process_date', 'ctools_dependent_process'),

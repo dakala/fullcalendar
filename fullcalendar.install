@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the fullcalendar module.
+ * Install, update and uninstall functions for the FullCalendar module.
  */
 
 /**
- * Implements of hook_requirements().
+ * Implements hook_requirements().
  */
 function fullcalendar_requirements($phase) {
   $requirements = array();

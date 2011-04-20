@@ -2,11 +2,11 @@
 
 /**
  * @file
- * View to display the fullcalendar
+ * View to display the FullCalendar.
  *
  * Variables available:
  * - $rows: The results of the view query, if any
- * - $options: Options for the fullcalendar style plugin
+ * - $options: Options for the FullCalendar style plugin
  * -   fullcalendar_view : the default view for the calendar
  * -   fullcalendar_url_colorbox : whether or not to attempt to use colorbox to open events
  * -   fullcalendar_theme : whether or not to apply a loaded jquery-ui theme

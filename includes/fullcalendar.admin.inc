@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Administrative page callbacks for the fullcalendar module.
+ * Administrative page callbacks for the FullCalendar module.
  */
 
 /**
- * General configuration form for controlling the fullcalendar behaviour.
+ * General configuration form for controlling the FullCalendar behaviour.
  */
 function fullcalendar_admin_settings() {
   $fullcalendar_path = variable_get('fullcalendar_path', FULLCALENDAR_PATH);

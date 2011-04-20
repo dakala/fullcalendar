@@ -2,7 +2,7 @@
 
 /**
  * @file
- * View to display the fullcalendar rows (events)
+ * View to display the FullCalendar rows.
  *
  * Variables available:
  * - $entity: The entity object.

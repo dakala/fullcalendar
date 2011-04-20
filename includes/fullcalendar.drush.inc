@@ -68,13 +68,13 @@ function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
   }
 
   // Download the zip archive
-  if (!drush_shell_exec('wget '. FULLCALENDAR_DOWNLOAD_URI)) {
-    drush_shell_exec('curl -O '. FULLCALENDAR_DOWNLOAD_URI);
+  if (!drush_shell_exec('wget ' . FULLCALENDAR_DOWNLOAD_URI)) {
+    drush_shell_exec('curl -O ' . FULLCALENDAR_DOWNLOAD_URI);
   }
 
   if (is_file($filename)) {
     // Decompress the zip archive
-    drush_shell_exec('unzip -qq -o '. $filename);
+    drush_shell_exec('unzip -qq -o ' . $filename);
     // Remove the zip archive
     drush_op('unlink', $filename);
     if (is_dir('fullcalendar')) {
@@ -87,7 +87,7 @@ function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
   // Set working directory back to the previous working directory.
   chdir($olddir);
 
-  if (is_dir($path .'/fullcalendar')) {
+  if (is_dir($path . '/fullcalendar')) {
     drush_log(dt('FullCalendar plugin has been downloaded to @path', array('@path' => $path)), 'success');
   }
   else {
