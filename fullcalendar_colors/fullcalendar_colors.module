@@ -212,5 +212,5 @@ function _fullcalendar_colors_filter_term_ids($fields) {
  */
 function _fullcalendar_colors_build_css_string(&$css, $class, $color) {
   $css .= ' .' . $class . ', .' . $class . ' .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
-  $css .= ' .' . $class . 'a, .' . $class . 'a .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
+  $css .= ' .' . $class . ' a, .' . $class . ' a .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
 }
