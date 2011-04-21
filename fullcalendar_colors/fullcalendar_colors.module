@@ -18,27 +18,29 @@ function fullcalendar_colors_menu() {
   );
 
   $items['admin/config/calendar/fullcalendar/colors/node'] = array(
-    'title' => 'node type',
+    'title' => t('Node Type'),
     'file' => 'fullcalendar_colors.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_color_node_type_settings'),
     'access arguments' => array('administer site configuration'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
 
-  $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
-    'title' => 'taxonomy',
-    'file' => 'fullcalendar_colors.admin.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('fullcalendar_admin_color_taxonomy_settings'),
-    'access arguments' => array('administer site configuration'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => -8,
-  );
+  if (module_exists('taxonomy')) {
+    $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
+      'title' => t('Taxonomy'),
+      'file' => 'fullcalendar_colors.admin.inc',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('fullcalendar_admin_color_taxonomy_settings'),
+      'access arguments' => array('administer site configuration'),
+      'type' => MENU_LOCAL_TASK,
+      'weight' => -8,
+    );
+  }
 
   $items['admin/config/calendar/fullcalendar/colors/user'] = array(
-    'title' => 'user role',
+    'title' => t('User Role'),
     'file' => 'fullcalendar_colors.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_color_user_role_settings'),
@@ -49,7 +51,7 @@ function fullcalendar_colors_menu() {
 
   if (module_exists('og')) {
     $items['admin/config/calendar/fullcalendar/colors/og'] = array(
-      'title' => 'og',
+      'title' => t('Organic Groups'),
       'file' => 'fullcalendar_colors.admin.inc',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('fullcalendar_admin_color_og_settings'),
@@ -77,127 +79,20 @@ function fullcalendar_colors_help($path, $arg) {
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_colors_fullcalendar_classes($entity) {
+  require_once './' . drupal_get_path('module', 'fullcalendar_colors') . '/fullcalendar_colors.inc';
   $classes = array();
   $css = '';
 
-  /* node type css coloring */
-  if ($entity->entity_type == "node" && variable_get('fullcalendar_color_node_types_enabled', FALSE)) {
-    _fullcalendar_colors_node_type_create_css($classes, $css, $entity);
+  $hook = 'fullcalendar_colors_create_css';
+  foreach (module_implements($hook) as $module) {
+    $function = $module . '_' . $hook;
+    $function($classes, $css, $entity);
   }
 
-  /* user roles css coloring */
-  if ($entity->entity_type == "user" && variable_get('fullcalendar_color_user_roles_enabled', FALSE)) {
-    _fullcalendar_colors_user_role_create_css($classes, $css, $entity);
-  }
-
-  /* taxonomy css coloring*/
-  $filtered_entity = (array) $entity;
-  $filtered_entity = array_intersect_key($filtered_entity, field_info_instances($entity->entity_type, $entity->bundle));
-  $tids = _fullcalendar_colors_filter_term_ids($filtered_entity);
-  if (!empty($tids)) {
-    _fullcalendar_colors_taxonomy_create_css($classes, $css, $tids);
-  }
-
-  /* Inject created css string */
+  // Inject created css string.
   drupal_add_css($css, 'inline');
 
   return $classes;
-}
-
-/**
- * Node type helper function for hook_fullcalendar_classes().
- *
- * Adds the needed classnames to the classes array.
- * Adds the needed css to the css array.
- *
- * @param $classes
- *   Array containing classnames.
- * @param $css
- *   Array containing css.
- * @param $entity
- *   The entity to extract the info from.
- */
-function _fullcalendar_colors_node_type_create_css(&$classes, &$css, $entity) {
-  $class = "node-type-" . $entity->type;
-  $color = variable_get('fullcalendar_color_node_type_' . $entity->type, '#3366CC');
-  _fullcalendar_colors_build_css_string($css, $class, $color);
-  $classes[] = $class;
-}
-
-/**
- * User role helper function for hook_fullcalendar_classes().
- *
- * Adds the needed classnames to the classes array.
- * Adds the needed css to the css array.
- *
- * @param $classes
- *   Array containing classnames.
- * @param $css
- *   Array containing css.
- * @param $entity
- *   The entity to extract the info from.
- */
-function _fullcalendar_colors_user_role_create_css(&$classes, &$css, $entity) {
-  foreach ($entity->roles as $role_id => $role) {
-    $class = "user-role-" . $role_id;
-    $color = variable_get('fullcalendar_color_user_role_' . $role_id, '#3366CC');
-    _fullcalendar_colors_build_css_string($css, $class, $color);
-    $classes[] = $class;
-  }
-}
-
-/**
- * Taxonomy helper function for hook_fullcalendar_classes().
- *
- * Adds the needed classnames to the classes array.
- * Adds the needed css to the css array.
- *
- * @param $classes
- *   Array containing classnames.
- * @param $css
- *   Array containing css.
- * @param $tids
- *   List of taxonomy id's.
- */
-function _fullcalendar_colors_taxonomy_create_css(&$classes, &$css, $tids) {
-  foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
-    if (variable_get('fullcalendar_color_taxo_' . $vid . '_enabled')) {
-      // If enabled, get all the terms in the taxonomy.
-      $terms = taxonomy_get_tree($vid);
-
-      foreach ($terms as $term) {
-        if (in_array($term->tid, $tids)) {
-          $class = "taxonomy-term-" . $term->tid;
-          $color = variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#3366CC');
-          _fullcalendar_colors_build_css_string($css, $class, $color);
-          $classes[] = $class;
-        }
-      }
-    }
-  }
-}
-
-/**
- * Filters all the term id's found in an array of fields.
- *
- * @param $fields
- *   An array filled with fields.
- *
- * @return
- *   List of the term ids found in the given fields.
- */
-function _fullcalendar_colors_filter_term_ids($fields) {
-  $term_ids = array();
-  foreach ($fields as $key => $value) {
-    foreach ($value as $language => $term) {
-      foreach ($term as $content) {
-        if(isset($content['tid'])) {
-          $term_ids[] = $content['tid'];
-        }
-      }
-    }
-  }
-  return $term_ids;
 }
 
 /**
