@@ -17,7 +17,7 @@
 
 /* Set FullCalendar default style */
 .fc-event-default,
-.fc-agenda .fc-event-default .fc-event-time,
+.fc-event-default .fc-event-time,
 .fc-event-default a {
   border-color: #36c;
   border-style: solid;
