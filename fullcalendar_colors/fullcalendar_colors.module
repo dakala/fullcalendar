@@ -106,6 +106,9 @@ function fullcalendar_colors_fullcalendar_classes($entity) {
  *   The new background color.
  */
 function _fullcalendar_colors_build_css_string(&$css, $class, $color) {
-  $css .= ' .' . $class . ', .' . $class . ' .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
-  $css .= ' .' . $class . ' a, .' . $class . ' a .fc-event-skin {background-color: ' . $color . '; border-color: ' . $color . ';}';
+  $css .= ' .' . $class . ',';
+  $css .= ' .' . $class . ' .fc-event-skin,';
+  $css .= ' .' . $class . ' .fc-event-time,';
+  $css .= ' .' . $class . ' a';
+  $css .= '{background-color: ' . $color . '; border-color: ' . $color . ';}';
 }
