@@ -84,13 +84,13 @@ function fullcalendar_colors_fullcalendar_classes($entity) {
   $css = '';
 
   $hook = 'fullcalendar_colors_create_css';
+  $css = array();
   foreach (module_implements($hook) as $module) {
     $function = $module . '_' . $hook;
-    $function($classes, $css, $entity);
+    $css[$module] = $function($classes, $entity);
   }
 
-  // Inject created css string.
-  drupal_add_css($css, 'inline');
+  fullcalendar_colors_process_css($css);
 
   return $classes;
 }
@@ -98,17 +98,45 @@ function fullcalendar_colors_fullcalendar_classes($entity) {
 /**
  * Builds a css string.
  *
- * @param $css
- *   Array containing css.
  * @param $class
  *   Classname used for the new css selectors.
  * @param $color
  *   The new background color.
  */
-function _fullcalendar_colors_build_css_string(&$css, $class, $color) {
-  $css .= ' .' . $class . ',';
+function _fullcalendar_colors_build_css_string($class, $color) {
+  $css = ' .' . $class . ',';
   $css .= ' .' . $class . ' .fc-event-skin,';
   $css .= ' .' . $class . ' .fc-event-time,';
   $css .= ' .' . $class . ' a';
   $css .= '{background-color: ' . $color . '; border-color: ' . $color . ';}';
+  return $css;
+}
+
+/**
+ * Processes css.
+ *
+ * @param $css
+ *   CSS that is being processed.
+ * @param $reset
+ *   Boolean to print the CSS and reset the array.
+ */
+function fullcalendar_colors_process_css($css = array(), $reset = FALSE) {
+  $fullcalendar_css = &drupal_static(__FUNCTION__, array());
+  if ($reset) {
+    $string = '';
+    foreach ($fullcalendar_css as $module => $class) {
+      foreach ($class as $class_name => $css) {
+        if (is_array($css)) {
+          $css = array_unique($css);
+          $css = reset($css);
+        }
+        $string .= $css;
+      }
+    }
+    drupal_add_css($string, 'inline');
+    drupal_static_reset('fullcalendar_colors_process_css');
+  }
+  else {
+    $fullcalendar_css = array_merge_recursive($css, $fullcalendar_css);
+  }
 }

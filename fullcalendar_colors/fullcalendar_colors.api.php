@@ -15,12 +15,15 @@
  *
  * @param $classes
  *   Array of CSS classes.
- * @param $css
- *   String containing generated CSS.
  * @param $entity
  *   Object representing the entity.
+ *
+ * @return $css
+ *   Array of strings of generated CSS.
  */
-function hook_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
+function hook_fullcalendar_colors_create_css(&$classes, $entity) {
+  $css = array();
+  return $css;
 }
 
 /**

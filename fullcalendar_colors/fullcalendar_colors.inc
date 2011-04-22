@@ -5,13 +5,15 @@
  *
  * Provide colors per node type.
  */
-function node_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
+function node_fullcalendar_colors_create_css(&$classes, $entity) {
+  $css = array();
   if ($entity->entity_type == 'node') {
     $class = 'node-type-' . $entity->type;
     $color = variable_get('fullcalendar_color_node_type_' . $entity->type, '#3366CC');
-    _fullcalendar_colors_build_css_string($css, $class, $color);
     $classes[] = $class;
+    $css[$class] = _fullcalendar_colors_build_css_string($class, $color);
   }
+  return $css;
 }
 
 /**
@@ -19,15 +21,17 @@ function node_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
  *
  * Provide colors per user role.
  */
-function user_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
+function user_fullcalendar_colors_create_css(&$classes, $entity) {
+  $css = array();
   if ($entity->entity_type == 'user') {
     foreach ($entity->roles as $role_id => $role) {
       $class = 'user-role-' . $role_id;
       $color = variable_get('fullcalendar_color_user_role_' . $role_id, '#3366CC');
-      _fullcalendar_colors_build_css_string($css, $class, $color);
       $classes[] = $class;
+      $css[$class] = _fullcalendar_colors_build_css_string($class, $color);
     }
   }
+  return $css;
 }
 
 /**
@@ -35,10 +39,11 @@ function user_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
  *
  * Provide colors per taxonomy term.
  */
-function taxonomy_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
+function taxonomy_fullcalendar_colors_create_css(&$classes, $entity) {
   $filtered_entity = (array) $entity;
   $filtered_entity = array_intersect_key($filtered_entity, field_info_instances($entity->entity_type, $entity->bundle));
   $tids = _fullcalendar_colors_filter_term_ids($filtered_entity);
+  $css = array();
   foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
     if (variable_get('fullcalendar_color_taxo_' . $vid . '_enabled')) {
       // If enabled, get all the terms in the taxonomy.
@@ -48,12 +53,13 @@ function taxonomy_fullcalendar_colors_create_css(&$classes, &$css, $entity) {
         if (in_array($term->tid, $tids)) {
           $class = 'taxonomy-term-' . $term->tid;
           $color = variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#3366CC');
-          _fullcalendar_colors_build_css_string($css, $class, $color);
           $classes[] = $class;
+          $css[$class] = _fullcalendar_colors_build_css_string($class, $color);
         }
       }
     }
   }
+  return $css;
 }
 
 /**
