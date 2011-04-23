@@ -5,11 +5,13 @@
  */
 function fullcalendar_colors_menu() {
   $items = array();
+  $path = drupal_get_path('module', 'fullcalendar_colors') . '/includes';
 
   $items['admin/config/calendar/fullcalendar/colors'] = array(
     'title' => 'Colors',
     'description' => 'Adjust FullCalendar color settings for entities.',
     'file' => 'fullcalendar_colors.admin.inc',
+    'file path' => $path,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_color_node_type_settings'),
     'access arguments' => array('administer site configuration'),
@@ -20,6 +22,7 @@ function fullcalendar_colors_menu() {
   $items['admin/config/calendar/fullcalendar/colors/node'] = array(
     'title' => t('Node Type'),
     'file' => 'fullcalendar_colors.admin.inc',
+    'file path' => $path,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_color_node_type_settings'),
     'access arguments' => array('administer site configuration'),
@@ -31,6 +34,7 @@ function fullcalendar_colors_menu() {
     $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
       'title' => t('Taxonomy'),
       'file' => 'fullcalendar_colors.admin.inc',
+      'file path' => $path,
       'page callback' => 'drupal_get_form',
       'page arguments' => array('fullcalendar_admin_color_taxonomy_settings'),
       'access arguments' => array('administer site configuration'),
@@ -42,6 +46,7 @@ function fullcalendar_colors_menu() {
   $items['admin/config/calendar/fullcalendar/colors/user'] = array(
     'title' => t('User Role'),
     'file' => 'fullcalendar_colors.admin.inc',
+    'file path' => $path,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_color_user_role_settings'),
     'access arguments' => array('administer site configuration'),
@@ -53,6 +58,7 @@ function fullcalendar_colors_menu() {
     $items['admin/config/calendar/fullcalendar/colors/og'] = array(
       'title' => t('Organic Groups'),
       'file' => 'fullcalendar_colors.admin.inc',
+      'file path' => $path,
       'page callback' => 'drupal_get_form',
       'page arguments' => array('fullcalendar_admin_color_og_settings'),
       'access arguments' => array('administer site configuration'),
@@ -79,7 +85,7 @@ function fullcalendar_colors_help($path, $arg) {
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_colors_fullcalendar_classes($entity) {
-  require_once './' . drupal_get_path('module', 'fullcalendar_colors') . '/fullcalendar_colors.inc';
+  require_once './' . drupal_get_path('module', 'fullcalendar_colors') . '/includes/fullcalendar_colors.inc';
   $classes = array();
   $css = '';
 
