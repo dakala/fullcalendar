@@ -1,5 +1,10 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+
+FullCalendar 7.x-2.0-alpha4, 2011-04-23
+---------------------------------------
+by geerlingguy, asplicious, tim.plunkett: Add fullcalendar_colors.
+#1134302 by aspilicious: Make CSS less specific.
 #1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1081488 by tim.plunkett: Fix calculation of the views dom id.
@@ -12,7 +17,7 @@ FullCalendar 7.x-2.x, xxxx-xx-xx
 #1050530 by aspilcious: Window layout fix.
 #1041068 by geerlingguy: Add default menu item to help sub-modules.
 
-FullCalendar 7.x-2.0-alpha2, 2011-03-15
+FullCalendar 7.x-2.0-alpha3, 2011-03-15
 ---------------------------------------
 #1003602 by tim.plunkett: Rename and reorganize files.
 #1063714 by tim.plunkett: Fix error when checking for editable.
@@ -75,6 +80,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1134302 by aspilicious: Make CSS less specific.
 #1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1130956 by tim.plunkett: Re-add support for timestamps.
