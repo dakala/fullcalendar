@@ -213,6 +213,10 @@ function fullcalendar_get_settings($options) {
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.views.js');
+
+  if (module_exists('fullcalendar_colors')) {
+    fullcalendar_colors_process_css(array(), TRUE);
+  }
 }
 
 /**
