@@ -171,8 +171,22 @@ function fullcalendar_fullcalendar_classes($entity) {
   return $classes;
 }
 
-function fullcalendar_get_settings($options) {
+function fullcalendar_get_settings($view) {
   global $language;
+
+  $options = $view->style_options;
+  static $dom_id = 1;
+  if (empty($view->dom_id)) {
+    $view->dom_id = 'fc-' . $dom_id++;
+  }
+  $options['dom_id'] = '.view-dom-id-' . $view->dom_id;
+
+  $options['gcal'] = array();
+  foreach ($view->field as $field) {
+    if ($field->field == 'gcal') {
+      $options['gcal'][] = $field->render(array());
+    }
+  }
 
   $settings = array(
     $options['dom_id'] => array(
