@@ -9,6 +9,6 @@
  * Implements hook_uninstall().
  */
 function fullcalendar_colors_uninstall() {
-  db_query("DELETE FROM {variable} WHERE name LIKE 'fullcalendaer_colors_%'");
-  cache_clear_all('variables', 'cache');
+  db_query('DELETE FROM {variable} WHERE name LIKE :fullcalendar_colors', array(':fullcalendar_colors' => 'fullcalendar_color_%'));
+  cache_clear_all('variables', 'cache_bootstrap');
 }
