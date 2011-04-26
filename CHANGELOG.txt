@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1139192 by tim.plunkett: Initialize arrays before usage.
 #1138612 by aspilicious: Fixed coding standards for Fullcalendar Colors.
 #1137218 by tim.plunkett: Let empty handler set dom id and display Google Calendar events.
 #1137660 by aspilicious: Fixed fullcalendar_colors_uninstall().

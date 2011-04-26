@@ -21,6 +21,8 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     return;
   }
 
+  $fields = array();
+  $date_fields = array();
   foreach ($vars['view']->field as $id => $field) {
     $fields[$id] = $vars['view']->style_plugin->get_field($vars['view']->row_index, $id);
     if (method_exists($field, 'fullcalendar_render')) {
