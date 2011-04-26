@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Collection of fullcalendar_colors hook implementations.
+ */
+
+/**
  * Implements hook_fullcalendar_colors_create_css().
  *
  * Provide colors per node type.

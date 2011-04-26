@@ -20,7 +20,7 @@ function fullcalendar_colors_menu() {
   );
 
   $items['admin/config/calendar/fullcalendar/colors/node'] = array(
-    'title' => t('Node Type'),
+    'title' => 'Node Type',
     'file' => 'fullcalendar_colors.admin.inc',
     'file path' => $path,
     'page callback' => 'drupal_get_form',
@@ -32,7 +32,7 @@ function fullcalendar_colors_menu() {
 
   if (module_exists('taxonomy')) {
     $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
-      'title' => t('Taxonomy'),
+      'title' => 'Taxonomy',
       'file' => 'fullcalendar_colors.admin.inc',
       'file path' => $path,
       'page callback' => 'drupal_get_form',
@@ -44,7 +44,7 @@ function fullcalendar_colors_menu() {
   }
 
   $items['admin/config/calendar/fullcalendar/colors/user'] = array(
-    'title' => t('User Role'),
+    'title' => 'User Role',
     'file' => 'fullcalendar_colors.admin.inc',
     'file path' => $path,
     'page callback' => 'drupal_get_form',
@@ -56,7 +56,7 @@ function fullcalendar_colors_menu() {
 
   if (module_exists('og')) {
     $items['admin/config/calendar/fullcalendar/colors/og'] = array(
-      'title' => t('Organic Groups'),
+      'title' => 'Organic Groups',
       'file' => 'fullcalendar_colors.admin.inc',
       'file path' => $path,
       'page callback' => 'drupal_get_form',
