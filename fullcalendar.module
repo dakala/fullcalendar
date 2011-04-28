@@ -174,7 +174,7 @@ function fullcalendar_fullcalendar_classes($entity) {
 function fullcalendar_get_settings($view) {
   global $language;
 
-  $options = $view->style_options;
+  $options = $view->style_plugin->options;
   static $dom_id = 1;
   if (empty($view->dom_id)) {
     $view->dom_id = 'fc-' . $dom_id++;

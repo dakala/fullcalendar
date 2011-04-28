@@ -1,5 +1,9 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+
+FullCalendar 7.x-2.0-alpha5, 2011-04-28
+---------------------------------------
+#1138516 by tim.plunkett: Check fully loaded options, not just altered options.
 #1139192 by tim.plunkett: Initialize arrays before usage.
 #1138612 by aspilicious: Fixed coding standards for Fullcalendar Colors.
 #1137218 by tim.plunkett: Let empty handler set dom id and display Google Calendar events.
@@ -84,6 +88,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1076576 by tim.plunkett: Added support for repeating dates.
 #1137218 by tim.plunkett: Let empty handler set dom id and display Google Calendar events.
 #1137234 by tim.plunkett: Hide views options if not needed.
 #1033010 by tim.plunkett: Provide a default view as an example.
