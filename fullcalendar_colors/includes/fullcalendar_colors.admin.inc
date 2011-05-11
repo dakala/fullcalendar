@@ -179,12 +179,10 @@ function fullcalendar_admin_color_user_role_settings() {
  */
 function _load_colorpicker() {
   // CSS for our custom form.
-  drupal_add_css(drupal_get_path('module', 'fullcalendar_colors') . '/css/fullcalendar_colors.admin.css');
+  ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
   // JS for our Farbtastic integration.
-  drupal_add_js(drupal_get_path('module', 'fullcalendar_colors') . '/js/fullcalendar_colors.admin.js');
-  // CSS for Farbtastic color picker.
-  drupal_add_css('misc/farbtastic/farbtastic.css');
-  // JS for Farbtastic color picker.
+  ctools_add_js('fullcalendar_colors.admin', 'fullcalendar_colors');
+  // CSS and JS for Farbtastic color picker.
   drupal_add_library('system', 'farbtastic');
 
   // Colorpicker

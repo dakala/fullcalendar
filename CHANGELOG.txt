@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1145016 by tim.plunkett: Clean-up addition of CSS and JS.
 
 FullCalendar 7.x-2.0-alpha5, 2011-04-28
 ---------------------------------------
@@ -88,6 +89,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1150336 by arrrgh: Declare Views 6.x-3.x dependency in README.txt.
 #1076576 by tim.plunkett: Added support for repeating dates.
 #1137218 by tim.plunkett: Let empty handler set dom id and display Google Calendar events.
 #1137234 by tim.plunkett: Hide views options if not needed.

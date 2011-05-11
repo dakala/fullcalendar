@@ -42,10 +42,6 @@ function fullcalendar_library() {
         'type' => 'file',
         'media' => 'screen',
       ),
-      drupal_get_path('module', 'fullcalendar') . '/css/fullcalendar.theme.css' => array(
-        'type' => 'file',
-        'media' => 'screen',
-      ),
     ),
     'dependencies' => array(
       array('system', 'ui.draggable'),
@@ -226,7 +222,8 @@ function fullcalendar_get_settings($view) {
 
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
-  drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.views.js');
+  ctools_add_css('fullcalendar.theme', 'fullcalendar');
+  ctools_add_js('fullcalendar.views', 'fullcalendar');
 
   if (module_exists('fullcalendar_colors')) {
     fullcalendar_colors_process_css(array(), TRUE);
