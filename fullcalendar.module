@@ -171,11 +171,11 @@ function fullcalendar_get_settings($view) {
   global $language;
 
   $options = $view->style_plugin->options;
-  static $dom_id = 1;
+  static $fc_dom_id = 1;
   if (empty($view->dom_id)) {
-    $view->dom_id = 'fc-' . $dom_id++;
+    $view->dom_id = 'fc-' . $fc_dom_id++;
   }
-  $options['dom_id'] = '.view-dom-id-' . $view->dom_id;
+  $dom_id = '.view-dom-id-' . $view->dom_id;
 
   $options['gcal'] = array();
   foreach ($view->field as $field) {
@@ -185,7 +185,7 @@ function fullcalendar_get_settings($view) {
   }
 
   $settings = array(
-    $options['dom_id'] => array(
+    $dom_id => array(
       'defaultView' => $options['display']['fc_view'],
       'firstDay' => $options['display']['fc_firstday'],
       'weekMode' => $options['display']['fc_weekmode'],
@@ -215,9 +215,20 @@ function fullcalendar_get_settings($view) {
   );
 
   if ($options['times']['fc_default_date']) {
-    $settings[$options['dom_id']]['year'] = $options['times']['fc_date']['year'];
-    $settings[$options['dom_id']]['month'] = $options['times']['fc_date']['month'];
-    $settings[$options['dom_id']]['day'] = $options['times']['fc_date']['day'];
+    $settings[$dom_id]['year'] = $options['times']['fc_date']['year'];
+    $settings[$dom_id]['month'] = $options['times']['fc_date']['month'];
+    $settings[$dom_id]['day'] = $options['times']['fc_date']['day'];
+  }
+
+  extract($view->get_exposed_input(), EXTR_SKIP);
+  if (isset($year) && is_numeric($year)) {
+    $settings[$dom_id]['year'] = $year;
+  }
+  if (isset($month) && is_numeric($month) && $month > 0 && $month <= 12) {
+    $settings[$dom_id]['month'] = $month;
+  }
+  if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
+    $settings[$dom_id]['day'] = $day;
   }
 
   drupal_add_library('fullcalendar', 'fullcalendar');

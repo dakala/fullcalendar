@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#921572 by tim.plunkett: Added ability to pass date argument from view to display specific month.
 #1145016 by tim.plunkett: Clean-up addition of CSS and JS.
 
 FullCalendar 7.x-2.0-alpha5, 2011-04-28

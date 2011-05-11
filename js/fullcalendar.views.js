@@ -79,7 +79,7 @@ Drupal.behaviors.fullCalendar = {
           return false;
         },
         year: (settings.year) ? settings.year : undefined,
-        month: (settings.month) ? settings.month : undefined,
+        month: (settings.month) ? settings.month - 1 : undefined,
         day: (settings.day) ? settings.day : undefined,
         timeFormat: {
           agenda: (settings.clock) ? 'HH:mm{ - HH:mm}' : settings.agenda,
