@@ -163,7 +163,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#default_value' => $this->options['times']['fc_date'],
       '#prefix' => '<div id="edit-style-options-times-fc-date-wrapper"><div id="edit-style-options-times-fc-date">',
       '#suffix' => '</div></div>',
-      '#process' => array('form_process_date', 'ctools_dependent_process'),
+      '#pre_render' => array('ctools_dependent_pre_render'),
       '#dependency' => array('edit-style-options-times-fc-default-date' => array(1)),
       '#fieldset' => 'times',
     );
@@ -191,7 +191,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#type' => 'textfield',
         '#title' => t('Classname or ID selector'),
         '#default_value' => $this->options['modules']['fc_url_colorbox_class'],
-        '#process' => array('ctools_dependent_process'),
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
         '#fieldset' => 'modules',
       );
@@ -199,7 +198,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#type' => 'textfield',
         '#title' => t('Width'),
         '#default_value' => $this->options['modules']['fc_url_colorbox_width'],
-        '#process' => array('ctools_dependent_process'),
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
         '#fieldset' => 'modules',
       );
@@ -207,7 +205,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#type' => 'textfield',
         '#title' => t('Height'),
         '#default_value' => $this->options['modules']['fc_url_colorbox_height'],
-        '#process' => array('ctools_dependent_process'),
         '#dependency' => array('edit-style-options-modules-fc-url-colorbox' => array(1)),
         '#fieldset' => 'modules',
       );
@@ -220,7 +217,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     );
 
     if (module_exists('colorbox')) {
-      $form['modules']['fc_window']['#process'] = array('ctools_dependent_process');
       $form['modules']['fc_window']['#dependency'] = array('edit-style-options-modules-fc-url-colorbox' => array(0));
     }
   }

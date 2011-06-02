@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1177126 by tim.plunkett: Fixed problems leading to the Default Date not loading.
 #1176594 by aspilicious: Fixed disabling of node type and user role colors.
 #1168398 by rooby, aspilicious, tim.plunkett: Update the README.txt file for Drupal 7 Views.
 #921572 by tim.plunkett: Added ability to pass date argument from view to display specific month.
