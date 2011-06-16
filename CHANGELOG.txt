@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1180936 by amateescu: Allow drush to download latest version without breaking minimum version.
 #1189274 by aspilicious: Delete variables with db_delete instead of db_query.
 #1177126 by tim.plunkett: Fixed problems leading to the Default Date not loading.
 #1176594 by aspilicious: Fixed disabling of node type and user role colors.

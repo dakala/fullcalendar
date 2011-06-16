@@ -24,10 +24,15 @@ function fullcalendar_requirements($phase) {
       );
     }
     else {
+      $plugin_version = fullcalendar_get_version();
+      if (version_compare(FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION, $plugin_version) > 0) {
+        $plugin_version .= ' (Recommended version: ' . FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION . ')';
+      }
+
       $requirements['fullcalendar_plugin'] = array(
         'title' => $t('FullCalendar plugin'),
         'severity' => REQUIREMENT_OK,
-        'value' => fullcalendar_get_version(),
+        'value' => $plugin_version,
       );
     }
   }

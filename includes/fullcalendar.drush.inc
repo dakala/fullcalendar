@@ -8,7 +8,7 @@
 /**
  * The FullCalendar plugin URI.
  */
-define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-' . FULLCALENDAR_MIN_PLUGIN_VERSION . '.zip');
+define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-' . FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION . '.zip');
 
 /**
  * Implements hook_drush_command().
