@@ -131,34 +131,44 @@ function fullcalendar_update($action, $eid) {
   // Retrieve the post vars form the ajax call.
   $field = $_POST['field'];
   $index = $_POST['index'];
-  $dom_id = $_POST['dom_id'];
+
+  if (empty($field) || !isset($index)) {
+    return;
+  }
+
   $all_day = isset($_POST['all_day']) ? $_POST['all_day'] : '';
-  $day_delta = $_POST['day_delta'];
-  $minute_delta = $_POST['minute_delta'];
+  $delta = ' ' . $_POST['day_delta'] . ' days ' . $_POST['minute_delta'] . ' minutes';
   $entity_type = $_POST['entity_type'];
   $entity = entity_load($entity_type, array($eid));
   $entity = reset($entity);
 
-  if (!empty($field) && isset($index)) {
-    $langcode = field_language($entity_type, $entity, $field);
-    $old_start = $entity->{$field}[$langcode][$index]['value'];
-    $old_end = $entity->{$field}[$langcode][$index]['value2'];
+  $langcode = field_language($entity_type, $entity, $field);
+  $item = &$entity->{$field}[$langcode][$index];
+  $old_start = $item['value'];
+  $old_end = $item['value2'];
 
-    switch ($action) {
-      case 'drop':
-        $entity->{$field}[$langcode][$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
-        $entity->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
-        break;
-      case 'resize':
-        $entity->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
-        break;
-    }
+  // Adjust for different date formats.
+  $format = date_type_format($item['date_type']);
 
-    // Save the new start/end values.
-    field_attach_update($entity_type, $entity);
-
-    drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $dom_id));
+  // Datestamp can't combine with words for strtotime, convert to ISO for now.
+  if ($format == DATE_FORMAT_UNIX) {
+    $old_start = date(DATE_FORMAT_ISO, $old_start);
+    $old_end = date(DATE_FORMAT_ISO, $old_end);
   }
+
+  // No break after 'drop' so it will reuse the code of 'resize'.
+  switch ($action) {
+    case 'drop':
+      $item['value'] = date($format, strtotime($old_start . $delta));
+    case 'resize':
+      $item['value2'] = date($format, strtotime($old_end . $delta));
+      break;
+  }
+
+  // Save the new start/end values.
+  field_attach_update($entity_type, $entity);
+
+  drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $_POST['dom_id']));
 }
 
 /**

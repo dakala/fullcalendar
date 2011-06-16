@@ -1,5 +1,9 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1157558 by tim.plunkett: Fixed drag/drop for all three date formats.
+
+FullCalendar 7.x-2.0-alpha6, 2011-06-16
+---------------------------------------
 #1180936 by amateescu: Allow drush to download latest version without breaking minimum version.
 #1189274 by aspilicious: Delete variables with db_delete instead of db_query.
 #1177126 by tim.plunkett: Fixed problems leading to the Default Date not loading.
