@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1198254 by tim.plunkett: Remove usage of ctools_dependent_pre_render() and ctools_dependent_process().
 #1157558 by tim.plunkett: Fixed drag/drop for all three date formats.
 
 FullCalendar 7.x-2.0-alpha6, 2011-06-16

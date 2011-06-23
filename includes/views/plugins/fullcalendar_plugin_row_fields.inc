@@ -52,7 +52,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#options' => $field_options,
       '#default_value' => $this->options['custom']['fc_title_field'],
       '#description' => t('Choose the field with the custom title.'),
-      '#process' => array('form_process_select', 'ctools_dependent_process'),
+      '#process' => array('form_process_select'),
       '#dependency' => array('edit-row-options-custom-fc-title' => array(1)),
       '#fieldset' => 'custom',
     );
@@ -68,7 +68,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#options' => $field_options,
       '#default_value' => $this->options['custom']['fc_url_field'],
       '#description' => t('Choose the field with the custom link.'),
-      '#process' => array('form_process_select', 'ctools_dependent_process'),
+      '#process' => array('form_process_select'),
       '#dependency' => array('edit-row-options-custom-fc-url' => array(1)),
       '#fieldset' => 'custom',
     );
@@ -86,7 +86,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#description' => t('Select one or more date fields.'),
       '#multiple' => TRUE,
       '#size' => count($date_fields),
-      '#process' => array('form_process_select', 'ctools_dependent_process'),
+      '#process' => array('form_process_select'),
       '#dependency' => array('edit-row-options-custom-fc-date' => array(1)),
       '#fieldset' => 'custom',
     );
