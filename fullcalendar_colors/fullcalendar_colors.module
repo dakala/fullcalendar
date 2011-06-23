@@ -7,64 +7,51 @@ function fullcalendar_colors_menu() {
   $items = array();
   $path = drupal_get_path('module', 'fullcalendar_colors') . '/includes';
 
+  $base = array(
+    'file' => 'fullcalendar_colors.admin.inc',
+    'file path' => $path,
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('administer site configuration'),
+  );
+
   $items['admin/config/calendar/fullcalendar/colors'] = array(
     'title' => 'Colors',
     'description' => 'Adjust FullCalendar color settings for entities.',
-    'file' => 'fullcalendar_colors.admin.inc',
-    'file path' => $path,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('fullcalendar_admin_color_node_type_settings'),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => array('fullcalendar_colors_admin_node_type_settings'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
-  );
+  ) + $base;
 
   $items['admin/config/calendar/fullcalendar/colors/node'] = array(
     'title' => 'Node Type',
-    'file' => 'fullcalendar_colors.admin.inc',
-    'file path' => $path,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('fullcalendar_admin_color_node_type_settings'),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => array('fullcalendar_colors_admin_node_type_settings'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
-  );
+  ) + $base;
 
   if (module_exists('taxonomy')) {
     $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
       'title' => 'Taxonomy',
-      'file' => 'fullcalendar_colors.admin.inc',
-      'file path' => $path,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('fullcalendar_admin_color_taxonomy_settings'),
-      'access arguments' => array('administer site configuration'),
+      'page arguments' => array('fullcalendar_colors_admin_taxonomy_settings'),
       'type' => MENU_LOCAL_TASK,
       'weight' => -8,
-    );
+    ) + $base;
   }
 
   $items['admin/config/calendar/fullcalendar/colors/user'] = array(
     'title' => 'User Role',
-    'file' => 'fullcalendar_colors.admin.inc',
-    'file path' => $path,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('fullcalendar_admin_color_user_role_settings'),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => array('fullcalendar_colors_admin_user_role_settings'),
     'type' => MENU_LOCAL_TASK,
     'weight' => -6,
-  );
+  ) + $base;
 
   if (module_exists('og')) {
     $items['admin/config/calendar/fullcalendar/colors/og'] = array(
       'title' => 'Organic Groups',
-      'file' => 'fullcalendar_colors.admin.inc',
-      'file path' => $path,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('fullcalendar_admin_color_og_settings'),
-      'access arguments' => array('administer site configuration'),
+      'page arguments' => array('fullcalendar_colors_admin_og_settings'),
       'type' => MENU_LOCAL_TASK,
       'weight' => -2,
-    );
+    ) + $base;
   }
 
   return $items;

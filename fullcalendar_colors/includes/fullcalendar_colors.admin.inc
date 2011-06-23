@@ -8,7 +8,7 @@
 /**
  * Configuration form for coloring node types.
  */
-function fullcalendar_admin_color_node_type_settings() {
+function fullcalendar_colors_admin_node_type_settings() {
 
   $form = _load_colorpicker();
 
@@ -53,7 +53,7 @@ function fullcalendar_admin_color_node_type_settings() {
 /**
  * Configuration form for coloring taxonomy
  */
-function fullcalendar_admin_color_taxonomy_settings() {
+function fullcalendar_colors_admin_taxonomy_settings() {
 
   $form = _load_colorpicker();
 
@@ -102,7 +102,7 @@ function fullcalendar_admin_color_taxonomy_settings() {
 /**
  * Configuration form for coloring organic groups (og)
  */
-function fullcalendar_admin_color_og_settings() {
+function fullcalendar_colors_admin_og_settings() {
 
   $form = _load_colorpicker();
 
@@ -134,7 +134,7 @@ function fullcalendar_admin_color_og_settings() {
 /**
  * Configuration form for coloring user roles
  */
-function fullcalendar_admin_color_user_role_settings() {
+function fullcalendar_colors_admin_user_role_settings() {
 
   $form = _load_colorpicker();
 
