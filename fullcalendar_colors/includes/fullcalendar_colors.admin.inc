@@ -25,7 +25,7 @@ function fullcalendar_colors_admin_node_type_settings() {
   );
   $form['fieldset']['fullcalendar_color_node_types_enabled'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enable colors for node types.'),
+    '#title' => t('Enable colors for node types'),
     '#default_value' => variable_get('fullcalendar_color_node_types_enabled', FALSE),
   );
   $types = node_type_get_types();
@@ -74,7 +74,7 @@ function fullcalendar_colors_admin_taxonomy_settings() {
     );
     $form[$vid]['fullcalendar_color_taxo_' . $vid . '_enabled'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable this vocabulary.'),
+      '#title' => t('Enable this vocabulary'),
       '#default_value' => variable_get('fullcalendar_color_taxo_' . $vid . '_enabled', FALSE),
     );
 
@@ -120,7 +120,7 @@ function fullcalendar_colors_admin_og_settings() {
     );
     $form['fieldset']['fullcalendar_color_groups_enabled'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable colors for groups.'),
+      '#title' => t('Enable colors for groups'),
       '#default_value' => variable_get('fullcalendar_color_groups_enabled', FALSE),
     );
     /**
@@ -151,7 +151,7 @@ function fullcalendar_colors_admin_user_role_settings() {
   );
   $form['fieldset']['fullcalendar_color_user_roles_enabled'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enable colors for user_roles.'),
+    '#title' => t('Enable colors for user roles'),
     '#default_value' => variable_get('fullcalendar_color_user_roles_enabled', FALSE),
   );
   $roles = user_roles();
