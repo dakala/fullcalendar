@@ -245,6 +245,9 @@ function fullcalendar_get_settings($view) {
   if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
     $settings[$dom_id]['day'] = $day;
   }
+  if (isset($mode) && in_array($mode, array('month', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay'))) {
+    $settings[$dom_id]['defaultView'] = $mode;
+  }
 
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');

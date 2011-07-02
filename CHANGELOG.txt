@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1206518 by tim.plunkett: Call a specific calendar view through the URL.
 #1198254 by tim.plunkett: Remove usage of ctools_dependent_pre_render() and ctools_dependent_process().
 #1157558 by tim.plunkett: Fixed drag/drop for all three date formats.
 
