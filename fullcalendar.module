@@ -255,7 +255,7 @@ function fullcalendar_get_settings($view) {
   ctools_add_js('fullcalendar.views', 'fullcalendar');
 
   if (module_exists('fullcalendar_colors')) {
-    fullcalendar_colors_process_css(array(), TRUE);
+    fullcalendar_colors_process_selector(array(), TRUE);
   }
 }
 

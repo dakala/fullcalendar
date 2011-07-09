@@ -10,17 +10,14 @@
  *
  * Provide colors per node type.
  */
-function node_fullcalendar_colors_create_css(&$classes, $entity) {
-  $css = array();
-  if (variable_get('fullcalendar_color_node_types_enabled', FALSE)) {
+function node_fullcalendar_colors_class_names($entity) {
+  $class_names = array();
+  if (variable_get('fullcalendar_colors_node_types_enabled', FALSE)) {
     if ($entity->entity_type == 'node') {
-      $class = 'node-type-' . $entity->type;
-      $color = variable_get('fullcalendar_color_node_type_' . $entity->type, '#3366CC');
-      $classes[] = $class;
-      $css[$class] = _fullcalendar_colors_build_css_string($class, $color);
+      $class_names[] = 'fullcalendar_colors_node_type_' . $entity->type;
     }
   }
-  return $css;
+  return $class_names;
 }
 
 /**
@@ -28,19 +25,16 @@ function node_fullcalendar_colors_create_css(&$classes, $entity) {
  *
  * Provide colors per user role.
  */
-function user_fullcalendar_colors_create_css(&$classes, $entity) {
-  $css = array();
-  if (variable_get('fullcalendar_color_user_roles_enabled', FALSE)) {
+function user_fullcalendar_colors_class_names($entity) {
+  $class_names = array();
+  if (variable_get('fullcalendar_colors_user_roles_enabled', FALSE)) {
     if ($entity->entity_type == 'user') {
       foreach ($entity->roles as $role_id => $role) {
-        $class = 'user-role-' . $role_id;
-        $color = variable_get('fullcalendar_color_user_role_' . $role_id, '#3366CC');
-        $classes[] = $class;
-        $css[$class] = _fullcalendar_colors_build_css_string($class, $color);
+        $class_names[] = 'fullcalendar_colors_user_role_' . $role_id;
       }
     }
   }
-  return $css;
+  return $class_names;
 }
 
 /**
@@ -48,27 +42,23 @@ function user_fullcalendar_colors_create_css(&$classes, $entity) {
  *
  * Provide colors per taxonomy term.
  */
-function taxonomy_fullcalendar_colors_create_css(&$classes, $entity) {
+function taxonomy_fullcalendar_colors_class_names($entity) {
   $filtered_entity = (array) $entity;
   $filtered_entity = array_intersect_key($filtered_entity, field_info_instances($entity->entity_type, $entity->bundle));
   $tids = _fullcalendar_colors_filter_term_ids($filtered_entity);
-  $css = array();
+  $class_names = array();
   foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
-    if (variable_get('fullcalendar_color_taxo_' . $vid . '_enabled', FALSE)) {
+    if (variable_get('fullcalendar_colors_taxo_' . $vid . '_enabled', FALSE)) {
       // If enabled, get all the terms in the taxonomy.
       $terms = taxonomy_get_tree($vid);
-
       foreach ($terms as $term) {
         if (in_array($term->tid, $tids)) {
-          $class = 'taxonomy-term-' . $term->tid;
-          $color = variable_get('fullcalendar_color_taxo_term_' . $term->tid, '#3366CC');
-          $classes[] = $class;
-          $css[$class] = _fullcalendar_colors_build_css_string($class, $color);
+          $class_names[] = 'fullcalendar_colors_taxo_term_' . $term->tid;
         }
       }
     }
   }
-  return $css;
+  return $class_names;
 }
 
 /**

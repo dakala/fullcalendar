@@ -6,11 +6,84 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function fullcalendar_colors_install() {
+
+  $selector = _fullcalendar_colors_build_selector('fullcalendar_colors_default');
+  $color_options = array(
+    'background' => '#3366cc',
+    'border' => '#3366cc',
+    'text' => '#ffffff',
+  );
+
+  colors_set_color_configuration($selector, $color_options, 'fullcalendar colors');
+}
+
+/**
  * Implements hook_uninstall().
  */
 function fullcalendar_colors_uninstall() {
+  colors_delete_selectors('fullcalendar colors');
+
   db_delete('variable')
-    ->condition('name', db_like('fullcalendar_color_') . '%', 'LIKE')
+    ->condition('name', db_like('fullcalendar_colors_') . '%', 'LIKE')
     ->execute();
   cache_clear_all('variables', 'cache_bootstrap');
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function fullcalendar_colors_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'update') {
+    $t = get_t();
+
+    if (!module_exists('colors')) {
+      $requirements['fullcalendar_colors'] = array(
+        'title' => $t('FullCalendar colors dependencies'),
+        'value' => $t('Missing dependency'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('From now on fullcalendar colors requires the !colors', array('!colors' => l(t('Colors module'), 'http://drupal.org/project/colors'))),
+      );
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Move the colors in the variable table to the colors table
+ */
+function fullcalendar_colors_update_7200(&$sandbox) {
+  // Move the node type, taxonomy terms and user roles colors
+  $items = db_select('variable', 'v')
+    ->fields('v', array('name'))
+    ->condition(db_or()
+      ->condition('name', db_like('fullcalendar_color_node_type') . '%', 'LIKE')
+      ->condition('name', db_like('fullcalendar_color_taxo_term') . '%', 'LIKE')
+      ->condition('name', db_like('fullcalendar_color_taxo_term') . '%', 'LIKE')
+    )
+    ->execute()
+    ->fetchAllAssoc('name', PDO::FETCH_ASSOC);
+
+  foreach ($items as $item) {
+    fullcalendar_colors_set_color(preg_replace($item['name'], '_color_', '_colors_'), variable_get($item['name']));
+    variable_del($item['name']);
+  }
+
+  // Changed variable names
+  variable_set('fullcalendar_colors_node_types_enabled', variable_get('fullcalendar_color_node_types_enabled', FALSE));
+  variable_del('fullcalendar_color_node_types_enabled');
+
+  $taxonomies = taxonomy_get_vocabularies();
+  foreach ($taxonomies as $vid => $vocab) {
+    variable_set('fullcalendar_colors_taxo_' . $vid . '_enabled', variable_get('fullcalendar_color_taxo_' . $vid . '_enabled', FALSE));
+    variable_del('fullcalendar_color_taxo_' . $vid . '_enabled');
+  }
+
+  variable_set('fullcalendar_colors_user_roles_enabled', variable_get('fullcalendar_color_user_roles_enabled', FALSE));
+  variable_del('fullcalendar_color_user_roles_enabled');
 }

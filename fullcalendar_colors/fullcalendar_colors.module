@@ -74,62 +74,130 @@ function fullcalendar_colors_help($path, $arg) {
 function fullcalendar_colors_fullcalendar_classes($entity) {
   require_once './' . drupal_get_path('module', 'fullcalendar_colors') . '/includes/fullcalendar_colors.inc';
   $classes = array();
-  $css = '';
 
-  $hook = 'fullcalendar_colors_create_css';
-  $css = array();
+  $hook = 'fullcalendar_colors_class_names';
+  $selector = array();
   foreach (module_implements($hook) as $module) {
+    // Initialize selector array
+    $selectors = array();
+
+    // Fetch all the class names
     $function = $module . '_' . $hook;
-    $css[$module] = $function($classes, $entity);
+    $class_names = $function($entity);
+    foreach ($class_names as $class_name) {
+      // Build the classes array
+      $classes[] = $class_name;
+      // Create a valid fullcalendar selector based on the classname
+      $selectors[$class_name] =  _fullcalendar_colors_build_selector($class_name);
+    }
+    $selector[$module] = $selectors;
   }
 
-  fullcalendar_colors_process_css($css);
+  fullcalendar_colors_process_selector($selector);
 
   return $classes;
 }
 
 /**
- * Builds a css string.
+ * Processes selector.
  *
- * @param $class
- *   Classname used for the new css selectors.
- * @param $color
- *   The new background color.
- */
-function _fullcalendar_colors_build_css_string($class, $color) {
-  $css = ' .' . $class . ',';
-  $css .= ' .' . $class . ' .fc-event-skin,';
-  $css .= ' .' . $class . ' .fc-event-time,';
-  $css .= ' .' . $class . ' a';
-  $css .= '{background-color: ' . $color . '; border-color: ' . $color . ';}';
-  return $css;
-}
-
-/**
- * Processes css.
- *
- * @param $css
- *   CSS that is being processed.
+ * @param $selector
+ *   Selector that is being processed.
  * @param $reset
  *   Boolean to print the CSS and reset the array.
  */
-function fullcalendar_colors_process_css($css = array(), $reset = FALSE) {
-  $fullcalendar_css = &drupal_static(__FUNCTION__, array());
+function fullcalendar_colors_process_selector($selector = array(), $reset = FALSE) {
+  $fullcalendar_selector = &drupal_static(__FUNCTION__, array());
   if ($reset) {
-    $string = '';
-    foreach ($fullcalendar_css as $module => $class) {
-      foreach ($class as $class_name => $css) {
-        if (is_array($css)) {
-          $css = array_unique($css);
-          $css = reset($css);
+    $selector_array = array();
+    foreach ($fullcalendar_selector as $module => $class) {
+      foreach ($class as $class_name => $selector) {
+        if (is_array($selector)) {
+          $selector = array_unique($selector);
+          $selector = reset($selector);
         }
-        $string .= $css;
+        $selector_array[] = $selector;
       }
     }
-    drupal_add_css($string, 'inline');
-    drupal_static_reset('fullcalendar_colors_process_css');
+    // Pass our default configuration
+    $default_color_configuration = _fullcalendar_colors_get_color_configuration('fullcalendar_colors_default');
+    // Tell the colors module which selectors to color
+    colors_insert_css_from_selector_array($selector_array, $default_color_configuration);
+    drupal_static_reset('fullcalendar_colors_process_selector');
   }
   else {
-    $fullcalendar_css = array_merge_recursive($css, $fullcalendar_css);
+    $fullcalendar_selector = array_merge_recursive($selector, $fullcalendar_selector);
   }
+}
+
+/**
+ * Builds a selector string.
+ *
+ * @param $class
+ *   Classname used for the new selector string.
+ *
+ * @return
+ *   The build selector.
+ */
+function _fullcalendar_colors_build_selector($class) {
+  $selector = ' .' . $class . ',';
+  $selector .= ' .' . $class . ' .fc-event-skin,';
+  $selector .= ' .' . $class . ' .fc-event-time,';
+  $selector .= ' .' . $class . ' a';
+  return $selector;
+}
+
+/**
+ * Gets the FullCalendar color configuration.
+ *
+ * @param $class
+ *   The class you want the color configuration from. If there isn't a matching
+ *   color configuration, the default configuration will be used.
+ *
+ * @return
+ *   Color configuration matching the $class.
+ */
+function _fullcalendar_colors_get_color_configuration($class) {
+  $selector = _fullcalendar_colors_build_selector($class);
+  $color_configuration = colors_get_color_configuration($selector);
+  if (empty($color_configuration)) {
+    $default_selector = _fullcalendar_colors_build_selector('fullcalendar_colors_default');
+    $color_configuration = colors_get_color_configuration($default_selector);
+  }
+  return $color_configuration;
+}
+
+/**
+ * Builds the color configuration.
+ *
+ * @param $background_color
+ *   Background color used for the color configuration.
+ * @param $text_color
+ *   Background color used for the color configuration.
+ *
+ * @return
+ *   A color configuration based on the input colors.
+ */
+function _fullcalendar_colors_build_color_configuration($background_color = '#000000', $text_color = '#ffffff') {
+  return array(
+    'background' => $background_color,
+    'border' => $background_color,
+    'text' => $text_color,
+  );
+}
+
+/**
+ * Inserts or updates a FullCalendar color configuration.
+ *
+ * @param $class_name
+ *   Classname you would like to insert or update.
+ * @param $background_color
+ *   Background color used for the color configuration.
+ * @param $text_color
+ *   Background color used for the color configuration.
+ */
+function fullcalendar_colors_set_color($class_name, $background_color = '#000000', $text_color = '#ffffff') {
+  $selector = _fullcalendar_colors_build_selector($class_name);
+  $color_options = _fullcalendar_colors_build_color_configuration($background_color, $text_color);
+  colors_set_color_configuration($selector, $color_options, 'fullcalendar_colors');
 }
