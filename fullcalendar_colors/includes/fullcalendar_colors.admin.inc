@@ -72,7 +72,7 @@ function fullcalendar_colors_admin_node_type_settings_submit($form, &$form_state
   $names = node_type_get_names();
   foreach ($names as $key => $name) {
     $type = $types[$key];
-    $class = 'fullcalendar_colors_node_type_' . $type->type;
+    $class= 'fullcalendar_colors_node_type_' . $type->type;
     fullcalendar_colors_set_color($class, $values[$class]);
   }
 
@@ -145,7 +145,7 @@ function fullcalendar_colors_admin_taxonomy_settings_submit($form, &$form_state)
     if (variable_get('fullcalendar_colors_taxo_' . $vid . '_enabled')) {
       $term_ids = taxonomy_get_tree($vid);
       foreach ($term_ids as $term) {
-        $class = 'fullcalendar_colors_taxo_term_' . $term->tid;
+        $class= 'fullcalendar_colors_taxo_term_' . $term->tid;
         fullcalendar_colors_set_color($class, $values[$class]);
       }
     }

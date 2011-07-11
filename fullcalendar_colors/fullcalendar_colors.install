@@ -10,21 +10,20 @@
  */
 function fullcalendar_colors_install() {
 
-  $selector = _fullcalendar_colors_build_selector('fullcalendar_colors_default');
   $color_options = array(
     'background' => '#3366cc',
     'border' => '#3366cc',
     'text' => '#ffffff',
   );
 
-  colors_set_color_configuration($selector, $color_options, 'fullcalendar colors');
+  colors_set_color_configuration('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
 }
 
 /**
  * Implements hook_uninstall().
  */
 function fullcalendar_colors_uninstall() {
-  colors_delete_selectors('fullcalendar colors');
+  colors_delete_selectors('fullcalendar_colors');
 
   db_delete('variable')
     ->condition('name', db_like('fullcalendar_colors_') . '%', 'LIKE')

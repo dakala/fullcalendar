@@ -88,7 +88,7 @@ function fullcalendar_colors_fullcalendar_classes($entity) {
       // Build the classes array
       $classes[] = $class_name;
       // Create a valid fullcalendar selector based on the classname
-      $hook_selectors[$class_name] =  _fullcalendar_colors_build_selector($class_name);
+      $hook_selectors[$class_name] =  $class_name;
     }
     $selectors[$module] = $hook_selectors;
   }
@@ -120,9 +120,9 @@ function fullcalendar_colors_process_selectors($selectors = array(), $reset = FA
       }
     }
     // Pass our default configuration
-    $default_color_configuration = _fullcalendar_colors_get_color_configuration('fullcalendar_colors_default');
+    $default_color_configuration =_fullcalendar_colors_get_color_configuration('fullcalendar_colors_default');
     // Tell the colors module which selectors to color
-    colors_insert_css_from_selectors($unique_selectors, $default_color_configuration);
+    colors_insert_css_from_selectors($unique_selectors, 'fullcalendar_colors', $default_color_configuration);
     drupal_static_reset('fullcalendar_colors_process_selectors');
   }
   else {
@@ -131,15 +131,9 @@ function fullcalendar_colors_process_selectors($selectors = array(), $reset = FA
 }
 
 /**
- * Builds a selector string.
- *
- * @param $class
- *   Classname used for the new selector string.
- *
- * @return
- *   The build selector.
+ * Implements hook_build_selector
  */
-function _fullcalendar_colors_build_selector($class) {
+function fullcalendar_colors_build_selector($class) {
   $selector = ' .' . $class . ',';
   $selector .= ' .' . $class . ' .fc-event-skin,';
   $selector .= ' .' . $class . ' .fc-event-time,';
@@ -148,21 +142,19 @@ function _fullcalendar_colors_build_selector($class) {
 }
 
 /**
- * Gets the FullCalendar color configuration.
+ * Gets the fullcalendar color configuration.
  *
  * @param $class
  *   The class you want the color configuration from. If there isn't a matching
  *   color configuration, the default configuration will be used.
  *
- * @return
+ * @return $color_configuration
  *   Color configuration matching the $class.
  */
 function _fullcalendar_colors_get_color_configuration($class) {
-  $selector = _fullcalendar_colors_build_selector($class);
-  $color_configuration = colors_get_color_configuration($selector);
+  $color_configuration = colors_get_color_configuration($class);
   if (empty($color_configuration)) {
-    $default_selector = _fullcalendar_colors_build_selector('fullcalendar_colors_default');
-    $color_configuration = colors_get_color_configuration($default_selector);
+    $color_configuration = colors_get_color_configuration('fullcalendar_colors_default');
   }
   return $color_configuration;
 }
@@ -175,19 +167,21 @@ function _fullcalendar_colors_get_color_configuration($class) {
  * @param $text_color
  *   Text color used for the color configuration.
  *
- * @return
+ * @return $color_configuration
  *   A color configuration based on the input colors.
  */
 function _fullcalendar_colors_build_color_configuration($background_color = '#000000', $text_color = '#ffffff') {
-  return array(
+  $color_configuration = array(
     'background' => $background_color,
     'border' => $background_color,
     'text' => $text_color,
   );
+
+  return $color_configuration;
 }
 
 /**
- * Inserts or updates a FullCalendar color configuration.
+ * Inserts or updates a fullcalendar color configuration.
  *
  * @param $class_name
  *   Classname you would like to insert or update.
@@ -197,7 +191,6 @@ function _fullcalendar_colors_build_color_configuration($background_color = '#00
  *   Text color used for the color configuration.
  */
 function fullcalendar_colors_set_color($class_name, $background_color = '#000000', $text_color = '#ffffff') {
-  $selector = _fullcalendar_colors_build_selector($class_name);
   $color_options = _fullcalendar_colors_build_color_configuration($background_color, $text_color);
-  colors_set_color_configuration($selector, $color_options, 'fullcalendar_colors');
+  colors_set_color_configuration($class_name, $color_options, 'fullcalendar_colors');
 }
