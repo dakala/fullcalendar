@@ -85,4 +85,13 @@ function fullcalendar_colors_update_7200(&$sandbox) {
 
   variable_set('fullcalendar_colors_user_roles_enabled', variable_get('fullcalendar_color_user_roles_enabled', FALSE));
   variable_del('fullcalendar_color_user_roles_enabled');
+ 
+  // Add the default configuration
+  $color_options = array(
+    'background' => '#3366cc',
+    'border' => '#3366cc',
+    'text' => '#ffffff',
+  );
+
+  colors_set_color_configuration('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
 }
