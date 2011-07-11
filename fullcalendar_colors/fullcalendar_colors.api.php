@@ -11,14 +11,13 @@
  */
 
 /**
- * Fetches the needed css classes for coloring the fullcalendar.
+ * Fetches the needed CSS classes for coloring the FullCalendar.
  *
  * @param $entity
  *   Object representing the entity.
  *
- * @return $class_names
- *   Array containing the class that will be processed by fullcalendar for each
- *   event.
+ * @return
+ *   Array of classes that will be processed by FullCalendar for each entity.
  */
 function hook_fullcalendar_colors_class_names($entity) {
   $class_names = array();

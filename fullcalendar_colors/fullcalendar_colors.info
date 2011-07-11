@@ -4,4 +4,4 @@ core = 7.x
 package = "Views"
 configure = admin/config/calendar/fullcalendar/colors
 dependencies[] = colors
-dependencies[] = ctools
+dependencies[] = fullcalendar

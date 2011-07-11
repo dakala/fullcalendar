@@ -2,14 +2,14 @@
 
 /**
  * @file
- * Color page callbacks for the Fullcalendar colors module.
+ * Color page callbacks for the FullCalendar colors module.
  */
 
 /**
  * Configuration form for coloring node types.
  */
 function fullcalendar_colors_admin_node_type_settings() {
-  $form = _load_colorpicker();
+  $form = _fullcalendar_colors_load_colorpicker();
 
   $form['node_type_colors'] = array(
     '#type' => 'item',
@@ -27,18 +27,15 @@ function fullcalendar_colors_admin_node_type_settings() {
     '#title' => t('Enable colors for node types'),
     '#default_value' => variable_get('fullcalendar_colors_node_types_enabled', FALSE),
   );
-  $types = node_type_get_types();
-  $names = node_type_get_names();
-  foreach ($names as $key => $name) {
-    $type = $types[$key];
-    $class = 'fullcalendar_colors_node_type_' . $type->type;
-    $color_configuration = _fullcalendar_colors_get_color_configuration($class);
+  foreach (node_type_get_names() as $type => $name) {
+    $class = 'fullcalendar_colors_node_type_' . $type;
+    $colors = colors_get_colors($class, 'fullcalendar_colors');
 
     $form['fieldset'][$class] = array(
-      '#title' => t($type->name),
+      '#title' => t($name),
       '#type' => 'textfield',
       '#attributes' => array('class' => array('colorpicker-input')),
-      '#default_value' => $color_configuration['background'],
+      '#default_value' => $colors['background'],
       '#size' => 7,
       '#maxlength' => 7,
       '#states' => array(
@@ -68,11 +65,8 @@ function fullcalendar_colors_admin_node_type_settings_submit($form, &$form_state
   variable_set('fullcalendar_colors_node_types_enabled', $values['fullcalendar_colors_node_types_enabled']);
 
   // Save the node colors
-  $types = node_type_get_types();
-  $names = node_type_get_names();
-  foreach ($names as $key => $name) {
-    $type = $types[$key];
-    $class= 'fullcalendar_colors_node_type_' . $type->type;
+  foreach (node_type_get_names() as $type => $name) {
+    $class = 'fullcalendar_colors_node_type_' . $type;
     fullcalendar_colors_set_color($class, $values[$class]);
   }
 
@@ -80,18 +74,17 @@ function fullcalendar_colors_admin_node_type_settings_submit($form, &$form_state
 }
 
 /**
- * Configuration form for coloring taxonomy
+ * Configuration form for coloring taxonomy.
  */
 function fullcalendar_colors_admin_taxonomy_settings() {
-  $form = _load_colorpicker();
+  $form = _fullcalendar_colors_load_colorpicker();
 
   $form['taxonomy_colors'] = array(
     '#type' => 'item',
     '#title' => t('Taxonomy Colors'),
     '#description' => t('Colors on a per-taxonomy basis. After enabling a vocabulary, you can set colors for individual taxonomy terms below.'),
   );
-  $taxonomies = taxonomy_get_vocabularies();
-  foreach ($taxonomies as $vid => $vocab) {
+  foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
     $form[$vid] = array(
       '#type' => 'fieldset',
       '#title' => $vocab->name,
@@ -111,12 +104,12 @@ function fullcalendar_colors_admin_taxonomy_settings() {
       // @todo - Look into moving these into a custom db table, rather than variables...
       foreach ($term_ids as $term) {
         $class = 'fullcalendar_colors_taxo_term_' . $term->tid;
-        $color_configuration = _fullcalendar_colors_get_color_configuration($class);
+        $colors = colors_get_colors($class, 'fullcalendar_colors');
         $form[$vid][$class] = array(
           '#title' => t($term->name),
           '#type' => 'textfield',
           '#attributes' => array('class' => array('colorpicker-input')),
-          '#default_value' => $color_configuration['background'],
+          '#default_value' => $colors['background'],
           '#size' => 7,
           '#maxlength' => 7,
         );
@@ -140,12 +133,11 @@ function fullcalendar_colors_admin_taxonomy_settings() {
 function fullcalendar_colors_admin_taxonomy_settings_submit($form, &$form_state) {
   $values = $form_state['values'];
 
-  $taxonomies = taxonomy_get_vocabularies();
-  foreach ($taxonomies as $vid => $vocab) {
+  foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
     if (variable_get('fullcalendar_colors_taxo_' . $vid . '_enabled')) {
       $term_ids = taxonomy_get_tree($vid);
       foreach ($term_ids as $term) {
-        $class= 'fullcalendar_colors_taxo_term_' . $term->tid;
+        $class = 'fullcalendar_colors_taxo_term_' . $term->tid;
         fullcalendar_colors_set_color($class, $values[$class]);
       }
     }
@@ -156,10 +148,10 @@ function fullcalendar_colors_admin_taxonomy_settings_submit($form, &$form_state)
 }
 
 /**
- * Configuration form for coloring organic groups (og)
+ * Configuration form for coloring organic groups (og).
  */
 function fullcalendar_colors_admin_og_settings() {
-  $form = _load_colorpicker();
+  $form = _fullcalendar_colors_load_colorpicker();
 
   if (module_exists('og')) {
     $form['og_colors'] = array(
@@ -187,10 +179,10 @@ function fullcalendar_colors_admin_og_settings() {
 }
 
 /**
- * Configuration form for coloring user roles
+ * Configuration form for coloring user roles.
  */
 function fullcalendar_colors_admin_user_role_settings() {
-  $form = _load_colorpicker();
+  $form = _fullcalendar_colors_load_colorpicker();
 
   $form['user_role_colors'] = array(
     '#type' => 'item',
@@ -208,16 +200,15 @@ function fullcalendar_colors_admin_user_role_settings() {
     '#title' => t('Enable colors for user roles'),
     '#default_value' => variable_get('fullcalendar_colors_user_roles_enabled', FALSE),
   );
-  $roles = user_roles();
-  foreach ($roles as $role_id => $role) {
+  foreach (user_roles() as $role_id => $role) {
     $class = 'fullcalendar_colors_user_role_' . $role_id;
-    $color_configuration = _fullcalendar_colors_get_color_configuration($class);
+    $colors = colors_get_colors($class, 'fullcalendar_colors');
 
     $form['fieldset'][$class] = array(
       '#title' => t($role),
       '#type' => 'textfield',
       '#attributes' => array('class' => array('colorpicker-input')),
-      '#default_value' => $color_configuration['background'],
+      '#default_value' => $colors['background'],
       '#size' => 7,
       '#maxlength' => 7,
       '#states' => array(
@@ -246,8 +237,7 @@ function fullcalendar_colors_admin_user_role_settings_submit($form, &$form_state
   variable_set('fullcalendar_colors_user_roles_enabled', $values['fullcalendar_colors_user_roles_enabled']);
 
   // Save the user roles colors
-  $roles = user_roles();
-  foreach ($roles as $role_id => $role) {
+  foreach (user_roles() as $role_id => $role) {
     $class = 'fullcalendar_colors_user_role_' . $role_id;
     fullcalendar_colors_set_color($class, $values[$class]);
   }
@@ -258,7 +248,7 @@ function fullcalendar_colors_admin_user_role_settings_submit($form, &$form_state
 /**
  * Loads a farbtastic colorpicker on top of the page.
  */
-function _load_colorpicker() {
+function _fullcalendar_colors_load_colorpicker() {
   // CSS for our custom form.
   ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
   // JS for our Farbtastic integration.
@@ -267,10 +257,10 @@ function _load_colorpicker() {
   drupal_add_library('system', 'farbtastic');
 
   // Colorpicker
-  $form['color_picker'] = array(
-    '#type' => 'item',
-    '#markup' => '<div id="colorpicker"></div>'
+  return array(
+    'color_picker' => array(
+      '#prefix' => '<div id="colorpicker">',
+      '#suffix' => '</div>',
+    ),
   );
-
-  return $form;
 }

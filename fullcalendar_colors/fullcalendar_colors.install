@@ -16,7 +16,7 @@ function fullcalendar_colors_install() {
     'text' => '#ffffff',
   );
 
-  colors_set_color_configuration('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
+  colors_set_colors('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
 }
 
 /**
@@ -54,7 +54,9 @@ function fullcalendar_colors_requirements($phase) {
 }
 
 /**
- * Move the colors in the variable table to the colors table
+ * Implements hook_update_N().
+ *
+ * Move the colors in the variable table to the colors table.
  */
 function fullcalendar_colors_update_7200(&$sandbox) {
   // Move the node type, taxonomy terms and user roles colors
@@ -85,7 +87,7 @@ function fullcalendar_colors_update_7200(&$sandbox) {
 
   variable_set('fullcalendar_colors_user_roles_enabled', variable_get('fullcalendar_color_user_roles_enabled', FALSE));
   variable_del('fullcalendar_color_user_roles_enabled');
- 
+
   // Add the default configuration
   $color_options = array(
     'background' => '#3366cc',
@@ -93,5 +95,5 @@ function fullcalendar_colors_update_7200(&$sandbox) {
     'text' => '#ffffff',
   );
 
-  colors_set_color_configuration('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
+  colors_set_colors('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
 }
