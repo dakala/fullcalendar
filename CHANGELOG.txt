@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1215534 by aspilicious, tim.plunkett: Refactor fullcalendar_colors to use the Colors API.
 #1206518 by tim.plunkett: Call a specific calendar view through the URL.
 #1198254 by tim.plunkett: Remove usage of ctools_dependent_pre_render() and ctools_dependent_process().
 #1157558 by tim.plunkett: Fixed drag/drop for all three date formats.
@@ -101,6 +102,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1206518 by tim.plunkett: Call a specific calendar view through the URL.
 #1076576 by tim.plunkett: Prevent repeating dates from being edited on the calendar.
 #1150336 by arrrgh: Declare Views 6.x-3.x dependency in README.txt.
 #1076576 by tim.plunkett: Added support for repeating dates.
