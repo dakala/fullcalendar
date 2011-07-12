@@ -53,6 +53,13 @@ function fullcalendar_colors_menu() {
     ) + $base;
   }
 
+  $items['admin/config/calendar/fullcalendar/colors/settings'] = array(
+    'title' => 'Settings',
+    'page arguments' => array('fullcalendar_colors_admin_settings'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 20,
+  ) + $base;
+
   return $items;
 }
 
@@ -67,11 +74,35 @@ function fullcalendar_colors_help($path, $arg) {
   }
 }
 
+function fullcalendar_colors_include_api() {
+  ctools_include('plugins');
+  return ctools_plugin_api_include('fullcalendar_colors', 'fullcalendar_colors', fullcalendar_colors_api_version(), fullcalendar_colors_api_minimum_version());
+}
+
+function fullcalendar_colors_ctools_plugin_api_hook_name() {
+  return 'fullcalendar_colors_api';
+}
+
+function fullcalendar_colors_fullcalendar_colors_api() {
+  return array(
+    'api' => fullcalendar_colors_api_version(),
+    'path' => drupal_get_path('module', 'fullcalendar_colors') . '/modules',
+  );
+}
+
+function fullcalendar_colors_api_version() {
+  return '1';
+}
+
+function fullcalendar_colors_api_minimum_version() {
+  return '1';
+}
+
 /**
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_colors_fullcalendar_classes($entity) {
-  require_once './' . drupal_get_path('module', 'fullcalendar_colors') . '/includes/fullcalendar_colors.inc';
+  fullcalendar_colors_include_api();
   $classes = array();
 
   $hook = 'fullcalendar_colors_class_names';
@@ -119,7 +150,13 @@ function fullcalendar_colors_colors_build_selector($class) {
 function fullcalendar_colors_process_selectors($selectors = array(), $reset = FALSE) {
   $fullcalendar_selectors = &drupal_static(__FUNCTION__, array());
   if ($reset) {
-    $unique_selectors = array();
+    // Set the default selector first
+    $unique_selectors = array('fullcalendar_colors_default');
+
+    // Rearrange the selector processing order.
+    fullcalendar_colors_rearrange_selectors($fullcalendar_selectors);
+
+    // Add the other selectors
     foreach ($fullcalendar_selectors as $class) {
       foreach ($class as $class_name => $selector) {
         if (is_array($selector)) {
@@ -135,6 +172,61 @@ function fullcalendar_colors_process_selectors($selectors = array(), $reset = FA
   }
   else {
     $fullcalendar_selectors = array_merge_recursive($selectors, $fullcalendar_selectors);
+  }
+}
+
+/**
+ * Rearranges the selectors according to the weights.
+ *
+ * @param $selectors
+ *   The selectors that needs to be rearranged.
+ */
+function fullcalendar_colors_rearrange_selectors(&$selectors) {
+  $modules = array();
+  if (variable_get('fullcalendar_colors_process_order_enabled', FALSE)) {
+    $hook = 'fullcalendar_colors_class_names';
+    foreach (module_implements($hook) as $module) {
+      $modules[$module] = variable_get('fullcalendar_colors_weight_' . $module, 0);
+    }
+
+    // Filter modules that didn't provide any CSS.
+    $modules = array_intersect_key($modules, $selectors);
+
+    // Sort the modules by weight.
+    asort($modules);
+  }
+
+  // Reorder the CSS processing.
+  $selectors = array_merge($modules, $selectors);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function fullcalendar_colors_theme() {
+  return array(
+    'fullcalendar_colors_admin_settings' => array(
+      'render element' => 'form',
+      'file' => 'includes/fullcalendar_colors.admin.inc',
+    ),
+  );
+}
+
+if (!function_exists('user_fullcalendar_colors_api')) {
+  function user_fullcalendar_colors_api() {
+    return fullcalendar_colors_fullcalendar_colors_api();
+  }
+}
+
+if (!function_exists('node_fullcalendar_colors_api')) {
+  function node_fullcalendar_colors_api() {
+    return fullcalendar_colors_fullcalendar_colors_api();
+  }
+}
+
+if (!function_exists('taxonomy_fullcalendar_colors_api')) {
+  function taxonomy_fullcalendar_colors_api() {
+    return fullcalendar_colors_fullcalendar_colors_api();
   }
 }
 

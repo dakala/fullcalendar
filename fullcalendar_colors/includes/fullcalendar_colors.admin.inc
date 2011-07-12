@@ -64,7 +64,7 @@ function fullcalendar_colors_admin_node_type_settings_submit($form, &$form_state
 
   variable_set('fullcalendar_colors_node_types_enabled', $values['fullcalendar_colors_node_types_enabled']);
 
-  // Save the node colors
+  // Save the node colors.
   foreach (node_type_get_names() as $type => $name) {
     $class = 'fullcalendar_colors_node_type_' . $type;
     fullcalendar_colors_set_color($class, $values[$class]);
@@ -236,13 +236,137 @@ function fullcalendar_colors_admin_user_role_settings_submit($form, &$form_state
   $values = $form_state['values'];
   variable_set('fullcalendar_colors_user_roles_enabled', $values['fullcalendar_colors_user_roles_enabled']);
 
-  // Save the user roles colors
+  // Save the user roles colors.
   foreach (user_roles() as $role_id => $role) {
     $class = 'fullcalendar_colors_user_role_' . $role_id;
     fullcalendar_colors_set_color($class, $values[$class]);
   }
 
   drupal_set_message(t('The configuration options have been saved.'));
+}
+
+/**
+ * Configuration form for color settings.
+ */
+function fullcalendar_colors_admin_settings() {
+  $form = _fullcalendar_colors_load_colorpicker();
+  $default_colors = colors_get_colors('fullcalendar_colors_default');
+
+  $form['default_color'] = array(
+    '#type' => 'item',
+    '#title' => t('Default Color'),
+    '#tree' => TRUE,
+  );
+  $form['default_color']['input'] = array(
+    '#title' => t('default color'),
+    '#type' => 'textfield',
+    '#attributes' => array('class' => array('colorpicker-input')),
+    '#default_value' => $default_colors['background'],
+    '#size' => 7,
+    '#maxlength' => 7,
+    '#title_display' => 'invisible',
+  );
+
+  $form['process_order'] = array(
+    '#tree' => TRUE,
+  );
+  $form['process_order']['info'] = array(
+    '#type' => 'item',
+    '#title' => t('Process order'),
+  );
+  $form['process_order']['enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Change the CSS processing order.'),
+    '#default_value' => variable_get('fullcalendar_colors_process_order_enabled', FALSE),
+    '#description' => t('Save settings after enabling/disabling this feature. CSS from modules on the bottom of the list will overwrite the CSS of the modules above it.'),
+  );
+
+  fullcalendar_colors_include_api();
+  $modules = array();
+  $hook = 'fullcalendar_colors_class_names';
+  foreach (module_implements($hook) as $i => $module) {
+    $modules[$module] = variable_get('fullcalendar_colors_weight_' . $module, $i);
+  }
+  asort($modules);
+
+  $form['modules'] = array(
+    '#tree' => TRUE,
+  );
+  foreach ($modules as $module => $weight) {
+    // Get the module name.
+    $path = drupal_get_path('module', $module) . '/' . $module . '.info';
+    $info = drupal_parse_info_file($path);
+
+    $form['modules'][$module]['#name'] = $info['name'];
+    $form['modules'][$module]['#weight'] = $weight;
+    $form['modules'][$module]['weight'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Weight for @title', array('@title' => $module)),
+      '#title_display' => 'invisible',
+      '#size' => 4,
+      '#default_value' => $weight,
+      '#attributes' => array('class' => array('role-weight')),
+    );
+  }
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save settings'),
+    '#submit' => array('fullcalendar_colors_admin_settings_submit')
+  );
+
+  return $form;
+}
+
+/**
+ * Form submit handler for the fullcalendar_colors_admin_settings() form.
+ */
+function fullcalendar_colors_admin_settings_submit($form, &$form_state) {
+  fullcalendar_colors_set_color('fullcalendar_colors_default', $form_state['values']['default_color']['input']);
+  variable_set('fullcalendar_colors_process_order_enabled', $form_state['values']['process_order']['enabled']);
+
+  foreach ($form_state['values']['modules'] as $module => $weight) {
+    if ($form['modules'][$module]['#weight'] != $weight['weight']) {
+      variable_set('fullcalendar_colors_weight_' . $module, $weight['weight']);
+    }
+  }
+}
+
+/**
+ * Returns HTML for the settings form.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - form: A render element representing the form.
+ */
+function theme_fullcalendar_colors_admin_settings($variables) {
+  $form = $variables['form'];
+  $header = array(t('Module'), t('weight'));
+
+  $rows = array();
+  foreach (element_children($form['modules']) as $module) {
+    $row = array();
+    $row[] = $form['modules'][$module]['#name'];
+    $row[] = drupal_render($form['modules'][$module]['weight']);
+
+    $rows[] = array('data' => $row, 'class' => array('draggable'));
+  }
+
+  // Render the elements before the table
+  $output = drupal_render($form['color_picker']);
+  $output .= drupal_render($form['default_color']);
+  $output .= drupal_render($form['process_order']);
+
+  // If needed, render the table
+  if (variable_get('fullcalendar_colors_process_order_enabled', FALSE)) {
+    $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'fullcalender-colors-settings')));
+    drupal_add_tabledrag('fullcalender-colors-settings', 'order', 'sibling', 'role-weight');
+  }
+
+  // Render the rest of the form
+  $output .= drupal_render_children($form);
+
+  return $output;
 }
 
 /**
@@ -256,7 +380,7 @@ function _fullcalendar_colors_load_colorpicker() {
   // CSS and JS for Farbtastic color picker.
   drupal_add_library('system', 'farbtastic');
 
-  // Colorpicker
+  // Colorpicker.
   return array(
     'color_picker' => array(
       '#prefix' => '<div id="colorpicker">',
