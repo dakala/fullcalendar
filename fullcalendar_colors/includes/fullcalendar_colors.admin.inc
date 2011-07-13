@@ -277,7 +277,7 @@ function fullcalendar_colors_admin_settings() {
       '#type' => 'checkbox',
       '#title' => t('Change the CSS processing order.'),
       '#default_value' => variable_get('fullcalendar_colors_process_order_enabled', FALSE),
-      '#description' => t('Save settings after enabling/disabling this feature. CSS from modules on the bottom of the list will overwrite the CSS of the modules above it.'),
+      '#description' => t('Color order is cascading, CSS from modules at the bottom will override the top.'),
     ),
   );
 
