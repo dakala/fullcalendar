@@ -256,35 +256,34 @@ function fullcalendar_colors_admin_settings() {
     '#type' => 'item',
     '#title' => t('Default Color'),
     '#tree' => TRUE,
-  );
-  $form['default_color']['input'] = array(
-    '#title' => t('default color'),
-    '#type' => 'textfield',
-    '#attributes' => array('class' => array('colorpicker-input')),
-    '#default_value' => $default_colors['background'],
-    '#size' => 7,
-    '#maxlength' => 7,
-    '#title_display' => 'invisible',
+    'input' => array(
+      '#title' => t('default color'),
+      '#type' => 'textfield',
+      '#attributes' => array('class' => array('colorpicker-input')),
+      '#default_value' => $default_colors['background'],
+      '#size' => 7,
+      '#maxlength' => 7,
+      '#title_display' => 'invisible',
+    ),
   );
 
   $form['process_order'] = array(
     '#tree' => TRUE,
-  );
-  $form['process_order']['info'] = array(
-    '#type' => 'item',
-    '#title' => t('Process order'),
-  );
-  $form['process_order']['enabled'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Change the CSS processing order.'),
-    '#default_value' => variable_get('fullcalendar_colors_process_order_enabled', FALSE),
-    '#description' => t('Save settings after enabling/disabling this feature. CSS from modules on the bottom of the list will overwrite the CSS of the modules above it.'),
+    'info' => array(
+      '#type' => 'item',
+      '#title' => t('Process order'),
+    ),
+    'enabled' => array(
+      '#type' => 'checkbox',
+      '#title' => t('Change the CSS processing order.'),
+      '#default_value' => variable_get('fullcalendar_colors_process_order_enabled', FALSE),
+      '#description' => t('Save settings after enabling/disabling this feature. CSS from modules on the bottom of the list will overwrite the CSS of the modules above it.'),
+    ),
   );
 
   fullcalendar_colors_include_api();
   $modules = array();
-  $hook = 'fullcalendar_colors_class_names';
-  foreach (module_implements($hook) as $i => $module) {
+  foreach (module_implements('fullcalendar_colors_class_names') as $i => $module) {
     $modules[$module] = variable_get('fullcalendar_colors_weight_' . $module, $i);
   }
   asort($modules);
@@ -292,6 +291,7 @@ function fullcalendar_colors_admin_settings() {
   $form['modules'] = array(
     '#tree' => TRUE,
   );
+  $rows = array();
   foreach ($modules as $module => $weight) {
     // Get the module name.
     $path = drupal_get_path('module', $module) . '/' . $module . '.info';
@@ -305,14 +305,25 @@ function fullcalendar_colors_admin_settings() {
       '#title_display' => 'invisible',
       '#size' => 4,
       '#default_value' => $weight,
-      '#attributes' => array('class' => array('role-weight')),
+      '#attributes' => array('class' => array('fullcalendar-color-weight')),
     );
   }
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save settings'),
-    '#submit' => array('fullcalendar_colors_admin_settings_submit')
+  $form['order_settings'] = array(
+    '#type' => 'container',
+    '#states' => array(
+      'visible' => array(
+        'input[name="process_order[enabled]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Save settings'),
+      '#submit' => array('fullcalendar_colors_admin_settings_submit')
+    ),
   );
 
   return $form;
@@ -341,7 +352,6 @@ function fullcalendar_colors_admin_settings_submit($form, &$form_state) {
  */
 function theme_fullcalendar_colors_admin_settings($variables) {
   $form = $variables['form'];
-  $header = array(t('Module'), t('weight'));
 
   $rows = array();
   foreach (element_children($form['modules']) as $module) {
@@ -352,21 +362,18 @@ function theme_fullcalendar_colors_admin_settings($variables) {
     $rows[] = array('data' => $row, 'class' => array('draggable'));
   }
 
-  // Render the elements before the table
-  $output = drupal_render($form['color_picker']);
-  $output .= drupal_render($form['default_color']);
-  $output .= drupal_render($form['process_order']);
+  $form['order_settings']['table'] = array(
+    '#theme' => 'table',
+    '#header' => array(
+      t('Module'),
+      t('Weight'),
+    ),
+    '#rows' => $rows,
+    '#attributes' => array('id' => 'fullcalender-colors-settings'),
+  );
+  drupal_add_tabledrag('fullcalender-colors-settings', 'order', 'sibling', 'fullcalendar-color-weight');
 
-  // If needed, render the table
-  if (variable_get('fullcalendar_colors_process_order_enabled', FALSE)) {
-    $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'fullcalender-colors-settings')));
-    drupal_add_tabledrag('fullcalender-colors-settings', 'order', 'sibling', 'role-weight');
-  }
-
-  // Render the rest of the form
-  $output .= drupal_render_children($form);
-
-  return $output;
+  return drupal_render_children($form);
 }
 
 /**

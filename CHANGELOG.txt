@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1195264 by aspilicious, tim.plunkett: Provide color settings page.
 #1215534 by aspilicious, tim.plunkett: Refactor fullcalendar_colors to use the Colors API.
 #1206518 by tim.plunkett: Call a specific calendar view through the URL.
 #1198254 by tim.plunkett: Remove usage of ctools_dependent_pre_render() and ctools_dependent_process().
