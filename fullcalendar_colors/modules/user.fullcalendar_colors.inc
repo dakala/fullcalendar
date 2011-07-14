@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Implements FullCalendar Colors hooks for user.module.
+ */
+
+/**
  * Implements hook_fullcalendar_colors_class_names().
  *
  * Provide colors per user role.

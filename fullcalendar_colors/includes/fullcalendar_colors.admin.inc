@@ -9,7 +9,9 @@
  * Configuration form for coloring node types.
  */
 function fullcalendar_colors_admin_node_type_settings() {
-  $form = _fullcalendar_colors_load_colorpicker();
+  // CSS for our custom form.
+  ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
+  $form = colors_load_colorpicker();
 
   $form['node_type_colors'] = array(
     '#type' => 'item',
@@ -77,7 +79,9 @@ function fullcalendar_colors_admin_node_type_settings_submit($form, &$form_state
  * Configuration form for coloring taxonomy.
  */
 function fullcalendar_colors_admin_taxonomy_settings() {
-  $form = _fullcalendar_colors_load_colorpicker();
+  // CSS for our custom form.
+  ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
+  $form = colors_load_colorpicker();
 
   $form['taxonomy_colors'] = array(
     '#type' => 'item',
@@ -151,7 +155,9 @@ function fullcalendar_colors_admin_taxonomy_settings_submit($form, &$form_state)
  * Configuration form for coloring organic groups (og).
  */
 function fullcalendar_colors_admin_og_settings() {
-  $form = _fullcalendar_colors_load_colorpicker();
+  // CSS for our custom form.
+  ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
+  $form = colors_load_colorpicker();
 
   if (module_exists('og')) {
     $form['og_colors'] = array(
@@ -182,7 +188,9 @@ function fullcalendar_colors_admin_og_settings() {
  * Configuration form for coloring user roles.
  */
 function fullcalendar_colors_admin_user_role_settings() {
-  $form = _fullcalendar_colors_load_colorpicker();
+  // CSS for our custom form.
+  ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
+  $form = colors_load_colorpicker();
 
   $form['user_role_colors'] = array(
     '#type' => 'item',
@@ -249,7 +257,7 @@ function fullcalendar_colors_admin_user_role_settings_submit($form, &$form_state
  * Configuration form for color settings.
  */
 function fullcalendar_colors_admin_settings() {
-  $form = _fullcalendar_colors_load_colorpicker();
+  $form = colors_load_colorpicker();
   $default_colors = colors_get_colors('fullcalendar_colors_default');
 
   $form['default_color'] = array(
@@ -374,24 +382,4 @@ function theme_fullcalendar_colors_admin_settings($variables) {
   drupal_add_tabledrag('fullcalender-colors-settings', 'order', 'sibling', 'fullcalendar-color-weight');
 
   return drupal_render_children($form);
-}
-
-/**
- * Loads a farbtastic colorpicker on top of the page.
- */
-function _fullcalendar_colors_load_colorpicker() {
-  // CSS for our custom form.
-  ctools_add_css('fullcalendar_colors.admin', 'fullcalendar_colors');
-  // JS for our Farbtastic integration.
-  ctools_add_js('fullcalendar_colors.admin', 'fullcalendar_colors');
-  // CSS and JS for Farbtastic color picker.
-  drupal_add_library('system', 'farbtastic');
-
-  // Colorpicker.
-  return array(
-    'color_picker' => array(
-      '#prefix' => '<div id="colorpicker">',
-      '#suffix' => '</div>',
-    ),
-  );
 }

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Implements FullCalendar Colors hooks for taxonomy.module.
+ */
+
+/**
  * Implements hook_fullcalendar_colors_class_names().
  *
  * Provide colors per taxonomy term.
