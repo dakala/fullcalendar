@@ -86,6 +86,7 @@ Drupal.behaviors.fullCalendar = {
           '': (settings.clock) ? 'HH:mm' : settings.agenda
         },
         axisFormat: (settings.clock) ? 'HH:mm' : 'h(:mm)tt',
+        contentHeight: settings.contentHeight,
         weekMode: settings.weekMode,
         firstDay: settings.firstDay,
         monthNames: settings.monthNames,

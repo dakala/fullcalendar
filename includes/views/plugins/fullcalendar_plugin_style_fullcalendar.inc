@@ -12,6 +12,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         'fc_view' => array('default' => 'month'),
         'fc_firstday' => array('default' => '0'),
         'fc_weekmode' => array('default' => 'fixed'),
+        'fc_content_height' => array('default' => ''),
       ),
     );
     $options['modules'] = array(
@@ -66,7 +67,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       ),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/views/Available_Views', array('attributes' => array('target' => '_blank'))),
       '#default_value' => $this->options['display']['fc_view'],
-      '#prefix' => '<div class="views-left-30">',
+      '#prefix' => '<div class="views-left-25">',
       '#suffix' => '</div>',
       '#fieldset' => 'display',
     );
@@ -78,7 +79,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '1' => t('Monday'),
       ),
       '#default_value' => $this->options['display']['fc_firstday'],
-      '#prefix' => '<div class="views-left-30">',
+      '#prefix' => '<div class="views-left-25">',
       '#suffix' => '</div>',
       '#fieldset' => 'display',
     );
@@ -92,7 +93,17 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       ),
       '#default_value' => $this->options['display']['fc_weekmode'],
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank'))),
-      '#prefix' => '<div class="views-left-30">',
+      '#prefix' => '<div class="views-left-25">',
+      '#suffix' => '</div>',
+      '#fieldset' => 'display',
+    );
+    $form['display']['fc_content_height'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Calendar height'),
+      '#size' => 4,
+      '#default_value' => $this->options['display']['fc_content_height'],
+      '#field_suffix' => 'px',
+      '#prefix' => '<div class="views-left-25">',
       '#suffix' => '</div>',
       '#fieldset' => 'display',
     );
