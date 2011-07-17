@@ -37,6 +37,7 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
     $form['gcal'] = array(
       '#type' => 'textfield',
       '#title' => t('Feed URL'),
+      '#maxlength' => 1024,
       '#default_value' => $this->options['gcal'],
     );
     $form['class'] = array(
