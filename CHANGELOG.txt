@@ -1,5 +1,6 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1238466 by tim.plunkett: Class attribute must be an array.
 #1220914 by tim.plunkett: Extend Google Calendar feed field to 1024 characters.
 #1217830 by tim.plunkett: Add a setting for calendar height.
 #1218108 by aspilicious: Move colorpicker out of FullCalendar and into to Colors.

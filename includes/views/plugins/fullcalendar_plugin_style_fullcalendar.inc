@@ -52,7 +52,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'fieldset',
       '#title' => t('Display settings'),
       '#attributes' => array(
-        'class' => 'clear-block',
+        'class' => array('clear-block'),
       ),
     );
     $form['display']['fc_view'] = array(
@@ -112,7 +112,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#title' => t('Header settings'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank'))),
       '#attributes' => array(
-        'class' => 'clear-block',
+        'class' => array('clear-block'),
       ),
     );
     $form['header']['fc_left'] = array(
@@ -146,7 +146,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'fieldset',
       '#title' => t('Time/date settings'),
       '#attributes' => array(
-        'class' => 'clear-block',
+        'class' => array('clear-block'),
       ),
     );
     $form['times']['fc_timeformat'] = array(
@@ -181,7 +181,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'fieldset',
       '#title' => t('Visual settings'),
       '#attributes' => array(
-        'class' => 'clear-block',
+        'class' => array('clear-block'),
       ),
     );
     $form['modules']['fc_theme'] = array(
