@@ -1,3 +1,7 @@
+/* Force contents to wrap */
+.fc-event {
+  word-wrap: break-word;
+}
 
 /* Undo Drupal default theme link colors */
 .fc-content a:link,
