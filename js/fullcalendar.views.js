@@ -29,7 +29,7 @@ Drupal.behaviors.fullCalendar = {
               url: $(this).attr('href'),
               allDay: ($(this).attr('allDay') === '1'),
               className: $(this).attr('cn'),
-              editable: $(this).attr('editable'),
+              editable: $(this).attr('editable') === '1',
               dom_id: index
             });
           });
