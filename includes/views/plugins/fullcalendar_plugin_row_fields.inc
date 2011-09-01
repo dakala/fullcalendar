@@ -37,7 +37,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#title' => t('Customize fields'),
       '#description' => t('Add fields to the view in order to customize fields below.'),
       '#attributes' => array(
-        'class' => 'clear-block',
+        'class' => array('clear-block'),
       ),
     );
     $form['custom']['fc_title'] = array(
