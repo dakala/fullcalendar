@@ -37,9 +37,9 @@ Drupal.behaviors.fullCalendar = {
         }
       ];
 
-       // Add events from Google Calendar feeds.
-       $.each(settings.gcal, function(i, gcalEntry) {
-         eventSourcesArray.push($.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1]));
+      // Add events from Google Calendar feeds.
+      $.each(settings.gcal, function(i, gcalEntry) {
+        eventSourcesArray.push($.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1]));
       });
 
       // Use .once() to protect against extra AJAX calls from Colorbox.

@@ -34,16 +34,17 @@ function fullcalendar_views_api() {
  * Implements hook_library().
  */
 function fullcalendar_library() {
+  $path = variable_get('fullcalendar_path', FULLCALENDAR_PATH);
   $libraries['fullcalendar'] = array(
     'title' => 'FullCalendar',
     'website' => 'http://arshaw.com/fullcalendar',
     'version' => FULLCALENDAR_MIN_PLUGIN_VERSION,
     'js' => array(
       fullcalendar_get_js_path() => array(),
-      variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/gcal.js' => array(),
+      $path . '/gcal.js' => array(),
     ),
     'css' => array(
-      variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css' => array(
+      $path . '/fullcalendar.css' => array(
         'type' => 'file',
         'media' => 'screen',
       ),
