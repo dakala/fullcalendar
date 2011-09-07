@@ -116,6 +116,13 @@ function fullcalendar_menu() {
     'access arguments' => array(4),
     'type' => MENU_CALLBACK,
   );
+  $items['fullcalendar/ajax/results'] = array(
+    'title' => 'Events',
+    'description' => 'Get events from views with arguments',
+    'page callback' => 'fullcalendar_results',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
 
   return $items;
 }
@@ -184,6 +191,12 @@ function fullcalendar_fullcalendar_classes($entity) {
 }
 
 function fullcalendar_get_settings($view) {
+
+  // Bail out if we're getting results from ajax callback.
+  if (isset($view->fullcalendar_ajax)) {
+    return;
+  }
+
   global $language;
 
   $options = $view->style_plugin->options;
@@ -228,6 +241,8 @@ function fullcalendar_get_settings($view) {
       'todayString' => t('Today'),
       'isRTL' => $language->direction,
       'gcal' => $options['gcal'],
+      'view_name' => $view->name,
+      'view_display' => $view->current_display,
     ),
   );
 
@@ -251,6 +266,16 @@ function fullcalendar_get_settings($view) {
     $settings[$dom_id]['defaultView'] = $mode;
   }
 
+  // Check if there is an argument which is an instance the default
+  // date argument class and create month , year variables as well as next
+  // and previous urls from all arguments.
+  if (!empty($view->argument)) {
+    $extra = fullcalendar_check_arguments($view);
+    if (!empty($extra)) {
+      $settings[$dom_id] += $extra;
+    }
+  }
+
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   ctools_add_css('fullcalendar.theme', 'fullcalendar');
@@ -259,6 +284,105 @@ function fullcalendar_get_settings($view) {
   if (module_exists('fullcalendar_colors')) {
     fullcalendar_colors_process_selectors(array(), TRUE);
   }
+}
+
+/**
+ * Check arguments on a view. If a date handler is found, add more
+ * info to the $settings array so we know in jQuery we can fetch
+ * new data from the view.
+ *
+ * @param $view
+ *   The current view we're processing.
+ *
+ * @return $settings
+ *   A collection of extra settings.
+ */
+function fullcalendar_check_arguments($view) {
+  $date_handler = NULL;
+  $args = '';
+  $settings = array('ajax' => FALSE);
+
+  $position = 0;
+  foreach ($view->argument as $argument_key => $handler) {
+    if (date_views_handler_is_date($handler, 'argument')) {
+      $date_handler = $handler;
+      $args[] = 'full_calendar_browse';
+    }
+    else {
+      $args[] = $view->args[$position];
+    }
+    $position++;
+  }
+
+  if ($date_handler) {
+    $timestamp = strtotime($date_handler->argument);
+    $separator = (strpos($date_handler->argument, '-') !== FALSE) ? '-' : '';
+
+    // Add separator and ajax for date argument.
+    $settings['args'] = implode('|', $args);
+    $settings['separator'] = $separator;
+    $settings['ajax'] = TRUE;
+
+    // Settings for FullCalendar.
+    $month = date('n', $timestamp);
+    $year = date('Y', $timestamp);
+    $settings['month'] = $month - 1;
+    $settings['year'] = $year;
+  }
+
+  return $settings;
+}
+
+/**
+ * Returns events for FullCalendar.
+ */
+function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = NULL) {
+  $content = $status = NULL;
+
+  // Bail out if no view_name or view_display is passed.
+  if (empty($view_name) && empty($view_display)) {
+    return;
+  }
+
+  // Get the view and check access.
+  $view = views_get_view($view_name);
+  if ($view && $view->access($view_display)) {
+
+    $view->set_display($view_display);
+
+    // Add arguments.
+    if (!empty($args)) {
+      $args = explode('|', $args);
+      $view->set_arguments($args);
+    }
+
+    // Execute the display and render results
+    // if available into $content variable.
+    $view->execute($view_display);
+    if (!empty($view->result)) {
+      $status = TRUE;
+      $view->fullcalendar_ajax = TRUE;
+      $sets = $view->style_plugin->render_grouping($view->result, NULL);
+      foreach ($sets as $title => $records) {
+        foreach ($records as $index => $row) {
+          $view->row_index = $index;
+          // FIXME do we really need to output this div here ?
+          $content .= '<div class="fullcalendar-event">' . $view->style_plugin->row_plugin->render($row) . '</div>';
+        }
+      }
+    }
+  }
+
+  drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
+  print drupal_json_encode(array(
+    'status' => $status,
+    'content' => $content,
+  ));
+
+  // Let's call drupal_page_footer(), so even page cache can work.
+  drupal_page_footer();
+
+  exit();
 }
 
 /**

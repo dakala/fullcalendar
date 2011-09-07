@@ -5,6 +5,7 @@ package = "Views"
 configure = admin/config/calendar/fullcalendar
 dependencies[] = views
 dependencies[] = date
+dependencies[] = date_views
 
 files[] = includes/views/handlers/fullcalendar_handler_area_empty.inc
 files[] = includes/views/handlers/fullcalendar_handler_field_date.inc

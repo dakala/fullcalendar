@@ -109,3 +109,39 @@ function fullcalendar_views_data_alter(&$data) {
     }
   }
 }
+
+/**
+ * Implements hook_views_pre_view().
+ *
+ * Add an argument that provides the current date for each date field present.
+ */
+function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
+  if ($view->display_handler->get_option('style_plugin') != 'fullcalendar' || !$view->display_handler->get_option('use_ajax')) {
+    return;
+  }
+
+  foreach ($view->display_handler->get_handlers('field') as $field_name => $field) {
+    // If the field is a date field, its handler will have this method.
+    if (!method_exists($field, 'fullcalendar_render')) {
+      continue;
+    }
+
+    // Set the argument to provide a default value.
+    $options = array('default_action' => 'default');
+
+    // Check to see if this is a Field API field, or a timestamp.
+    $info = field_info_field($field_name);
+    if (!empty($info)) {
+      $table = 'field_data_' . $field_name;
+      $field_col = $field_name . '_value';
+    }
+    else {
+      $table = $field->table;
+      $field_col = $field_name . '_year_month';
+      $options['default_argument_type'] = 'date';
+    }
+
+    // Add an argument for the date field.
+    $view->add_item($display_id, 'argument', $table, $field_col, $options);
+  }
+}
