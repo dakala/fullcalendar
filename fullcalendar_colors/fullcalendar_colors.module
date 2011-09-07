@@ -230,6 +230,12 @@ if (!function_exists('taxonomy_fullcalendar_colors_api')) {
   }
 }
 
+if (!function_exists('og_fullcalendar_colors_api')) {
+  function og_fullcalendar_colors_api() {
+    return fullcalendar_colors_fullcalendar_colors_api();
+  }
+}
+
 /**
  * Inserts or updates a FullCalendar color configuration.
  *

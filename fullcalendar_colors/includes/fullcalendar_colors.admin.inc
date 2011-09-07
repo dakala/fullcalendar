@@ -161,7 +161,7 @@ function fullcalendar_colors_admin_og_settings() {
 
   if (module_exists('og')) {
     $form['og_colors'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'item',
       '#title' => t('Group Colors'),
       '#description' => t('Colors for organic groups. If enabled, you may set colors for each group below.'),
     );
@@ -176,12 +176,50 @@ function fullcalendar_colors_admin_og_settings() {
       '#title' => t('Enable colors for groups'),
       '#default_value' => variable_get('fullcalendar_colors_groups_enabled', FALSE),
     );
-    /**
-     * @todo - Get a listing of all the groups, display it like node types above.
-     */
+    foreach (og_get_all_group() as $gid) {
+      $class = 'fullcalendar_color_group_' . $gid;
+      $colors = colors_get_colors($class, 'fullcalendar_colors');
+
+      $form['fieldset'][$class] = array(
+        '#title' => og_label($gid),
+        '#type' => 'textfield',
+        '#attributes' => array('class' => array('colorpicker-input')),
+        '#default_value' => $colors['background'],
+        '#size' => 7,
+        '#maxlength' => 7,
+        '#states' => array(
+          'visible' => array(
+            ':input[name="fullcalendar_color_groups_enabled"]' => array('checked' => TRUE),
+          ),
+        ),
+      );
+    }
   }
 
-  return system_settings_form($form);
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
+  $form['#submit'][] = 'fullcalendar_colors_admin_og_settings_submit';
+
+  return $form;
+}
+
+/**
+ * Submit handler for fullcalendar_colors_admin_og_settings.
+ */
+function fullcalendar_colors_admin_og_settings_submit($form, &$form_state) {
+  $values = $form_state['values'];
+  variable_set('fullcalendar_colors_groups_enabled', $values['fullcalendar_colors_groups_enabled']);
+
+  // Save the node colors.
+  foreach (og_get_all_group() as $gid) {
+    $class = 'fullcalendar_color_group_' . $gid;
+    fullcalendar_colors_set_color($class, $values[$class]);
+  }
+
+  drupal_set_message(t('The configuration options have been saved.'));
 }
 
 /**
