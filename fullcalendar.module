@@ -337,7 +337,7 @@ function fullcalendar_check_arguments($view) {
  * Returns events for FullCalendar.
  */
 function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = NULL) {
-  $content = $status = NULL;
+  $content = NULL;
 
   // Bail out if no view_name or view_display is passed.
   if (empty($view_name) && empty($view_display)) {
@@ -360,7 +360,6 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = N
     // if available into $content variable.
     $view->execute($view_display);
     if (!empty($view->result)) {
-      $status = TRUE;
       $view->fullcalendar_ajax = TRUE;
       $sets = $view->style_plugin->render_grouping($view->result, NULL);
       foreach ($sets as $title => $records) {
@@ -375,7 +374,7 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = N
 
   drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
   print drupal_json_encode(array(
-    'status' => $status,
+    'status' => TRUE,
     'content' => $content,
   ));
 

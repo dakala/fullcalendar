@@ -71,6 +71,14 @@ table.fc-header {
 }
 
 /* Hide plain text events when javascript is enabled */
-html.js .fullcalendar-content {
+.js .fullcalendar-content {
   display: none;
+}
+
+/* Reposition the throbber. */
+.fullcalendar .ajax-progress {
+  left: 50%;
+  position: absolute;
+  top: 1.6em;
+  z-index: 1;
 }

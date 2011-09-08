@@ -93,12 +93,19 @@ Drupal.behaviors.fullCalendar = {
               type: 'GET',
               url: fetch_url,
               dataType: 'json',
+              beforeSend: function() {
+                // Add a throbber.
+                this.progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
+                $(index + ' .fc-header-title').after(this.progress);
+              },
               success: function (data) {
                 if (data.status) {
                   // Replace content.
-                  $('.' + index + ' .fullcalendar-content').html(data.content);
+                  $(index + ' .fullcalendar-content').html(data.content);
                   Drupal.fullCalendar.ParseEvents(index, calendar, callback);
                 }
+                // Remove the throbber.
+                $(this.progress).remove();
               },
               error: function (xmlhttp) {
                 alert(Drupal.t('An HTTP error @status occurred.', {'@status': xmlhttp.status}));
