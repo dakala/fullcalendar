@@ -269,7 +269,7 @@ function fullcalendar_get_settings($view) {
   // Check if there is an argument which is an instance the default
   // date argument class and create month , year variables as well as next
   // and previous urls from all arguments.
-  if (!empty($view->argument)) {
+  if (!empty($view->argument) && $view->use_ajax) {
     $extra = fullcalendar_check_arguments($view);
     if (!empty($extra)) {
       $settings[$dom_id] += $extra;

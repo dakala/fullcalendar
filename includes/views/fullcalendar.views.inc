@@ -122,7 +122,7 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
 
   foreach ($view->display_handler->get_handlers('field') as $field_name => $field) {
     // If the field is a date field, its handler will have this method.
-    if (!method_exists($field, 'fullcalendar_render')) {
+    if (!method_exists($field, 'fullcalendar_render') || $field_name == 'gcal') {
       continue;
     }
 
