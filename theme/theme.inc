@@ -93,6 +93,10 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   foreach ($date_fields as $field) {
     $instance = field_info_instance($entity_type, $field['field_name'], $bundle);
     $field_data = field_info_field($field['field_name']);
+
+    // Add a field-specific class to the event.
+    $entity->class .= ' fc-event-field-' . $field['field_name'];
+
     // Filter fields without value.
     if (!empty($field['value'])) {
       foreach ($field['value'] as $index => $item) {
