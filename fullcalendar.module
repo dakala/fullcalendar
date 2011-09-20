@@ -363,7 +363,7 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = N
 
     // Execute the display and render results
     // if available into $content variable.
-    $view->execute($view_display);
+    $view->preview($view_display);
     if (!empty($view->result)) {
       $view->fullcalendar_ajax = TRUE;
       $sets = $view->style_plugin->render_grouping($view->result, NULL);
