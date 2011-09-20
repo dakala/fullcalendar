@@ -185,7 +185,7 @@ Drupal.fullCalendar.ParseEvents = function(index, calendar, callback) {
       url: event.attr('href'),
       allDay: (event.attr('allDay') === '1'),
       className: event.attr('cn'),
-      editable: event.attr('editable'),
+      editable: (event.attr('editable') === '1'),
       dom_id: index
     });
   });
