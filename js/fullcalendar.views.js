@@ -41,7 +41,8 @@ Drupal.behaviors.fullCalendar = {
               $.colorbox({
                 href: url,
                 width: settings.colorboxWidth,
-                height: settings.colorboxHeight
+                height: settings.colorboxHeight,
+                iframe: true
               });
             }
           }
