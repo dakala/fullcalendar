@@ -191,6 +191,11 @@ function fullcalendar_fullcalendar_classes($entity) {
 }
 
 function fullcalendar_get_settings($view) {
+  // If this style plugin isn't ours, return.
+  // @todo Debug why this would occur.
+  if (!($view->style_plugin instanceof fullcalendar_plugin_style_fullcalendar)) {
+    return;
+  }
 
   // Bail out if we're getting results from ajax callback.
   if (isset($view->fullcalendar_ajax)) {
