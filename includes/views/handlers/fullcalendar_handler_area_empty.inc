@@ -8,6 +8,6 @@
 class fullcalendar_handler_area_empty extends views_handler_area {
   function render($empty = FALSE) {
     fullcalendar_get_settings($this->view);
-    return '<div class="fullcalendar"></div>';
+    return '<div class="fullcalendar-status"></div><div class="fullcalendar"></div><div class="fullcalendar-content"></div>';
   }
 }
