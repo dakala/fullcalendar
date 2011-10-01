@@ -218,23 +218,12 @@ function fullcalendar_get_settings($view) {
     }
   }
 
+  // Remove times from $options so they can be set conditionally later.
+  $times = $options['times'];
+  unset($options['times']);
+
   $settings = array(
-    $dom_id => array(
-      'defaultView' => $options['display']['fc_view'],
-      'firstDay' => $options['display']['fc_firstday'],
-      'weekMode' => $options['display']['fc_weekmode'],
-      'contentHeight' => $options['display']['fc_content_height'],
-      'theme' => $options['modules']['fc_theme'],
-      'sameWindow' => $options['modules']['fc_window'],
-      'colorbox' => $options['modules']['fc_url_colorbox'],
-      'colorboxClass' => $options['modules']['fc_url_colorbox_class'],
-      'colorboxWidth' => $options['modules']['fc_url_colorbox_width'],
-      'colorboxHeight' => $options['modules']['fc_url_colorbox_height'],
-      'left' => $options['header']['fc_left'],
-      'center' => $options['header']['fc_center'],
-      'right' => $options['header']['fc_right'],
-      'agenda' => $options['times']['fc_timeformat'],
-      'clock' => $options['times']['fc_clock'],
+    $dom_id => $options + array(
       'monthNames' => array_values(date_month_names(TRUE)),
       'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
       'dayNames' => date_week_days(TRUE),
@@ -245,16 +234,15 @@ function fullcalendar_get_settings($view) {
       'monthString' => t('Month'),
       'todayString' => t('Today'),
       'isRTL' => $language->direction,
-      'gcal' => $options['gcal'],
       'view_name' => $view->name,
       'view_display' => $view->current_display,
     ),
   );
 
-  if ($options['times']['fc_default_date']) {
-    $settings[$dom_id]['year'] = $options['times']['fc_date']['year'];
-    $settings[$dom_id]['month'] = $options['times']['fc_date']['month'];
-    $settings[$dom_id]['day'] = $options['times']['fc_date']['day'];
+  if ($times['default_date']) {
+    $settings[$dom_id]['year'] = $times['date']['year'];
+    $settings[$dom_id]['month'] = $times['date']['month'];
+    $settings[$dom_id]['day'] = $times['date']['day'];
   }
 
   extract($view->get_exposed_input(), EXTR_SKIP);

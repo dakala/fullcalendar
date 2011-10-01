@@ -19,6 +19,16 @@ Drupal.behaviors.fullCalendar = {
       // Hide the failover display.
       $('.fullcalendar-content', calendar).hide();
 
+      // Fetch timeformat settings.
+      var timeformatSettings = settings.timeformat;
+      if (settings.advanced) {
+        timeformatSettings = {
+          month: settings.timeformatMonth,
+          week: settings.timeformatWeek,
+          day: settings.timeformatDay
+        }
+      };
+
       // Use .once() to protect against extra AJAX calls from Colorbox.
       $('.fullcalendar', calendar).once().fullCalendar({
         defaultView: settings.defaultView,
@@ -59,11 +69,18 @@ Drupal.behaviors.fullCalendar = {
         year: (settings.year) ? settings.year : undefined,
         month: (settings.month) ? settings.month : undefined,
         date: (settings.day) ? settings.day : undefined,
-        timeFormat: {
-          agenda: (settings.clock) ? 'HH:mm{ - HH:mm}' : settings.agenda,
-          '': (settings.clock) ? 'HH:mm' : settings.agenda
+        timeFormat: timeformatSettings,
+        titleFormat: {
+          month: settings.titleformatMonth,
+          week: settings.titleformatWeek,
+          day: settings.titleformatDay
         },
-        axisFormat: (settings.clock) ? 'HH:mm' : 'h(:mm)tt',
+        columnFormat: {
+          month: settings.columnformatMonth,
+          week: settings.columnformatWeek,
+          day: settings.columnformatDay
+        },
+        axisFormat: (settings.advanced !== 0) ? settings.axisformat : undefined,
         contentHeight: settings.contentHeight,
         weekMode: settings.weekMode,
         firstDay: settings.firstDay,

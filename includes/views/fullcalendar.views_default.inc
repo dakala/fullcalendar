@@ -29,7 +29,7 @@ function fullcalendar_views_default_views() {
   $handler->display->display_options['pager']['type'] = 'none';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['style_plugin'] = 'fullcalendar';
-  $handler->display->display_options['style_options']['modules']['fc_theme'] = 1;
+  $handler->display->display_options['style_options']['theme'] = 1;
   $handler->display->display_options['row_plugin'] = 'fullcalendar_node';
   /* No results behavior: FullCalendar: Empty calendar */
   $handler->display->display_options['empty']['area']['id'] = 'area';
