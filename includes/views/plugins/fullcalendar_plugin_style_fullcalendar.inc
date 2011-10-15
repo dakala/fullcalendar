@@ -170,6 +170,16 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         )),
       ),
     );
+    $options['fields'] = array(
+      'contains' => array(
+        'title_field' => array('default' => ''),
+        'url_field' => array('default' => ''),
+        'date_field' => array('default' => ''),
+        'title' => array('default' => FALSE),
+        'url' => array('default' => FALSE),
+        'date' => array('default' => FALSE),
+      ),
+    );
 
     return $options;
   }
@@ -474,5 +484,97 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     if (module_exists('colorbox')) {
       $form['sameWindow']['#dependency'] = array('edit-style-options-colorbox' => array(0));
     }
+
+    // Get the regular fields.
+    $field_options = $this->display->handler->get_field_labels();
+    // Get the date fields.
+    $date_fields = _fullcalendar_parse_fields($this->display->handler);
+
+    $form['fields'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Customize fields'),
+      '#description' => t('Add fields to the view in order to customize fields below.'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form['fields']['title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use a custom title'),
+      '#default_value' => $this->options['fields']['title'],
+      '#fieldset' => 'fields',
+    );
+    $form['fields']['title_field'] = array(
+      '#type' => 'select',
+      '#title' => t('Title Field'),
+      '#options' => $field_options,
+      '#default_value' => $this->options['fields']['title_field'],
+      '#description' => t('Choose the field with the custom title.'),
+      '#process' => array('form_process_select'),
+      '#dependency' => array('edit-style-options-fields-title' => array(1)),
+      '#fieldset' => 'fields',
+    );
+    $form['fields']['url'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use a custom redirect URL'),
+      '#default_value' => $this->options['fields']['url'],
+      '#fieldset' => 'fields',
+    );
+    $form['fields']['url_field'] = array(
+      '#type' => 'select',
+      '#title' => t('URL Field'),
+      '#options' => $field_options,
+      '#default_value' => $this->options['fields']['url_field'],
+      '#description' => t('Choose the field with the custom link.'),
+      '#process' => array('form_process_select'),
+      '#dependency' => array('edit-style-options-fields-url' => array(1)),
+      '#fieldset' => 'fields',
+    );
+    $form['fields']['date'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use a custom date field'),
+      '#default_value' => $this->options['fields']['date'],
+      '#fieldset' => 'fields',
+    );
+    $form['fields']['date_field'] = array(
+      '#type' => 'select',
+      '#title' => t('Date Fields'),
+      '#options' => $date_fields,
+      '#default_value' => $this->options['fields']['date_field'],
+      '#description' => t('Select one or more date fields.'),
+      '#multiple' => TRUE,
+      '#size' => count($date_fields),
+      '#process' => array('form_process_select'),
+      '#dependency' => array('edit-style-options-fields-date' => array(1)),
+      '#fieldset' => 'fields',
+    );
+
+    // Disable form elements when not needed.
+    if (empty($field_options)) {
+      $form['fields']['#description'] = t('All the options are hidden, you need to add fields first.');
+      $form['fields']['title']['#type'] = 'hidden';
+      $form['fields']['url']['#type'] = 'hidden';
+      $form['fields']['date']['#type'] = 'hidden';
+      $form['fields']['title_field']['#disabled'] = TRUE;
+      $form['fields']['url_field']['#disabled'] = TRUE;
+      $form['fields']['date_field']['#disabled'] = TRUE;
+    }
+    elseif (empty($date_fields)) {
+      $form['fields']['date']['#type'] = 'hidden';
+      $form['fields']['date_field']['#disabled'] = TRUE;
+    }
+  }
+
+  function validate() {
+    // Get the date fields.
+    $date_fields = _fullcalendar_parse_fields($this->display->handler);
+
+    if (empty($date_fields)) {
+      $display = $this->display;
+      if ($display->display_plugin != 'default') {
+        drupal_set_message(t('Display "@display" requires at least one date field.', array('@display' => $display->display_title)), 'error');
+      }
+    }
+
+    return parent::validate();
   }
 }

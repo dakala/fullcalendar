@@ -36,23 +36,11 @@ function fullcalendar_views_plugins() {
         'theme' => 'fullcalendar',
         'theme file' => 'theme.inc',
         'theme path' => $theme_path,
-        'uses row plugin' => TRUE,
-        'uses options' => TRUE,
-        'uses grouping' => TRUE,
-        'type' => 'normal',
-      ),
-    ),
-    'row' => array(
-      'fullcalendar_node' => array(
-        'title' => t('Fields (FullCalendar)'),
-        'help' => t('For use with FullCalendar style'),
-        'handler' => 'fullcalendar_plugin_row_fields',
-        'path' => $path,
-        'theme' => 'fullcalendar_fields',
-        'theme file' => 'theme.inc',
-        'theme path' => $theme_path,
+        'uses row plugin' => FALSE,
         'uses fields' => TRUE,
         'uses options' => TRUE,
+        'uses grouping' => TRUE,
+        'even empty' => TRUE,
         'type' => 'normal',
       ),
     ),
@@ -124,6 +112,9 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
     // If the field is a date field, its handler will have this method.
     if (!method_exists($field, 'fullcalendar_render') || $field_name == 'gcal') {
       continue;
+    }
+    if (isset($field->field)) {
+      $field_name = $field->field;
     }
 
     // Set the argument to provide a default value.

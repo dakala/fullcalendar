@@ -31,6 +31,22 @@ function fullcalendar_views_api() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function fullcalendar_theme($existing, $type, $theme, $path) {
+  return array(
+    'fullcalendar_event' => array(
+      'variables' => array(
+        'event' => NULL,
+        'entity' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path . '/theme',
+    ),
+  );
+}
+
+/**
  * Implements hook_library().
  */
 function fullcalendar_library() {
@@ -221,6 +237,7 @@ function fullcalendar_get_settings($view) {
   // Remove times from $options so they can be set conditionally later.
   $times = $options['times'];
   unset($options['times']);
+  unset($options['fields']);
 
   $settings = array(
     $dom_id => $options + array(
@@ -273,10 +290,6 @@ function fullcalendar_get_settings($view) {
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   ctools_add_css('fullcalendar.theme', 'fullcalendar');
   ctools_add_js('fullcalendar.views', 'fullcalendar');
-
-  if (module_exists('fullcalendar_colors')) {
-    fullcalendar_colors_process_selectors(array(), TRUE);
-  }
 }
 
 /**
@@ -292,7 +305,7 @@ function fullcalendar_get_settings($view) {
  */
 function fullcalendar_check_arguments($view) {
   $date_handler = NULL;
-  $args = '';
+  $args = array();
   $settings = array('ajax' => FALSE);
 
   $position = 0;
@@ -354,14 +367,7 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = N
     $view->preview($view_display);
     if (!empty($view->result)) {
       $view->fullcalendar_ajax = TRUE;
-      $sets = $view->style_plugin->render_grouping($view->result, NULL);
-      foreach ($sets as $title => $records) {
-        foreach ($records as $index => $row) {
-          $view->row_index = $index;
-          // FIXME do we really need to output this div here ?
-          $content .= '<div class="fullcalendar-event">' . $view->style_plugin->row_plugin->render($row) . '</div>';
-        }
-      }
+      $content = theme('fullcalendar', array('view' => $view, 'rows' => $view->result, 'options' => $view->style_options));
     }
   }
 
@@ -375,60 +381,6 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = N
   drupal_page_footer();
 
   exit();
-}
-
-/**
- * Translates times to the right display times.
- *
- * This is done by passing times through date modules date_formatter_process
- * function.
- *
- * @param $entity_type
- *   The type of entity that will be updated.
- * @param $entity
- *   The entity that will be updated.
- * @param $instance
- *   A field instance.
- * @param $field_name
- *   The name of the date field.
- * @param $field
- *   The field structure for the date field.
- * @param $item
- *   The field value for the date field.
- * @param $index
- *   The current index of the date field.
- *
- * @return
- *   String containing specially formatted link for the FullCalendar plugin.
- */
-function _fullcalendar_set_display_times($entity_type, $entity, $instance, $field, $item, $index) {
-  if (!isset($item['raw']['date_type'])) {
-    $date1 = new DateObject($item['raw']['value'], date_default_timezone(), DATE_FORMAT_UNIX);
-    $date2 = $date1;
-    $all_day = FALSE;
-    $editable = FALSE;
-  }
-  else {
-    $date = date_formatter_process($instance['display']['default']['type'], $entity_type, $entity, $field, $instance, LANGUAGE_NONE, $item['raw'], $instance['display']['default']);
-    $date1 = $date['value']['local']['object'];
-    $date2 = $date['value2']['local']['object'];
-    $all_day = date_field_all_day($field, $instance, $date1, $date2);
-    $editable = $entity->editable;
-  }
-  $attributes = array(
-    'field' => $field['field_name'],
-    'allDay' => $all_day,
-    'start' => $date1->format(DATE_FORMAT_DATETIME),
-    'end' => $date2->format(DATE_FORMAT_DATETIME),
-    'index' => $index,
-    'eid' => $entity->eid,
-    'entity_type' => $entity_type,
-    'cn' => $entity->class,
-    'title' => $entity->title,
-    'class' => array('fullcalendar-event-details'),
-    'editable' => $editable,
-  );
-  return l($item['rendered']['#markup'], $entity->url, array('attributes' => $attributes, 'html' => TRUE));
 }
 
 /**
