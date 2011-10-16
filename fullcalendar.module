@@ -99,15 +99,7 @@ function fullcalendar_permission() {
 function fullcalendar_menu() {
   $items = array();
 
-  $items['admin/config/calendar'] = array(
-    'title' => 'Calendar',
-    'description' => 'Settings for calendars.',
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file' => 'system.admin.inc',
-    'file path' => drupal_get_path('module', 'system'),
-  );
-  $items['admin/config/calendar/fullcalendar'] = array(
+  $items['admin/config/user-interface/fullcalendar'] = array(
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
     'file' => 'fullcalendar.admin.inc',
@@ -118,7 +110,7 @@ function fullcalendar_menu() {
     'type' => MENU_NORMAL_ITEM,
     'weight' => 0,
   );
-  $items['admin/config/calendar/fullcalendar/default'] = array(
+  $items['admin/config/user-interface/fullcalendar/default'] = array(
     'title' => 'FullCalendar',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
@@ -206,6 +198,12 @@ function fullcalendar_fullcalendar_classes($entity) {
   return $classes;
 }
 
+/**
+ * Process the view and add the relevant CSS and JS.
+ *
+ * @param $view
+ *   The view object.
+ */
 function fullcalendar_get_settings($view) {
   // If this style plugin isn't ours, return.
   // @todo Debug why this would occur.

@@ -13,7 +13,7 @@ function fullcalendar_colors_menu() {
     'access arguments' => array('administer site configuration'),
   );
 
-  $items['admin/config/calendar/fullcalendar/colors'] = array(
+  $items['admin/config/user-interface/fullcalendar/colors'] = array(
     'title' => 'Colors',
     'description' => 'Adjust FullCalendar color settings for entities.',
     'page arguments' => array('fullcalendar_colors_admin_node_type_settings'),
@@ -21,7 +21,7 @@ function fullcalendar_colors_menu() {
     'weight' => 1,
   ) + $base;
 
-  $items['admin/config/calendar/fullcalendar/colors/node'] = array(
+  $items['admin/config/user-interface/fullcalendar/colors/node'] = array(
     'title' => 'Node Type',
     'page arguments' => array('fullcalendar_colors_admin_node_type_settings'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
@@ -29,7 +29,7 @@ function fullcalendar_colors_menu() {
   ) + $base;
 
   if (module_exists('taxonomy')) {
-    $items['admin/config/calendar/fullcalendar/colors/taxonomy'] = array(
+    $items['admin/config/user-interface/fullcalendar/colors/taxonomy'] = array(
       'title' => 'Taxonomy',
       'page arguments' => array('fullcalendar_colors_admin_taxonomy_settings'),
       'type' => MENU_LOCAL_TASK,
@@ -37,7 +37,7 @@ function fullcalendar_colors_menu() {
     ) + $base;
   }
 
-  $items['admin/config/calendar/fullcalendar/colors/user'] = array(
+  $items['admin/config/user-interface/fullcalendar/colors/user'] = array(
     'title' => 'User Role',
     'page arguments' => array('fullcalendar_colors_admin_user_role_settings'),
     'type' => MENU_LOCAL_TASK,
@@ -45,7 +45,7 @@ function fullcalendar_colors_menu() {
   ) + $base;
 
   if (module_exists('og')) {
-    $items['admin/config/calendar/fullcalendar/colors/og'] = array(
+    $items['admin/config/user-interface/fullcalendar/colors/og'] = array(
       'title' => 'Organic Groups',
       'page arguments' => array('fullcalendar_colors_admin_og_settings'),
       'type' => MENU_LOCAL_TASK,
@@ -53,7 +53,7 @@ function fullcalendar_colors_menu() {
     ) + $base;
   }
 
-  $items['admin/config/calendar/fullcalendar/colors/settings'] = array(
+  $items['admin/config/user-interface/fullcalendar/colors/settings'] = array(
     'title' => 'Settings',
     'page arguments' => array('fullcalendar_colors_admin_settings'),
     'type' => MENU_LOCAL_TASK,
@@ -69,7 +69,7 @@ function fullcalendar_colors_menu() {
 function fullcalendar_colors_help($path, $arg) {
   switch ($path) {
     case 'admin/help#fullcalendar_colors':
-      return '<p>' . t('You can configure colors for your fullcalendar events based on taxonomy terms, node types, etc. on the <a href="@link">FullCalendar Colors administration page</a>.', array('@link' => '/admin/config/calendar/fullcalendar/colors')) . '</p>';
+      return '<p>' . t('You can configure colors for your fullcalendar events based on taxonomy terms, node types, etc. on the <a href="@link">FullCalendar Colors administration page</a>.', array('@link' => '/admin/config/user-interface/fullcalendar/colors')) . '</p>';
       break;
   }
 }

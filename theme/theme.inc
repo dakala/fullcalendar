@@ -6,7 +6,7 @@
  */
 
 /**
- * Passes options to the FullCalendar plugin as JavaScript settings.
+ * Builds the FullCalendar structure as a render array.
  */
 function template_preprocess_fullcalendar(&$variables) {
   fullcalendar_get_settings($variables['view']);
@@ -52,16 +52,25 @@ function template_preprocess_fullcalendar(&$variables) {
   }
 }
 
+/**
+ * Process FullCalendar Colors after the structure is built.
+ */
 function template_process_fullcalendar(&$variables) {
   if (module_exists('fullcalendar_colors')) {
     fullcalendar_colors_process_selectors(array(), TRUE);
   }
 }
 
+/**
+ * Render the FullCalendar.
+ */
 function theme_fullcalendar($variables) {
   return drupal_render($variables['element']);
 }
 
+/**
+ * Build the render array for an individual event.
+ */
 function template_preprocess_fullcalendar_event(&$variables) {
   $variables['element'] = array(
     '#type' => 'container',
@@ -89,10 +98,26 @@ function template_preprocess_fullcalendar_event(&$variables) {
   }
 }
 
+/**
+ * Render the event.
+ */
 function theme_fullcalendar_event($variables) {
   return drupal_render($variables['element']);
 }
 
+/**
+ * Build a render array representing the events.
+ *
+ * @param $view
+ *   The view object.
+ * @param $rows
+ *   An array of row objects.
+ * @param $options
+ *   An array of options from the style plugin.
+ *
+ * @return
+ *   A render array of events.
+ */
 function fullcalendar_prepare_events($view, $rows, $options) {
   $events = array();
   foreach ($rows as $delta => $row) {
