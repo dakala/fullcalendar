@@ -8,6 +8,7 @@
 
 Drupal.fullCalendar = Drupal.fullCalendar || {};
 Drupal.fullCalendar.navigate = false;
+Drupal.fullCalendar.options = {};
 
 Drupal.behaviors.fullCalendar = {
   attach: function(context) {
@@ -29,8 +30,7 @@ Drupal.behaviors.fullCalendar = {
         }
       };
 
-      // Use .once() to protect against extra AJAX calls from Colorbox.
-      $('.fullcalendar', calendar).once().fullCalendar({
+      var options = {
         defaultView: settings.defaultView,
         theme: settings.theme,
         header: {
@@ -160,7 +160,15 @@ Drupal.behaviors.fullCalendar = {
             fullcalendarUpdate);
           return false;
         }
+      };
+
+      // Allow other modules to overwrite options.
+      $.each(Drupal.fullCalendar.options, function() {
+        $.extend(options, this);
       });
+
+      // Use .once() to protect against extra AJAX calls from Colorbox.
+      $('.fullcalendar', calendar).once().fullCalendar(options);
     });
 
     var fullcalendarUpdate = function(result) {
