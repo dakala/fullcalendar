@@ -338,6 +338,20 @@ function fullcalendar_check_arguments($view) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Since we force the query to be distinct, reflect that in the UI.
+ */
+function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_state['view']->display_handler->get_option('style_plugin') != 'fullcalendar') {
+    return;
+  }
+
+  $form['options']['query']['options']['distinct']['#disabled'] = TRUE;
+  $form['options']['query']['options']['distinct']['#description'] .= '<br><strong>' . t('FullCalendar requires that the query be distinct.') . '</strong>';
+}
+
+/**
  * Returns events for FullCalendar.
  */
 function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = NULL) {

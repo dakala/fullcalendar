@@ -138,7 +138,19 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
   }
 }
 
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Force the query to be distinct. Also, if there are multiple date arguments,
+ * group them with 'OR'.
+ */
 function fullcalendar_views_query_alter(&$view, &$query) {
+  if ($view->display_handler->get_option('style_plugin') != 'fullcalendar') {
+    return;
+  }
+
+  $query->distinct = TRUE;
+
   if (empty($view->fullcalendar_args) || count($view->args) < $view->fullcalendar_args) {
     return;
   }
