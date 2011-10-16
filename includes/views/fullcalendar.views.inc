@@ -134,5 +134,24 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
 
     // Add an argument for the date field.
     $view->add_item($display_id, 'argument', $table, $field_col, $options);
+    $view->fullcalendar_args++;
   }
+}
+
+function fullcalendar_views_query_alter(&$view, &$query) {
+  if (empty($view->fullcalendar_args) || count($view->args) < $view->fullcalendar_args) {
+    return;
+  }
+
+  // Remove our arguments from the main set.
+  $arguments = array();
+  for ($i = 0; $i < $view->fullcalendar_args; $i++) {
+    $arguments[] = array_pop($query->where[0]['conditions']);
+  }
+  // Add them as a second set of conditions.
+  $query->where[] = array(
+    'conditions' => $arguments,
+    'args' => array(),
+    'type' => 'OR',
+  );
 }
