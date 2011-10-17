@@ -488,7 +488,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     // Get the regular fields.
     $field_options = $this->display->handler->get_field_labels();
     // Get the date fields.
-    $date_fields = _fullcalendar_parse_fields($this->display->handler);
+    $date_fields = $this->fullcalendar_parse_fields();
 
     $form['fields'] = array(
       '#type' => 'fieldset',
@@ -565,16 +565,25 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
   }
 
   function validate() {
-    // Get the date fields.
-    $date_fields = _fullcalendar_parse_fields($this->display->handler);
-
-    if (empty($date_fields)) {
-      $display = $this->display;
-      if ($display->display_plugin != 'default') {
-        drupal_set_message(t('Display "@display" requires at least one date field.', array('@display' => $display->display_title)), 'error');
+    if ($this->display->display_plugin != 'default') {
+      // Get the date fields.
+      $date_fields = $this->fullcalendar_parse_fields();
+      if (empty($date_fields)) {
+        drupal_set_message(t('Display "@display" requires at least one date field.', array('@display' => $this->display->display_title)), 'error');
       }
     }
 
     return parent::validate();
+  }
+
+  function fullcalendar_parse_fields() {
+    $labels = $this->display->handler->get_field_labels();
+    $field_options = array();
+    foreach ($this->display->handler->get_handlers('field') as $id => $field) {
+      if (fullcalendar_field_is_date($field, TRUE)) {
+        $field_options[$id] = $labels[$id];
+      }
+    }
+    return $field_options;
   }
 }

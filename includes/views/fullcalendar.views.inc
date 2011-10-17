@@ -77,28 +77,6 @@ function fullcalendar_views_data() {
 }
 
 /**
- * Implements hook_views_data_alter().
- *
- * Find all date fields and assign them our handler.
- */
-function fullcalendar_views_data_alter(&$data) {
-  // Field API date fields.
-  foreach (field_info_fields() as $id => $field) {
-    if (in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
-      $data['field_data_' . $id][$id]['field']['handler'] = 'fullcalendar_handler_field_field';
-    }
-  }
-  // UNIX timestamps.
-  foreach ($data as $module => &$table) {
-    foreach ($table as $id => &$field) {
-      if (isset($field['field']) && isset($field['field']['handler']) && ($field['field']['handler'] == 'views_handler_field_date')) {
-        $field['field']['handler'] = 'fullcalendar_handler_field_date';
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_views_pre_view().
  *
  * Add an argument that provides the current date for each date field present.
@@ -108,33 +86,13 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
     return;
   }
 
-  foreach ($view->display_handler->get_handlers('field') as $field_name => $field) {
+  foreach ($view->display_handler->get_handlers('field') as $field) {
     // If the field is a date field, its handler will have this method.
-    if (!method_exists($field, 'fullcalendar_render') || $field_name == 'gcal') {
-      continue;
+    if (fullcalendar_field_is_date($field)) {
+      // Add an argument for the date field.
+      $view->add_item($display_id, 'argument', 'field_data_' . $field->field, $field->field . '_value', array('default_action' => 'default'));
+      $view->fullcalendar_args++;
     }
-    if (isset($field->field)) {
-      $field_name = $field->field;
-    }
-
-    // Set the argument to provide a default value.
-    $options = array('default_action' => 'default');
-
-    // Check to see if this is a Field API field, or a timestamp.
-    $info = field_info_field($field_name);
-    if (!empty($info)) {
-      $table = 'field_data_' . $field_name;
-      $field_col = $field_name . '_value';
-    }
-    else {
-      $table = $field->table;
-      $field_col = $field_name . '_year_month';
-      $options['default_argument_type'] = 'date';
-    }
-
-    // Add an argument for the date field.
-    $view->add_item($display_id, 'argument', $table, $field_col, $options);
-    $view->fullcalendar_args++;
   }
 }
 

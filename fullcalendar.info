@@ -7,9 +7,6 @@ dependencies[] = views
 dependencies[] = date
 dependencies[] = date_views
 
-files[] = includes/views/handlers/fullcalendar_handler_area_empty.inc
-files[] = includes/views/handlers/fullcalendar_handler_field_date.inc
-files[] = includes/views/handlers/fullcalendar_handler_field_field.inc
 files[] = includes/views/handlers/fullcalendar_handler_field_gcal.inc
 files[] = includes/views/plugins/fullcalendar_plugin_display_page.inc
 files[] = includes/views/plugins/fullcalendar_plugin_row_fields.inc

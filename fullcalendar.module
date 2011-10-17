@@ -199,145 +199,6 @@ function fullcalendar_fullcalendar_classes($entity) {
 }
 
 /**
- * Process the view and add the relevant CSS and JS.
- *
- * @param $view
- *   The view object.
- */
-function fullcalendar_get_settings($view) {
-  // If this style plugin isn't ours, return.
-  // @todo Debug why this would occur.
-  if (!($view->style_plugin instanceof fullcalendar_plugin_style_fullcalendar)) {
-    return;
-  }
-
-  // Bail out if we're getting results from ajax callback.
-  if (isset($view->fullcalendar_ajax)) {
-    return;
-  }
-
-  global $language;
-
-  $options = $view->style_plugin->options;
-  static $fc_dom_id = 1;
-  if (empty($view->dom_id)) {
-    $view->dom_id = 'fc-' . $fc_dom_id++;
-  }
-  $dom_id = '.view-dom-id-' . $view->dom_id;
-
-  $options['gcal'] = array();
-  foreach ($view->field as $field) {
-    if ($field->field == 'gcal') {
-      $options['gcal'][] = $field->render(array());
-    }
-  }
-
-  // Remove times from $options so they can be set conditionally later.
-  $times = $options['times'];
-  unset($options['times']);
-  unset($options['fields']);
-
-  $settings = array(
-    $dom_id => $options + array(
-      'monthNames' => array_values(date_month_names(TRUE)),
-      'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
-      'dayNames' => date_week_days(TRUE),
-      'dayNamesShort' => date_week_days_abbr(TRUE),
-      'allDayText' => t('All day'),
-      'dayString' => t('Day'),
-      'weekString' => t('Week'),
-      'monthString' => t('Month'),
-      'todayString' => t('Today'),
-      'isRTL' => $language->direction,
-      'view_name' => $view->name,
-      'view_display' => $view->current_display,
-    ),
-  );
-
-  if ($times['default_date']) {
-    $settings[$dom_id]['year'] = $times['date']['year'];
-    $settings[$dom_id]['month'] = $times['date']['month'];
-    $settings[$dom_id]['day'] = $times['date']['day'];
-  }
-
-  extract($view->get_exposed_input(), EXTR_SKIP);
-  if (isset($year) && is_numeric($year)) {
-    $settings[$dom_id]['year'] = $year;
-  }
-  if (isset($month) && is_numeric($month) && $month > 0 && $month <= 12) {
-    $settings[$dom_id]['month'] = $month;
-  }
-  if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
-    $settings[$dom_id]['day'] = $day;
-  }
-  if (isset($mode) && in_array($mode, array('month', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay'))) {
-    $settings[$dom_id]['defaultView'] = $mode;
-  }
-
-  // Check if there is an argument which is an instance the default
-  // date argument class and create month , year variables as well as next
-  // and previous urls from all arguments.
-  if (!empty($view->argument) && $view->use_ajax) {
-    $extra = fullcalendar_check_arguments($view);
-    if (!empty($extra)) {
-      $settings[$dom_id] += $extra;
-    }
-  }
-
-  drupal_add_library('fullcalendar', 'fullcalendar');
-  drupal_add_js(array('fullcalendar' => $settings), 'setting');
-  ctools_add_css('fullcalendar.theme', 'fullcalendar');
-  ctools_add_js('fullcalendar.views', 'fullcalendar');
-}
-
-/**
- * Check arguments on a view. If a date handler is found, add more
- * info to the $settings array so we know in jQuery we can fetch
- * new data from the view.
- *
- * @param $view
- *   The current view we're processing.
- *
- * @return $settings
- *   A collection of extra settings.
- */
-function fullcalendar_check_arguments($view) {
-  $date_handler = NULL;
-  $args = array();
-  $settings = array('ajax' => FALSE);
-
-  $position = 0;
-  foreach ($view->argument as $argument_key => $handler) {
-    if (date_views_handler_is_date($handler, 'argument')) {
-      $date_handler = $handler;
-      $args[] = 'full_calendar_browse';
-    }
-    else {
-      $args[] = $view->args[$position];
-    }
-    $position++;
-  }
-
-  if ($date_handler) {
-    $timestamp = strtotime($date_handler->argument);
-    $separator = (strpos($date_handler->argument, '-') !== FALSE) ? '-' : '';
-
-    // Add separator and ajax for date argument.
-    $settings['args'] = implode('|', $args);
-    $settings['separator'] = $separator;
-    $settings['ajax'] = TRUE;
-
-    // Settings for FullCalendar.
-    $month = date('n', $timestamp);
-    $year = date('Y', $timestamp);
-    $settings['month'] = $month - 1;
-    $settings['year'] = $year;
-  }
-
-  return $settings;
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Since we force the query to be distinct, reflect that in the UI.
@@ -419,54 +280,22 @@ function _fullcalendar_update_access($entity) {
 }
 
 /**
- * Filters the date fields.
+ * Determines if a given field is a date field.
  *
- * @param $fields
- *   Array of possible date fields.
+ * @param $field
+ *   A Views field handler object.
+ * @param $include_gcal
+ *   Boolean indicating whether or not to count gcal fields as a date field.
  *
  * @return
- *   Array of valid date fields.
+ *   Boolean, TRUE if the field is a date field, FALSE otherwise.
  */
-function fullcalendar_date_fields($fields) {
-  foreach ($fields as $id => $field_name) {
-    switch ($id) {
-      case 'created':
-      case 'changed':
-      case 'access':
-      case 'login':
-      case 'timestamp':
-      case 'gcal':
-        break;
-      default:
-        $field = field_info_field($field_name);
-        if (!in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
-          unset($fields[$id]);
-        }
-    }
+function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
+  if ($include_gcal && $field->field == 'gcal') {
+    return TRUE;
   }
-  return $fields;
-}
 
-/**
- * Helper function to resolve field_name and field_label.
- *
- * @param $display
- *   Object representing the View display.
- *
- * @return
- *  Array of date field labels, keyed by field_name.
- */
-function _fullcalendar_parse_fields($display) {
-  $field_options = array();
-  foreach ($display->get_handlers('field') as $id => $field) {
-    if (isset($field->definition['field_name'])) {
-      $field_options[$id] = $field->definition['field_name'];
-    }
-    else {
-      $field_options[$id] = $field->definition['title'];
-    }
-  }
-  return array_intersect_key($display->get_field_labels(), fullcalendar_date_fields($field_options));
+  return !empty($field->definition['is date']) && isset($field->field_info);
 }
 
 /**
