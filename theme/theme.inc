@@ -113,8 +113,7 @@ function theme_fullcalendar_event($variables) {
  */
 function fullcalendar_get_settings($view) {
   // If this style plugin isn't ours, return.
-  // @todo Debug why this would occur.
-  if (!($view->style_plugin instanceof fullcalendar_plugin_style_fullcalendar)) {
+  if ($view->display_handler->get_option('style_plugin') != 'fullcalendar') {
     return;
   }
 
