@@ -41,5 +41,19 @@ function hook_fullcalendar_classes_alter(&$classes, $entity) {
 }
 
 /**
+ * Declare that you provide a droppable callback.
+ *
+ * Implementing this hook will cause a checkbox to appear on the view settings,
+ * when checked FullCalendar will search for JS callbacks in the form
+ * Drupal.fullCalendar.droppableCallbacks.MODULENAME.callback.
+ *
+ * @see http://arshaw.com/fullcalendar/docs/dropping/droppable
+ */
+function hook_fullcalendar_droppable() {
+  // This hook will never be executed.
+  return TRUE;
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

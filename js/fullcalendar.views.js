@@ -9,6 +9,7 @@
 Drupal.fullCalendar = Drupal.fullCalendar || {};
 Drupal.fullCalendar.navigate = false;
 Drupal.fullCalendar.options = {};
+Drupal.fullCalendar.droppableCallbacks = {};
 
 Drupal.behaviors.fullCalendar = {
   attach: function(context) {
@@ -66,6 +67,21 @@ Drupal.behaviors.fullCalendar = {
           }
           return false;
         },
+        droppable: (settings.droppable === 1),
+        drop: function (date, allDay, jsEvent, ui) {
+          object = this;
+          $.each(Drupal.fullCalendar.droppableCallbacks, function () {
+            if ($.isFunction(this.callback)) {
+              try {
+                this.callback(date, allDay, jsEvent, ui, object);
+              }
+              catch (exception) {
+                alert(exception);
+              }
+            }
+          });
+        },
+        editable: true,
         year: (settings.year) ? settings.year : undefined,
         month: (settings.month) ? settings.month : undefined,
         date: (settings.day) ? settings.day : undefined,

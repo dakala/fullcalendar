@@ -157,6 +157,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       'colorboxWidth' => array('default' => '80%'),
       'colorboxHeight' => array('default' => '80%'),
       'contentHeight' => array('default' => ''),
+      'droppable' => array('default' => ''),
     );
 
     // Nest these explicitly so that they can be more easily found later.
@@ -480,6 +481,14 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#field_suffix' => 'px',
       '#fieldset' => 'style',
     );
+    if (module_implements('fullcalendar_droppable')) {
+      $form['droppable'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Allow external events to be added via drag and drop'),
+        '#default_value' => $this->options['droppable'],
+        '#fieldset' => 'style',
+      );
+    }
 
     if (module_exists('colorbox')) {
       $form['sameWindow']['#dependency'] = array('edit-style-options-colorbox' => array(0));
