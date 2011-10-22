@@ -47,3 +47,10 @@ function fullcalendar_uninstall() {
   variable_del('fullcalendar_path');
   variable_del('fullcalendar_compression_type');
 }
+
+/**
+ * Force full cache clear to forget about old handlers and plugins.
+ */
+function fullcalendar_update_7200(&$sandbox) {
+  drupal_flush_all_caches();
+}
