@@ -147,10 +147,10 @@ Drupal.behaviors.fullCalendar = {
             });
           }
           else {
-
-            // Add Drupal events for the first time.
             Drupal.fullCalendar.ParseEvents(index, calendar, callback);
+          }
 
+          if (!Drupal.fullCalendar.navigate) {
             // Add events from Google Calendar feeds.
             $.each(settings.gcal, function(i, gcalEntry) {
               $('.fullcalendar', calendar).fullCalendar('addEventSource',
