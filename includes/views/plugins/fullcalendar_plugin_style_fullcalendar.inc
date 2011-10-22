@@ -442,6 +442,12 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#default_value' => $this->options['colorbox'],
         '#fieldset' => 'style',
       );
+      $form['colorboxIFrame'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Open events in iFrame'),
+        '#default_value' => $this->options['colorboxIFrame'],
+        '#fieldset' => 'colorboxSettings',
+      );
       $form['colorboxClass'] = array(
         '#type' => 'textfield',
         '#title' => t('Classname or ID selector'),
