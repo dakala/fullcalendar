@@ -43,7 +43,7 @@ function fullcalendar_colors_requirements($phase) {
         'title' => $t('FullCalendar colors dependencies'),
         'value' => $t('Missing dependency'),
         'severity' => REQUIREMENT_ERROR,
-        'description' => $t('From now on fullcalendar colors requires the !colors', array('!colors' => l(t('Colors module'), 'http://drupal.org/project/colors'))),
+        'description' => $t('From now on FullCalendar colors requires the !colors', array('!colors' => l(t('Colors module'), 'http://drupal.org/project/colors'))),
       );
     }
   }

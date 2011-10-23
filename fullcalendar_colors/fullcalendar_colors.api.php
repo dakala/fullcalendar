@@ -13,13 +13,20 @@
 /**
  * Fetches the needed CSS classes for coloring the FullCalendar.
  *
+ * These classes will NOT be added to the FullCalendar and are ONLY usefull if
+ * there is an existing class you want to color (can be useful for coloring
+ * gcal calendars).
+ *
+ * If you want to add classes AND color at the same time you should use
+ * hook_fullcalendar_classes().
+ *
  * @param $entity
  *   Object representing the entity.
  *
  * @return
  *   Array of classes that will be processed by FullCalendar for each entity.
  */
-function hook_fullcalendar_colors_class_names($entity) {
+function hook_fullcalendar_colors_css_classes($entity) {
   $class_names = array();
   $class_names[] = 'my_awesome_class_name';
   $class_names[] = 'another_awesome_class_name';

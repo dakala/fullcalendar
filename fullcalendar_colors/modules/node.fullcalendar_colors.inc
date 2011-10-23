@@ -6,11 +6,11 @@
  */
 
 /**
- * Implements hook_fullcalendar_colors_class_names().
+ * Implements hook_fullcalendar_classes().
  *
  * Provide colors per node type.
  */
-function node_fullcalendar_colors_class_names($entity) {
+function node_fullcalendar_classes($entity) {
   $class_names = array();
   if (variable_get('fullcalendar_colors_node_types_enabled', FALSE)) {
     if ($entity->entity_type == 'node') {

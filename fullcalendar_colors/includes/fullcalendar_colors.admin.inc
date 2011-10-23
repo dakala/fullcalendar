@@ -329,9 +329,13 @@ function fullcalendar_colors_admin_settings() {
 
   fullcalendar_colors_include_api();
   $modules = array();
-  foreach (module_implements('fullcalendar_colors_class_names') as $i => $module) {
-    $modules[$module] = variable_get('fullcalendar_colors_weight_' . $module, $i);
+  foreach (module_implements('fullcalendar_classes') as $weight => $module) {
+    $modules[$module] = variable_get('fullcalendar_colors_weight_' . $module, $weight);
   }
+
+  // FullCalendar's colors will always be processed first, remove it and sort
+  // the list of modules.
+  unset($modules['fullcalendar']);
   asort($modules);
 
   $form['modules'] = array(

@@ -298,10 +298,40 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     // Allow resize/drag/drop of an event if user has proper permissions.
     $entity->editable = _fullcalendar_update_access($entity);
 
-    // Create a string of class names.
-    $classes = module_invoke_all('fullcalendar_classes', $entity);
+    // Enable FullCalendar Colors API if needed.
+    if (module_exists('fullcalendar_colors')) {
+      fullcalendar_colors_include_api();
+    }
+
+     // Create a string of class names.
+    $classes = array();
+    $colors = array();
+    foreach (module_implements('fullcalendar_classes') as $module) {
+      // Fetch all the class names.
+      $function = $module . '_fullcalendar_classes';
+      $class_names = $function($entity);
+
+      // Merge for normal classes.
+      $classes = array_merge($classes, $class_names);
+
+      // Prepare an array for the FullCalendar Colors module.
+      if (module_exists('fullcalendar_colors')) {
+        foreach ($class_names as $class_name) {
+          $colors[$module][$class_name] = $class_name;
+        }
+      }
+    }
+
+    // Alter the classes array if needed.
     drupal_alter('fullcalendar_classes', $classes, $entity);
+
+    // Add classes to the FullCalendar event.
     $entity->class = implode(' ', array_unique($classes));
+
+    // Call FullCalendar Colors when needed.
+    if (module_exists('fullcalendar_colors')) {
+      fullcalendar_colors_generate_css($entity, $colors);
+    }
 
     // Default URL.
     $uri = entity_uri($entity_type, $entity);

@@ -6,11 +6,9 @@
  */
 
 /**
- * Implements hook_fullcalendar_colors_class_names().
- *
- * Provide colors per taxonomy term.
+ * Implements hook_fullcalendar_classes().
  */
-function taxonomy_fullcalendar_colors_class_names($entity) {
+function taxonomy_fullcalendar_classes($entity) {
   $filtered_entity = array_intersect_key((array) $entity, field_info_instances($entity->entity_type, $entity->bundle));
   $tids = _fullcalendar_colors_filter_term_ids($filtered_entity);
   $class_names = array();
