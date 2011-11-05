@@ -280,6 +280,15 @@ function _fullcalendar_update_access($entity) {
 }
 
 /**
+ * Implements hook_fullcalendar_editable().
+ *
+ * Use our access callback as the editable setting.
+ */
+function fullcalendar_fullcalendar_editable($entity, $view) {
+  return _fullcalendar_update_access($entity);
+}
+
+/**
  * Determines if a given field is a date field.
  *
  * @param $field

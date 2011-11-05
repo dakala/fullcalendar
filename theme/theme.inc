@@ -141,6 +141,9 @@ function fullcalendar_get_settings($view) {
   // Remove times from $options so they can be set conditionally later.
   $times = $options['times'];
   unset($options['times']);
+  if (!empty($options['editable'])) {
+    $view->fullcalendar_disallow_editable = TRUE;
+  }
   unset($options['fields']);
 
   $settings = array(
@@ -295,8 +298,20 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     $entity->eid = $row->{$view->base_field};
     $entity->entity_type = $entity_type;
 
-    // Allow resize/drag/drop of an event if user has proper permissions.
-    $entity->editable = _fullcalendar_update_access($entity);
+    // If the view disallows editing, that's it.
+    if (!empty($view->fullcalendar_disallow_editable)) {
+      $entity->editable = FALSE;
+    }
+    // Otherwise, see what other modules think.
+    else {
+      // Allow resize/drag/drop of an event if user has proper permissions.
+      $editable = module_invoke_all('fullcalendar_editable', $entity, $view);
+      // If one value is FALSE, return FALSE. The identical operator is needed
+      // because of the return value of array_search().
+      $editable = array_search(FALSE, $editable, TRUE) === FALSE;
+      drupal_alter('fullcalendar_editable', $editable, $entity, $view);
+      $entity->editable = $editable;
+    }
 
     // Enable FullCalendar Colors API if needed.
     if (module_exists('fullcalendar_colors')) {

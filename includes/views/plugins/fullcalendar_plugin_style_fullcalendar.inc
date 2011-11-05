@@ -158,6 +158,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       'colorboxHeight' => array('default' => '80%'),
       'contentHeight' => array('default' => ''),
       'droppable' => array('default' => ''),
+      'editable' => array('default' => ''),
     );
 
     // Nest these explicitly so that they can be more easily found later.
@@ -495,6 +496,13 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#fieldset' => 'style',
       );
     }
+    $form['editable'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Prevent editing events via drag-and-drop'),
+      '#default_value' => $this->options['editable'],
+      '#fieldset' => 'style',
+      '#description' => t('Modules can set custom access rules, but this will override those.'),
+    );
 
     if (module_exists('colorbox')) {
       $form['sameWindow']['#dependency'] = array('edit-style-options-colorbox' => array(0));
