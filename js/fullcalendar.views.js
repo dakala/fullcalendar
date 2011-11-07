@@ -11,6 +11,10 @@ Drupal.fullCalendar.navigate = false;
 Drupal.fullCalendar.options = {};
 Drupal.fullCalendar.droppableCallbacks = {};
 
+Drupal.fullCalendar.registerOptions = function(name, options) {
+  Drupal.fullCalendar.options[name] = options;
+};
+
 Drupal.behaviors.fullCalendar = {
   attach: function(context) {
     // Process each view and its settings.
@@ -195,6 +199,7 @@ Drupal.behaviors.fullCalendar = {
       else {
         fcStatus.effect('highlight', {}, 5000);
       }
+      Drupal.attachBehaviors();
       return false;
     };
 
