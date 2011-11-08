@@ -51,6 +51,13 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  */
 function fullcalendar_library() {
   $path = variable_get('fullcalendar_path', FULLCALENDAR_PATH);
+  $css_files = array($path . '/fullcalendar.css' => array('media' => 'screen'));
+
+  // Add fullcalendar.print.css if it is available.
+  if (version_compare(fullcalendar_get_version(), '1.5.0', '>=')) {
+    $css_files[$path . '/fullcalendar.print.css'] = array('media' => 'print');
+  }
+
   $libraries['fullcalendar'] = array(
     'title' => 'FullCalendar',
     'website' => 'http://arshaw.com/fullcalendar',
@@ -59,12 +66,7 @@ function fullcalendar_library() {
       fullcalendar_get_js_path() => array(),
       $path . '/gcal.js' => array(),
     ),
-    'css' => array(
-      $path . '/fullcalendar.css' => array(
-        'type' => 'file',
-        'media' => 'screen',
-      ),
-    ),
+    'css' => $css_files,
     'dependencies' => array(
       array('system', 'ui.draggable'),
       array('system', 'ui.droppable'),
