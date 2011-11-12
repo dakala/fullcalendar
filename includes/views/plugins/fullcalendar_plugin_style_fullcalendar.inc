@@ -139,7 +139,10 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       'center' => array('default' => 'title'),
       'right' => array('default' => 'month agendaWeek agendaDay'),
       'timeformat' => array('default' => $time_format['time']),
-      'advanced' => array('default' => FALSE),
+      'advanced' => array(
+        'default' => FALSE,
+        'bool' => TRUE,
+      ),
       'axisformat' => array('default' => $time_format['axis']),
       'timeformatMonth' => array('default' => $time_format['time']),
       'titleformatMonth' => array('default' => $date_format['title']['month']),
@@ -150,36 +153,63 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       'timeformatDay' => array('default' => $time_format['time']),
       'titleformatDay' => array('default' => $date_format['title']['day']),
       'columnformatDay' => array('default' => $date_format['column']['day']),
-      'theme' => array('default' => TRUE),
-      'sameWindow' => array('default' => FALSE),
-      'colorbox' => array('default' => FALSE),
+      'theme' => array(
+        'default' => TRUE,
+        'bool' => TRUE,
+      ),
+      'sameWindow' => array(
+        'default' => FALSE,
+        'bool' => TRUE,
+      ),
+      'colorbox' => array(
+        'default' => FALSE,
+        'bool' => TRUE,
+      ),
       'colorboxClass' => array('default' => '#content'),
       'colorboxWidth' => array('default' => '80%'),
       'colorboxHeight' => array('default' => '80%'),
       'contentHeight' => array('default' => ''),
-      'droppable' => array('default' => ''),
-      'editable' => array('default' => ''),
+      'droppable' => array(
+        'default' => FALSE,
+        'bool' => TRUE,
+      ),
+      'editable' => array(
+        'default' => FALSE,
+        'bool' => TRUE,
+      ),
     );
 
     // Nest these explicitly so that they can be more easily found later.
     $options['times'] = array(
       'contains' => array(
-        'default_date' => array('default' => FALSE),
+        'default_date' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
         'date' => array('default' => array(
-          'year' => '',
-          'month' => '',
-          'day' => '',
+          'year' => '1900',
+          'month' => '1',
+          'day' => '1',
         )),
       ),
     );
     $options['fields'] = array(
       'contains' => array(
-        'title_field' => array('default' => ''),
-        'url_field' => array('default' => ''),
-        'date_field' => array('default' => ''),
-        'title' => array('default' => FALSE),
-        'url' => array('default' => FALSE),
-        'date' => array('default' => FALSE),
+        'title_field' => array('default' => 'title'),
+        'url_field' => array('default' => 'title'),
+        'date_field' => array('default' => array()),
+        'title' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
+        'url' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
+        'date' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
       ),
     );
 
