@@ -202,7 +202,8 @@ function fullcalendar_get_settings(&$variables) {
   drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   ctools_add_css('fullcalendar.theme', 'fullcalendar');
-  drupal_add_js(ctools_attach_js('fullcalendar.views', 'fullcalendar'), array('group' => JS_LIBRARY));
+  drupal_add_js(ctools_attach_js('fullcalendar.library', 'fullcalendar'), array('group' => JS_LIBRARY));
+  drupal_add_js(ctools_attach_js('fullcalendar.views', 'fullcalendar'), array('weight' => 20));
 }
 
 /**

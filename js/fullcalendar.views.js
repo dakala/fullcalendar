@@ -6,19 +6,17 @@
 
 (function ($) {
 
-Drupal.fullCalendar = Drupal.fullCalendar || {};
-Drupal.fullCalendar.navigate = false;
-Drupal.fullCalendar.options = {};
-Drupal.fullCalendar.droppableCallbacks = {};
-
-Drupal.fullCalendar.registerOptions = function(name, options) {
-  Drupal.fullCalendar.options[name] = options;
-};
-
 Drupal.behaviors.fullCalendar = {
-  attach: function(context) {
+  attach: function(context, settings) {
     // Process each view and its settings.
-    $.each(Drupal.settings.fullcalendar, function(index, settings) {
+    for (var index in settings.fullcalendar) {
+      if (!settings.fullcalendar.hasOwnProperty(index)) {
+        continue;
+      }
+
+      // Give our settings a nice name.
+      var settings = settings.fullcalendar[index];
+
       // Create an object of this calendar.
       var calendar = $(index);
 
@@ -35,6 +33,7 @@ Drupal.behaviors.fullCalendar = {
         }
       };
 
+      // Prepare our options.
       var options = {
         defaultView: settings.defaultView,
         theme: settings.theme,
@@ -73,7 +72,7 @@ Drupal.behaviors.fullCalendar = {
         },
         droppable: (settings.droppable === 1),
         drop: function (date, allDay, jsEvent, ui) {
-          object = this;
+          var object = this;
           $.each(Drupal.fullCalendar.droppableCallbacks, function () {
             if ($.isFunction(this.callback)) {
               try {
@@ -156,11 +155,13 @@ Drupal.behaviors.fullCalendar = {
 
           if (!Drupal.fullCalendar.navigate) {
             // Add events from Google Calendar feeds.
-            $.each(settings.gcal, function(i, gcalEntry) {
-              $('.fullcalendar', calendar).fullCalendar('addEventSource',
-                $.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1])
-              );
-            });
+            for (var entry in settings.gcal) {
+              if (settings.gcal.hasOwnProperty(entry)) {
+                $('.fullcalendar', calendar).fullCalendar('addEventSource',
+                  $.fullCalendar.gcalFeed(settings.gcal[entry][0], settings.gcal[entry][1])
+                );
+              }
+            }
           }
 
           // Set navigate to true which means we've starting clicking on
@@ -183,16 +184,19 @@ Drupal.behaviors.fullCalendar = {
       };
 
       // Allow other modules to overwrite options.
-      $.each(Drupal.fullCalendar.options, function() {
-        $.extend(options, this);
-      });
+      var extendedOptions = Drupal.fullCalendar.getOptions(index);
+      for (var extendedOption in extendedOptions) {
+        if (extendedOptions.hasOwnProperty(extendedOption)) {
+          $.extend(options, extendedOptions[extendedOption]);
+        }
+      }
 
       // Use .once() to protect against extra AJAX calls from Colorbox.
       $('.fullcalendar', calendar).once().fullCalendar(options);
-    });
+    }
 
     var fullcalendarUpdate = function(result) {
-      fcStatus = $(result.dom_id).find('.fullcalendar-status');
+      var fcStatus = $(result.dom_id).find('.fullcalendar-status');
       if (fcStatus.text() === '') {
         fcStatus.html(result.msg).slideDown();
       }
@@ -203,12 +207,12 @@ Drupal.behaviors.fullCalendar = {
       return false;
     };
 
-    $('.fullcalendar-status-close').live('click', function() {
+    $('.fullcalendar-status-close', calendar).live('click', function() {
       $(this).parent().slideUp();
       return false;
     });
 
-    // Trigger a window resize so that calendar will redraw itself as it loads funny in some browsers occasionally
+    // Trigger a window resize so that calendar will redraw itself.
     $(window).resize();
   }
 };
