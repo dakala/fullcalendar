@@ -132,6 +132,9 @@ function fullcalendar_get_settings(&$variables) {
   }
   $dom_id = '.view-dom-id-' . $view->dom_id;
 
+  // Gather options from all modules.
+  $settings = array();
+
   $options['gcal'] = array();
   foreach ($view->field as $field) {
     if ($field->field == 'gcal') {
@@ -189,6 +192,11 @@ function fullcalendar_get_settings(&$variables) {
   // and previous urls from all arguments.
   if (!empty($view->argument) && $view->use_ajax) {
     $settings[$dom_id] += fullcalendar_check_arguments($view);
+  }
+
+  foreach (module_implements('fullcalendar_options_process') as $module) {
+    $function = $module . '_fullcalendar_options_process';
+    $function($variables, $settings);
   }
 
   drupal_add_library('fullcalendar', 'fullcalendar');

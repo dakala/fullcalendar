@@ -213,7 +213,9 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       ),
     );
 
-    return $options;
+    // Load all FullCalendar options and merge in their form info.
+    fullcalendar_include_api();
+    return array_merge($options, module_invoke_all('fullcalendar_option_definition'));
   }
 
   function options_form(&$form, &$form_state) {
@@ -534,8 +536,26 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#description' => t('Modules can set custom access rules, but this will override those.'),
     );
 
-    if (module_exists('colorbox')) {
-      $form['sameWindow']['#dependency'] = array('edit-style-options-colorbox' => array(0));
+    // Load all FullCalendar options and merge in their form info.
+    fullcalendar_include_api();
+    $fullcalendar_options = module_invoke_all('fullcalendar_option_info');
+    uasort($fullcalendar_options, 'drupal_sort_weight');
+    if (!empty($fullcalendar_options)) {
+      $arguments = array(&$form, &$form_state, &$this);
+      // Create a separate fieldset for each module.
+      foreach (array_intersect_key(array_keys($fullcalendar_options), module_implements('fullcalendar_options_form')) as $module) {
+        if (empty($fullcalendar_options[$module]['no_fieldset'])) {
+          $form[$module] = array(
+            '#type' => 'fieldset',
+            '#title' => t('!module options', array('!module' => $fullcalendar_options[$module]['name'])),
+            '#collapsible' => TRUE,
+            '#collapsed' => TRUE,
+            '#attributes' => array('class' => array($module)),
+          );
+        }
+        $function = $module . '_fullcalendar_options_form';
+        call_user_func_array($function, $arguments);
+      }
     }
 
     // Get the regular fields.
@@ -614,6 +634,26 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     elseif (empty($date_fields)) {
       $form['fields']['date']['#type'] = 'hidden';
       $form['fields']['date_field']['#disabled'] = TRUE;
+    }
+  }
+
+  function options_validate(&$form, &$form_state) {
+    parent::options_validate($form, $form_state);
+    fullcalendar_include_api();
+    $arguments = array(&$form, &$form_state, &$this);
+    foreach (module_implements('fullcalendar_options_validate') as $module) {
+      $function = $module . '_fullcalendar_options_validate';
+      call_user_func_array($function, $arguments);
+    }
+  }
+
+  function options_submit(&$form, &$form_state) {
+    parent::options_submit($form, $form_state);
+    fullcalendar_include_api();
+    $arguments = array(&$form, &$form_state, $this);
+    foreach (module_implements('fullcalendar_options_submit') as $module) {
+      $function = $module . '_fullcalendar_options_submit';
+      call_user_func_array($function, $arguments);
     }
   }
 
