@@ -44,29 +44,11 @@ Drupal.behaviors.fullCalendar = {
         },
         isRTL: settings.isRTL === '1',
         eventClick: function(calEvent, jsEvent, view) {
-          // Use colorbox only for events based on entities
-          if (settings.colorbox && (calEvent.eid !== undefined)) {
-            // Open in colorbox if exists, else open in new window.
-            if ($.colorbox) {
-              var url = calEvent.url;
-              if (settings.colorboxClass !== '') {
-                url += ' ' + settings.colorboxClass;
-              }
-              $.colorbox({
-                href: url,
-                width: settings.colorboxWidth,
-                height: settings.colorboxHeight,
-                iframe: settings.colorboxIFrame === 1 ? true : false
-              });
-            }
+          if (settings.sameWindow) {
+            window.open(calEvent.url, '_self');
           }
           else {
-            if (settings.sameWindow) {
-              window.open(calEvent.url, '_self');
-            }
-            else {
-              window.open(calEvent.url);
-            }
+            window.open(calEvent.url);
           }
           return false;
         },

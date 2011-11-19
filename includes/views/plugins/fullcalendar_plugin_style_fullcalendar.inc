@@ -161,13 +161,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         'default' => FALSE,
         'bool' => TRUE,
       ),
-      'colorbox' => array(
-        'default' => FALSE,
-        'bool' => TRUE,
-      ),
-      'colorboxClass' => array('default' => '#content'),
-      'colorboxWidth' => array('default' => '80%'),
-      'colorboxHeight' => array('default' => '80%'),
       'contentHeight' => array('default' => ''),
       'droppable' => array(
         'default' => FALSE,
@@ -468,44 +461,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       '#default_value' => $this->options['theme'],
       '#fieldset' => 'style',
     );
-    if (module_exists('colorbox')) {
-      $form['colorbox'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Open events with Colorbox'),
-        '#default_value' => $this->options['colorbox'],
-        '#fieldset' => 'style',
-      );
-      $form['colorboxIFrame'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Open events in iFrame'),
-        '#default_value' => $this->options['colorboxIFrame'],
-        '#fieldset' => 'colorboxSettings',
-      );
-      $form['colorboxClass'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Classname or ID selector'),
-        '#default_value' => $this->options['colorboxClass'],
-        '#fieldset' => 'colorboxSettings',
-      );
-      $form['colorboxWidth'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Width'),
-        '#default_value' => $this->options['colorboxWidth'],
-        '#fieldset' => 'colorboxSettings',
-      );
-      $form['colorboxHeight'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Height'),
-        '#default_value' => $this->options['colorboxHeight'],
-        '#fieldset' => 'colorboxSettings',
-      );
-      $form['colorboxSettings'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Colorbox settings'),
-        '#fieldset' => 'style',
-        '#dependency' => array('edit-style-options-colorbox' => array(1)),
-      );
-    }
     $form['sameWindow'] = array(
       '#type' => 'checkbox',
       '#title' => t('Open events in same window'),

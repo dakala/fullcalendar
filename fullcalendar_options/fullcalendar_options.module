@@ -143,3 +143,12 @@ function _fullcalendar_options_list($show_all = FALSE) {
 
   return $form;
 }
+
+/**
+ * Add Colorbox integration.
+ */
+if (module_exists('colorbox') && !function_exists('colorbox_fullcalendar_api')) {
+  function colorbox_fullcalendar_api() {
+    return fullcalendar_options_fullcalendar_api();
+  }
+}
