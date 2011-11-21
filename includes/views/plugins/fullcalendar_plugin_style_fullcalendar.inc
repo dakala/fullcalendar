@@ -639,6 +639,12 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
 
   function options_validate(&$form, &$form_state) {
     parent::options_validate($form, $form_state);
+
+    // If an option was defined with #data_type, cast the value to that.
+    if (is_array($form_state['values']['style_options'])) {
+      $this->fullcalendar_cast_nested_value($form_state['values']['style_options'], $form);
+    }
+
     fullcalendar_include_api();
     $arguments = array(&$form, &$form_state, &$this);
     foreach (module_implements('fullcalendar_options_validate') as $module) {
@@ -678,5 +684,45 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       }
     }
     return $field_options;
+  }
+
+  /**
+   * If #data_type is defined, use that as the type for casting the value.
+   *
+   * @param $values
+   *   An array of View option form values.
+   * @param $form
+   *   The Views option form definition.
+   * @param $current_key
+   *   The current key being processed.
+   * @param $parents
+   *   An array of parent keys when recursing through the nested array.
+   */
+  function fullcalendar_cast_nested_value(&$values, $form, $current_key = NULL, $parents = array()) {
+    foreach ($values as $key => &$value) {
+      // We are leaving a recursive loop, remove the last parent key.
+      if (empty($current_key)) {
+        array_pop($parents);
+      }
+
+      // In case we recurse into an array, or need to specify the key for
+      // drupal_array_get_nested_value(), add the current key to $parents.
+      $parents[] = $key;
+
+      if (is_array($value)) {
+        // Enter another recursive loop.
+        $this->fullcalendar_cast_nested_value($value, $form, $key, $parents);
+      }
+      else {
+        // Get the form definition for this key.
+        $form_value = drupal_array_get_nested_value($form, $parents);
+        // Check to see if #data_type is specified, if so, cast the value.
+        if (isset($form_value['#data_type'])) {
+          settype($value, $form_value['#data_type']);
+        }
+        // Remove the current key from $parents to move on to the next key.
+        array_pop($parents);
+      }
+    }
   }
 }
