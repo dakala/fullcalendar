@@ -126,7 +126,10 @@ function fullcalendar_get_settings(&$variables) {
 
   // Gather options from all modules.
   $settings = array();
-  foreach (module_implements('fullcalendar_options_process') as $module) {
+  fullcalendar_include_api();
+  $fullcalendar_options = module_invoke_all('fullcalendar_option_info');
+  uasort($fullcalendar_options, 'drupal_sort_weight');
+  foreach (array_intersect_key(array_keys($fullcalendar_options), module_implements('fullcalendar_options_process')) as $module) {
     $function = $module . '_fullcalendar_options_process';
     $function($variables, $settings);
   }
