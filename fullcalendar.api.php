@@ -45,7 +45,7 @@ function hook_fullcalendar_classes_alter(&$classes, $entity) {
  *
  * Implementing this hook will cause a checkbox to appear on the view settings,
  * when checked FullCalendar will search for JS callbacks in the form
- * Drupal.fullCalendar.droppableCallbacks.MODULENAME.callback.
+ * Drupal.fullcalendar.droppableCallbacks.MODULENAME.callback.
  *
  * @see http://arshaw.com/fullcalendar/docs/dropping/droppable
  */

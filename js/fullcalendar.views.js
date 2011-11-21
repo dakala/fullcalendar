@@ -6,19 +6,19 @@
 
 (function ($) {
 
-Drupal.behaviors.fullCalendar = {
+Drupal.behaviors.fullcalendar = {
   attach: function(context, settings) {
     // Process each view and its settings.
-    for (var index in settings.fullcalendar) {
-      if (!settings.fullcalendar.hasOwnProperty(index)) {
+    for (var dom_id in settings.fullcalendar) {
+      if (!settings.fullcalendar.hasOwnProperty(dom_id)) {
         continue;
       }
 
       // Give our settings a nice name.
-      var settings = settings.fullcalendar[index];
+      var settings = settings.fullcalendar[dom_id];
 
       // Create an object of this calendar.
-      var calendar = $(index);
+      var calendar = $(dom_id);
 
       // Hide the failover display.
       $('.fullcalendar-content', calendar).hide();
@@ -55,7 +55,7 @@ Drupal.behaviors.fullCalendar = {
         droppable: (settings.droppable === 1),
         drop: function (date, allDay, jsEvent, ui) {
           var object = this;
-          $.each(Drupal.fullCalendar.droppableCallbacks, function () {
+          $.each(Drupal.fullcalendar.droppableCallbacks, function () {
             if ($.isFunction(this.callback)) {
               try {
                 this.callback(date, allDay, jsEvent, ui, object);
@@ -99,7 +99,7 @@ Drupal.behaviors.fullCalendar = {
         events: function(start, end, callback) {
 
           // Fetch new items from Views if possible.
-          if (Drupal.fullCalendar.navigate && settings.ajax) {
+          if (Drupal.fullcalendar.navigate && settings.ajax) {
 
             date = $('.fullcalendar', calendar).fullCalendar('getDate');
             month = $.fullCalendar.formatDate(date, 'MM');
@@ -115,13 +115,13 @@ Drupal.behaviors.fullCalendar = {
               beforeSend: function() {
                 // Add a throbber.
                 this.progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
-                $(index + ' .fc-header-title').after(this.progress);
+                $(dom_id + ' .fc-header-title').after(this.progress);
               },
               success: function (data) {
                 if (data.status) {
                   // Replace content.
-                  $(index + ' .fullcalendar-content').html(data.content);
-                  Drupal.fullCalendar.ParseEvents(index, calendar, callback);
+                  $(dom_id + ' .fullcalendar-content').html(data.content);
+                  Drupal.fullcalendar.parseEvents(dom_id, calendar, callback);
                 }
                 // Remove the throbber.
                 $(this.progress).remove();
@@ -132,10 +132,10 @@ Drupal.behaviors.fullCalendar = {
             });
           }
           else {
-            Drupal.fullCalendar.ParseEvents(index, calendar, callback);
+            Drupal.fullcalendar.parseEvents(dom_id, calendar, callback);
           }
 
-          if (!Drupal.fullCalendar.navigate) {
+          if (!Drupal.fullcalendar.navigate) {
             // Add events from Google Calendar feeds.
             for (var entry in settings.gcal) {
               if (settings.gcal.hasOwnProperty(entry)) {
@@ -148,7 +148,7 @@ Drupal.behaviors.fullCalendar = {
 
           // Set navigate to true which means we've starting clicking on
           // next and previous buttons if we re-enter here again.
-          Drupal.fullCalendar.navigate = true;
+          Drupal.fullcalendar.navigate = true;
 
         },
         eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
@@ -166,7 +166,7 @@ Drupal.behaviors.fullCalendar = {
       };
 
       // Allow other modules to overwrite options.
-      var extendedOptions = Drupal.fullCalendar.getOptions(index);
+      var extendedOptions = Drupal.fullcalendar.getOptions(dom_id);
       for (var extendedOption in extendedOptions) {
         if (extendedOptions.hasOwnProperty(extendedOption)) {
           $.extend(options, extendedOptions[extendedOption]);
@@ -202,7 +202,7 @@ Drupal.behaviors.fullCalendar = {
 /**
  * Parse Drupal events from the DOM.
  */
-Drupal.fullCalendar.ParseEvents = function(index, calendar, callback) {
+Drupal.fullcalendar.parseEvents = function(dom_id, calendar, callback) {
   var events = [];
   // Drupal events.
   $('.fullcalendar-event-details', calendar).each(function() {
@@ -219,7 +219,7 @@ Drupal.fullCalendar.ParseEvents = function(index, calendar, callback) {
       allDay: (event.attr('allDay') === '1'),
       className: event.attr('cn'),
       editable: (event.attr('editable') === '1'),
-      dom_id: index
+      dom_id: dom_id
     });
   });
   callback(events);

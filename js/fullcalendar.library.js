@@ -1,11 +1,14 @@
 (function ($) {
 
-Drupal.fullCalendar = Drupal.fullCalendar || {};
-Drupal.fullCalendar.navigate = false;
-Drupal.fullCalendar.options = {
+Drupal.fullcalendar = {};
+Drupal.fullcalendar.navigate = false;
+Drupal.fullcalendar.options = {
   global: {}
 };
-Drupal.fullCalendar.droppableCallbacks = {};
+Drupal.fullcalendar.droppableCallbacks = {};
+
+// Alias old fullCalendar namespace.
+Drupal.fullCalendar = Drupal.fullcalendar;
 
 /**
  * Add FullCalendar options for a specific view.
@@ -21,10 +24,10 @@ Drupal.fullCalendar.droppableCallbacks = {};
  *
  * @see http://arshaw.com/fullcalendar/docs
  */
-Drupal.fullCalendar.registerOptions = function(name, options, dom_id) {
+Drupal.fullcalendar.registerOptions = function(name, options, dom_id) {
   dom_id = dom_id || 'global';
-  Drupal.fullCalendar.options[dom_id] = Drupal.fullCalendar.options[dom_id] || {};
-  Drupal.fullCalendar.options[dom_id][name] = options;
+  Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
+  Drupal.fullcalendar.options[dom_id][name] = options;
 };
 
 /**
@@ -35,9 +38,12 @@ Drupal.fullCalendar.registerOptions = function(name, options, dom_id) {
  * @param dom_id
  *   The dom id of the FullCalendar view.
  */
-Drupal.fullCalendar.getOptions = function(dom_id) {
-  Drupal.fullCalendar.options[dom_id] = Drupal.fullCalendar.options[dom_id] || {};
-  return $.extend({}, Drupal.fullCalendar.options.global, Drupal.fullCalendar.options[dom_id]);
+Drupal.fullcalendar.getOptions = function(dom_id) {
+  Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
+  return $.extend({}, Drupal.fullcalendar.options.global, Drupal.fullcalendar.options[dom_id]);
 };
+
+// Alias old fullCalendar namespace.
+Drupal.fullCalendar = Drupal.fullcalendar;
 
 })(jQuery);
