@@ -43,7 +43,42 @@ Drupal.fullcalendar.getOptions = function(dom_id) {
   return $.extend({}, Drupal.fullcalendar.options.global, Drupal.fullcalendar.options[dom_id]);
 };
 
-// Alias old fullCalendar namespace.
-Drupal.fullCalendar = Drupal.fullcalendar;
+Drupal.fullcalendar.update = function(result) {
+  var fcStatus = $(result.dom_id).find('.fullcalendar-status');
+  if (fcStatus.text() === '') {
+    fcStatus.html(result.msg).slideDown();
+  }
+  else {
+    fcStatus.effect('highlight', {}, 5000);
+  }
+  Drupal.attachBehaviors();
+  return false;
+};
+
+/**
+ * Parse Drupal events from the DOM.
+ */
+Drupal.fullcalendar.parseEvents = function(dom_id, calendar, callback) {
+  var events = [];
+  // Drupal events.
+  $('.fullcalendar-event-details', calendar).each(function() {
+    var event = $(this);
+    events.push({
+      field: event.attr('field'),
+      index: event.attr('index'),
+      eid: event.attr('eid'),
+      entity_type: event.attr('entity_type'),
+      title: event.attr('title'),
+      start: event.attr('start'),
+      end: event.attr('end'),
+      url: event.attr('href'),
+      allDay: (event.attr('allDay') === '1'),
+      className: event.attr('cn'),
+      editable: (event.attr('editable') === '1'),
+      dom_id: dom_id
+    });
+  });
+  callback(events);
+};
 
 })(jQuery);

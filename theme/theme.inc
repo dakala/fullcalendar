@@ -118,14 +118,6 @@ function fullcalendar_get_settings(&$variables) {
     return;
   }
 
-  // Bail out if we're getting results from ajax callback.
-  if (isset($view->fullcalendar_ajax)) {
-    return;
-  }
-
-  global $language;
-
-  $options = $view->style_plugin->options;
   static $fc_dom_id = 1;
   if (empty($view->dom_id)) {
     $view->dom_id = 'fc-' . $fc_dom_id++;
@@ -134,73 +126,13 @@ function fullcalendar_get_settings(&$variables) {
 
   // Gather options from all modules.
   $settings = array();
-
-  $options['gcal'] = array();
-  foreach ($view->field as $field) {
-    if ($field->field == 'gcal') {
-      $options['gcal'][] = $field->render(array());
-    }
-  }
-
-  // Remove times from $options so they can be set conditionally later.
-  $times = $options['times'];
-  unset($options['times']);
-  if (!empty($options['editable'])) {
-    $view->fullcalendar_disallow_editable = TRUE;
-  }
-  unset($options['fields']);
-
-  $settings = array(
-    $dom_id => $options + array(
-      'monthNames' => array_values(date_month_names(TRUE)),
-      'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
-      'dayNames' => date_week_days(TRUE),
-      'dayNamesShort' => date_week_days_abbr(TRUE),
-      'allDayText' => t('All day'),
-      'dayString' => t('Day'),
-      'weekString' => t('Week'),
-      'monthString' => t('Month'),
-      'todayString' => t('Today'),
-      'isRTL' => $language->direction,
-      'view_name' => $view->name,
-      'view_display' => $view->current_display,
-    ),
-  );
-
-  if ($times['default_date']) {
-    $settings[$dom_id]['year'] = $times['date']['year'];
-    $settings[$dom_id]['month'] = $times['date']['month'];
-    $settings[$dom_id]['day'] = $times['date']['day'];
-  }
-
-  extract($view->get_exposed_input(), EXTR_SKIP);
-  if (isset($year) && is_numeric($year)) {
-    $settings[$dom_id]['year'] = $year;
-  }
-  if (isset($month) && is_numeric($month) && $month > 0 && $month <= 12) {
-    $settings[$dom_id]['month'] = $month;
-  }
-  if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
-    $settings[$dom_id]['day'] = $day;
-  }
-  if (isset($mode) && in_array($mode, array('month', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay'))) {
-    $settings[$dom_id]['defaultView'] = $mode;
-  }
-
-  // Check if there is an argument which is an instance the default
-  // date argument class and create month, year variables as well as next
-  // and previous urls from all arguments.
-  if (!empty($view->argument) && $view->use_ajax) {
-    $settings[$dom_id] += fullcalendar_check_arguments($view);
-  }
-
   foreach (module_implements('fullcalendar_options_process') as $module) {
     $function = $module . '_fullcalendar_options_process';
     $function($variables, $settings);
   }
 
   drupal_add_library('fullcalendar', 'fullcalendar');
-  drupal_add_js(array('fullcalendar' => $settings), 'setting');
+  drupal_add_js(array('fullcalendar' => array($dom_id => $settings)), 'setting');
   ctools_add_css('fullcalendar.theme', 'fullcalendar');
   drupal_add_js(ctools_attach_js('fullcalendar.library', 'fullcalendar'), array('group' => JS_LIBRARY));
   drupal_add_js(ctools_attach_js('fullcalendar.views', 'fullcalendar'), array('weight' => 20));
@@ -246,8 +178,8 @@ function fullcalendar_check_arguments($view) {
     // Settings for FullCalendar.
     $month = date('n', $timestamp);
     $year = date('Y', $timestamp);
-    $settings['month'] = $month - 1;
-    $settings['year'] = $year;
+    $settings['date']['month'] = $month - 1;
+    $settings['date']['year'] = $year;
   }
 
   return $settings;

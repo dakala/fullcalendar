@@ -1,0 +1,125 @@
+(function($) {
+
+Drupal.behaviors.fullcalendar_fullcalendar = {
+  attach: function(context, settings) {
+    for (var dom_id in settings.fullcalendar) {
+      if (settings.fullcalendar.hasOwnProperty(dom_id)) {
+        Drupal.fullcalendar.registerOptions(
+          'fullcalendar',
+          Drupal.fullcalendar.processOptions(settings.fullcalendar[dom_id], dom_id),
+          dom_id
+        );
+      }
+    }
+  }
+};
+
+Drupal.fullcalendar.processOptions = function(settings, dom_id) {
+  // Create an object of this calendar.
+  var calendar = $(dom_id);
+
+  // Prepare our options.
+  var options = {
+    eventClick: function(calEvent, jsEvent, view) {
+      if (settings.sameWindow) {
+        window.open(calEvent.url, '_self');
+      }
+      else {
+        window.open(calEvent.url);
+      }
+      return false;
+    },
+    drop: function (date, allDay, jsEvent, ui) {
+      var object = this;
+      $.each(Drupal.fullcalendar.droppableCallbacks, function () {
+        if ($.isFunction(this.callback)) {
+          try {
+            this.callback(date, allDay, jsEvent, ui, object);
+          }
+          catch (exception) {
+            alert(exception);
+          }
+        }
+      });
+    },
+    events: function(start, end, callback) {
+
+      // Fetch new items from Views if possible.
+      if (Drupal.fullcalendar.navigate && settings.ajax) {
+
+        var date, month, year, date_argument, arguments, fetch_url;
+        date = $('.fullcalendar', calendar).fullCalendar('getDate');
+        month = $.fullCalendar.formatDate(date, 'MM');
+        year = $.fullCalendar.formatDate(date, 'yyyy');
+        date_argument = year + settings.separator + month;
+        arguments = settings.args.replace('full_calendar_browse', date_argument);
+        fetch_url = Drupal.settings.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + arguments;
+
+        $.ajax({
+          type: 'GET',
+          url: fetch_url,
+          dataType: 'json',
+          beforeSend: function() {
+            // Add a throbber.
+            this.progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
+            $(dom_id + ' .fc-header-title').after(this.progress);
+          },
+          success: function (data) {
+            if (data.status) {
+              // Replace content.
+              $(dom_id + ' .fullcalendar-content').html(data.content);
+              Drupal.fullcalendar.parseEvents(dom_id, calendar, callback);
+            }
+            // Remove the throbber.
+            $(this.progress).remove();
+          },
+          error: function (xmlhttp) {
+            alert(Drupal.t('An HTTP error @status occurred.', {'@status': xmlhttp.status}));
+          }
+        });
+      }
+      else {
+        Drupal.fullcalendar.parseEvents(dom_id, calendar, callback);
+      }
+
+      if (!Drupal.fullcalendar.navigate) {
+        // Add events from Google Calendar feeds.
+        for (var entry in settings.gcal) {
+          if (settings.gcal.hasOwnProperty(entry)) {
+            $('.fullcalendar', calendar).fullCalendar('addEventSource',
+              $.fullCalendar.gcalFeed(settings.gcal[entry][0], settings.gcal[entry][1])
+            );
+          }
+        }
+      }
+
+      // Set navigate to true which means we've starting clicking on
+      // next and previous buttons if we re-enter here again.
+      Drupal.fullcalendar.navigate = true;
+    },
+    eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.eid,
+        'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay + '&dom_id=' + event.dom_id,
+        Drupal.fullcalendar.update);
+      return false;
+    },
+    eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
+      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/'+ event.eid,
+        'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
+        Drupal.fullcalendar.update);
+      return false;
+    }
+  };
+
+  // Merge in our settings.
+  $.extend(options, settings.fullcalendar);
+
+  // Pull in overrides from URL.
+  if (settings.date) {
+    $.extend(options, settings.date);
+  }
+
+  return options;
+}
+
+})(jQuery);

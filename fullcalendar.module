@@ -399,3 +399,13 @@ function fullcalendar_api_version() {
 function fullcalendar_api_minimum_version() {
   return '1';
 }
+
+/**
+ * Implements hook_fullcalendar_api().
+ */
+function fullcalendar_fullcalendar_api() {
+  return array(
+    'api' => fullcalendar_api_version(),
+    'path' => drupal_get_path('module', 'fullcalendar') . '/includes',
+  );
+}
