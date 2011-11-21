@@ -9,8 +9,6 @@
  * Builds the FullCalendar structure as a render array.
  */
 function template_preprocess_fullcalendar(&$variables) {
-  fullcalendar_get_settings($variables['view']);
-
   $variables['element'] = array(
     'status' => array(
       '#type' => 'container',
@@ -37,6 +35,8 @@ function template_preprocess_fullcalendar(&$variables) {
       ),
     ),
   );
+
+  fullcalendar_get_settings($variables);
 
   if (empty($variables['rows'])) {
     return;
@@ -108,12 +108,13 @@ function theme_fullcalendar_event($variables) {
 /**
  * Process the view and add the relevant CSS and JS.
  *
- * @param $view
- *   The view object.
+ * @param $variables
+ *   The variables array, containing the view object.
  */
-function fullcalendar_get_settings($view) {
-  // If this style plugin isn't ours, return.
-  if ($view->display_handler->get_option('style_plugin') != 'fullcalendar') {
+function fullcalendar_get_settings(&$variables) {
+  $view = &$variables['view'];
+  // If this style plugin isn't ours, or if it is from an ajax callback, return.
+  if ($view->display_handler->get_option('style_plugin') != 'fullcalendar' || isset($view->fullcalendar_ajax)) {
     return;
   }
 

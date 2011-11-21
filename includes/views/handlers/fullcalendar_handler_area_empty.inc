@@ -7,7 +7,8 @@
 
 class fullcalendar_handler_area_empty extends views_handler_area {
   function render($empty = FALSE) {
-    fullcalendar_get_settings($this->view);
+    $variables = array('view' => $this->view);
+    fullcalendar_get_settings($variables);
     return '<div class="fullcalendar-status"></div><div class="fullcalendar"></div><div class="fullcalendar-content"></div>';
   }
 }
