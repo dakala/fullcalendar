@@ -650,6 +650,20 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
     $settings += fullcalendar_check_arguments($view);
   }
 
+  // Add JS and CSS files.
+  $variables['element']['#attached'] = array(
+    'library' => array(
+      array('fullcalendar', 'fullcalendar'),
+    ),
+    'js' => array(
+      ctools_attach_js('fullcalendar.library', 'fullcalendar') => array('group' => JS_LIBRARY),
+      ctools_attach_js('fullcalendar.views', 'fullcalendar') => array('weight' => 20),
+    ),
+    'css' => array(
+      ctools_attach_css('fullcalendar.theme', 'fullcalendar'),
+    ),
+  );
+
   // Add CSS and JS for each option plugin that provides it.
   fullcalendar_include_api();
   foreach (module_invoke_all('fullcalendar_option_info') as $module => $info) {

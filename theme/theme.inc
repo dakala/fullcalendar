@@ -134,11 +134,9 @@ function fullcalendar_get_settings(&$variables) {
     $function($variables, $settings);
   }
 
-  drupal_add_library('fullcalendar', 'fullcalendar');
-  drupal_add_js(array('fullcalendar' => array($dom_id => $settings)), 'setting');
-  ctools_add_css('fullcalendar.theme', 'fullcalendar');
-  drupal_add_js(ctools_attach_js('fullcalendar.library', 'fullcalendar'), array('group' => JS_LIBRARY));
-  drupal_add_js(ctools_attach_js('fullcalendar.views', 'fullcalendar'), array('weight' => 20));
+  // Add settings to Drupal.settings.
+  $variables['element']['#attached']['js'][] = array('type' => 'setting', 'data' => array('fullcalendar' => array($dom_id => $settings)));
+
 }
 
 /**
