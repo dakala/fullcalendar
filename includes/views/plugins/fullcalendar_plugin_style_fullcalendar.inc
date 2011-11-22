@@ -114,7 +114,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     if (!empty($fullcalendar_options)) {
       $arguments = array(&$form, &$form_state, &$this);
       // Create a separate fieldset for each module.
-      foreach (array_intersect_key(array_keys($fullcalendar_options), module_implements('fullcalendar_options_form')) as $module) {
+      foreach (array_intersect(array_keys($fullcalendar_options), module_implements('fullcalendar_options_form')) as $module) {
         if (empty($fullcalendar_options[$module]['no_fieldset'])) {
           $form[$module] = array(
             '#type' => 'fieldset',
