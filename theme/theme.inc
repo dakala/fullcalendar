@@ -36,8 +36,6 @@ function template_preprocess_fullcalendar(&$variables) {
     ),
   );
 
-  fullcalendar_get_settings($variables);
-
   if (empty($variables['rows'])) {
     return;
   }
@@ -50,6 +48,8 @@ function template_preprocess_fullcalendar(&$variables) {
   else {
     $variables['element']['content']['events'] = $events;
   }
+
+  fullcalendar_get_settings($variables);
 }
 
 /**
@@ -240,6 +240,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     $entity->bundle = $bundle;
     $entity->eid = $row->{$view->base_field};
     $entity->entity_type = $entity_type;
+    $entity->options = $view->style_options;
 
     // If the view disallows editing, that's it.
     if (!empty($view->fullcalendar_disallow_editable)) {
