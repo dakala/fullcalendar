@@ -36,17 +36,15 @@ function template_preprocess_fullcalendar(&$variables) {
     ),
   );
 
-  if (empty($variables['rows'])) {
-    return;
-  }
+  if (!empty($variables['rows'])) {
+    $events = fullcalendar_prepare_events($variables['view'], $variables['rows'], $variables['options']['fields']);
 
-  $events = fullcalendar_prepare_events($variables['view'], $variables['rows'], $variables['options']['fields']);
-
-  if (!empty($variables['view']->fullcalendar_ajax)) {
-    $variables['element'] = $events;
-  }
-  else {
-    $variables['element']['content']['events'] = $events;
+    if (!empty($variables['view']->fullcalendar_ajax)) {
+      $variables['element'] = $events;
+    }
+    else {
+      $variables['element']['content']['events'] = $events;
+    }
   }
 
   fullcalendar_get_settings($variables);
