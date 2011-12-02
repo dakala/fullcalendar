@@ -8,6 +8,13 @@
 class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
 
   /**
+   * Check if there are no results behaviors set.
+   */
+  function even_empty() {
+    return empty($this->view->empty) ? !empty($this->definition['even empty']) : FALSE;
+  }
+
+  /**
    * Map old setting names to new ones.
    * @todo Remove in 7.x-2.1.
    */
