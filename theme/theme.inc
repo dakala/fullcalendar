@@ -9,6 +9,14 @@
  * Builds the FullCalendar structure as a render array.
  */
 function template_preprocess_fullcalendar(&$variables) {
+  $events = fullcalendar_prepare_events($variables['view'], $variables['rows'], $variables['options']['fields']);
+
+  // If we're using ajax, we're done.
+  if (!empty($variables['view']->fullcalendar_ajax)) {
+    $variables['element'] = $events;
+    return;
+  }
+
   $variables['element'] = array(
     'status' => array(
       '#type' => 'container',
@@ -36,18 +44,30 @@ function template_preprocess_fullcalendar(&$variables) {
     ),
   );
 
-  if (!empty($variables['rows'])) {
-    $events = fullcalendar_prepare_events($variables['view'], $variables['rows'], $variables['options']['fields']);
 
-    if (!empty($variables['view']->fullcalendar_ajax)) {
-      $variables['element'] = $events;
-    }
-    else {
-      $variables['element']['content']['events'] = $events;
-    }
+  if ($events) {
+    $variables['element']['content']['events'] = $events;
   }
 
-  fullcalendar_get_settings($variables);
+  // Gather options from all modules.
+  $settings = array();
+  fullcalendar_include_api();
+  $fullcalendar_options = module_invoke_all('fullcalendar_option_info');
+  uasort($fullcalendar_options, 'drupal_sort_weight');
+  foreach (array_intersect(array_keys($fullcalendar_options), module_implements('fullcalendar_options_process')) as $module) {
+    $function = $module . '_fullcalendar_options_process';
+    $function($variables, $settings);
+  }
+
+  // Add settings to Drupal.settings.
+  $variables['element']['#attached']['js'][] = array(
+    'type' => 'setting',
+    'data' => array(
+      'fullcalendar' => array(
+        '.view-dom-id-' . $variables['view']->dom_id => $settings,
+      ),
+    ),
+  );
 }
 
 /**
@@ -104,87 +124,6 @@ function theme_fullcalendar_event($variables) {
 }
 
 /**
- * Process the view and add the relevant CSS and JS.
- *
- * @param $variables
- *   The variables array, containing the view object.
- */
-function fullcalendar_get_settings(&$variables) {
-  $view = &$variables['view'];
-  // If this style plugin isn't ours, or if it is from an ajax callback, return.
-  if ($view->display_handler->get_option('style_plugin') != 'fullcalendar' || isset($view->fullcalendar_ajax)) {
-    return;
-  }
-
-  static $fc_dom_id = 1;
-  if (empty($view->dom_id)) {
-    $view->dom_id = 'fc-' . $fc_dom_id++;
-  }
-  $dom_id = '.view-dom-id-' . $view->dom_id;
-
-  // Gather options from all modules.
-  $settings = array();
-  fullcalendar_include_api();
-  $fullcalendar_options = module_invoke_all('fullcalendar_option_info');
-  uasort($fullcalendar_options, 'drupal_sort_weight');
-  foreach (array_intersect(array_keys($fullcalendar_options), module_implements('fullcalendar_options_process')) as $module) {
-    $function = $module . '_fullcalendar_options_process';
-    $function($variables, $settings);
-  }
-
-  // Add settings to Drupal.settings.
-  $variables['element']['#attached']['js'][] = array('type' => 'setting', 'data' => array('fullcalendar' => array($dom_id => $settings)));
-
-}
-
-/**
- * Check arguments on a view. If a date handler is found, add more
- * info to the $settings array so we know in jQuery we can fetch
- * new data from the view.
- *
- * @param $view
- *   The current view we're processing.
- *
- * @return $settings
- *   A collection of extra settings.
- */
-function fullcalendar_check_arguments($view) {
-  $date_handler = NULL;
-  $args = array();
-  $settings = array('ajax' => FALSE);
-
-  $position = 0;
-  foreach ($view->argument as $argument_key => $handler) {
-    if (date_views_handler_is_date($handler, 'argument')) {
-      $date_handler = $handler;
-      $args[] = 'full_calendar_browse';
-    }
-    else {
-      $args[] = $view->args[$position];
-    }
-    $position++;
-  }
-
-  if ($date_handler) {
-    $timestamp = strtotime($date_handler->argument);
-    $separator = (strpos($date_handler->argument, '-') !== FALSE) ? '-' : '';
-
-    // Add separator and ajax for date argument.
-    $settings['args'] = implode('|', $args);
-    $settings['separator'] = $separator;
-    $settings['ajax'] = TRUE;
-
-    // Settings for FullCalendar.
-    $month = date('n', $timestamp);
-    $year = date('Y', $timestamp);
-    $settings['date']['month'] = $month - 1;
-    $settings['date']['year'] = $year;
-  }
-
-  return $settings;
-}
-
-/**
  * Build a render array representing the events.
  *
  * @param $view
@@ -198,6 +137,10 @@ function fullcalendar_check_arguments($view) {
  *   A render array of events.
  */
 function fullcalendar_prepare_events($view, $rows, $options) {
+  if (empty($rows)) {
+    return;
+  }
+
   $events = array();
   foreach ($rows as $delta => $row) {
     // Collect all fields for the customize options.

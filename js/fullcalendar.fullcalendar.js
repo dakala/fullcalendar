@@ -46,13 +46,12 @@ Drupal.fullcalendar.processOptions = function(settings, dom_id) {
 
       // Fetch new items from Views if possible.
       if (Drupal.fullcalendar.navigate && settings.ajax) {
+        var prev_date, next_date, date_argument, arguments, fetch_url;
 
-        var date, month, year, date_argument, arguments, fetch_url;
-        date = $('.fullcalendar', calendar).fullCalendar('getDate');
-        month = $.fullCalendar.formatDate(date, 'MM');
-        year = $.fullCalendar.formatDate(date, 'yyyy');
-        date_argument = year + settings.separator + month;
-        arguments = settings.args.replace('full_calendar_browse', date_argument);
+        prev_date = $.fullCalendar.formatDate(start, 'yyyy-MM-dd');
+        next_date = $.fullCalendar.formatDate(end, 'yyyy-MM-dd');
+        date_argument = prev_date + '--' + next_date;
+        arguments = settings.args.replace('fullcalendar_browse', date_argument);
         fetch_url = Drupal.settings.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + arguments;
 
         $.ajax({

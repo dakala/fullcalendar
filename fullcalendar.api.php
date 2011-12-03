@@ -236,7 +236,7 @@ function hook_fullcalendar_options_submit($form, &$form_state, $view) {
 }
 
 /**
- * Allow any modules to have runtime access to the view.
+ * Allow any modules to have access to the view after the query is run.
  *
  * @param $variables
  *   The variables array, containing the view object.
@@ -244,6 +244,19 @@ function hook_fullcalendar_options_submit($form, &$form_state, $view) {
  *   An array of settings to be passed to JavaScript.
  */
 function hook_fullcalendar_options_process(&$variables, &$settings) {
+  $view = &$variables['view'];
+  // @todo.
+}
+
+/**
+ * Allow any modules to have access to the view before the query is run.
+ *
+ * @param $settings
+ *   An array of settings to be passed to JavaScript.
+ * @param $view
+ *   The FullCalendar view object.
+ */
+function hook_fullcalendar_options_pre_view(&$settings, &$view) {
   $view = &$variables['view'];
   // @todo.
 }

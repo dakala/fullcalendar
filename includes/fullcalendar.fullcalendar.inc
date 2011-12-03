@@ -608,6 +608,12 @@ function fullcalendar_process_options(&$values) {
  */
 function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
   $view = &$variables['view'];
+
+  static $fc_dom_id = 1;
+  if (empty($view->dom_id)) {
+    $view->dom_id = 'fc-' . $fc_dom_id++;
+  }
+
   $options = $view->style_plugin->options;
 
   $options['gcal'] = array();
@@ -617,8 +623,6 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
     }
   }
 
-  // Remove times from $options so they can be set conditionally later.
-  unset($options['times']);
   if (!empty($options['editable'])) {
     $view->fullcalendar_disallow_editable = TRUE;
   }
@@ -628,20 +632,6 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
     'view_name' => $view->name,
     'view_display' => $view->current_display,
   );
-
-  extract($view->get_exposed_input(), EXTR_SKIP);
-  if (isset($year) && is_numeric($year)) {
-    $settings['date']['year'] = $year;
-  }
-  if (isset($month) && is_numeric($month) && $month > 0 && $month <= 12) {
-    $settings['date']['month'] = $month;
-  }
-  if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
-    $settings['date']['day'] = $day;
-  }
-  if (isset($mode) && in_array($mode, array('month', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay'))) {
-    $settings['date']['defaultView'] = $mode;
-  }
 
   // Check if there is an argument which is an instance the default
   // date argument class and create month, year variables as well as next
@@ -676,4 +666,87 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
       $variables['element']['#attached']['css'][] = ctools_attach_css("$module.fullcalendar", $parent);
     }
   }
+}
+
+/**
+ * Implements hook_fullcalendar_options_pre_view().
+ */
+function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
+  // First, use the default date if set.
+  if (!empty($settings['times']['default_date'])) {
+    $settings['date'] = $settings['times']['date'];
+  }
+  // Unset times settings.
+  unset($settings['times']);
+
+  // Get the values from the URL.
+  extract($view->get_exposed_input(), EXTR_SKIP);
+  if (isset($year) && is_numeric($year)) {
+    $settings['date']['year'] = $year;
+  }
+  if (isset($month) && is_numeric($month) && $month > 0 && $month <= 12) {
+    $settings['date']['month'] = $month;
+  }
+  if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
+    $settings['date']['date'] = $day;
+  }
+  if (isset($mode) && in_array($mode, array('month', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay'))) {
+    $settings['date']['defaultView'] = $mode;
+  }
+
+  // Ensure that some value is set.
+  if (!isset($settings['date']['year'])) {
+    $settings['date']['year'] = date('Y', strtotime('now'));
+  }
+  if (!isset($settings['date']['month'])) {
+    $settings['date']['month'] = date('n', strtotime('now'));
+  }
+  // Change month to zero-based.
+  $settings['date']['month']--;
+}
+
+/**
+ * Check arguments on a view. If a date handler is found, add more
+ * info to the $settings array so we know in jQuery we can fetch
+ * new data from the view.
+ *
+ * @param $view
+ *   The current view we're processing.
+ *
+ * @return $settings
+ *   A collection of extra settings.
+ */
+function fullcalendar_check_arguments($view) {
+  $date_handler = NULL;
+  $args = array();
+  $settings = array('ajax' => FALSE);
+
+  $position = 0;
+  foreach ($view->argument as $argument_key => $handler) {
+    if (date_views_handler_is_date($handler, 'argument')) {
+      $date_handler = $handler;
+      $args[] = 'fullcalendar_browse';
+    }
+    else {
+      $args[] = $view->args[$position];
+    }
+    $position++;
+  }
+
+  if ($date_handler) {
+    $date_range = explode('--', $date_handler->argument);
+    $timestamp = strtotime($date_range[0] . " +1 month");
+
+    // Add ajax for date argument.
+    $settings['args'] = implode('|', $args);
+    $settings['ajax'] = TRUE;
+
+    // Settings for FullCalendar.
+    $month = date('n', $timestamp);
+    $year = date('Y', $timestamp);
+    $settings['date']['month'] = $month - 1;
+    $settings['date']['year'] = $year;
+  }
+
+  return $settings;
 }
