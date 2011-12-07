@@ -22,7 +22,7 @@ function fullcalendar_admin_settings() {
     '#title' => t('Choose FullCalendar compression level'),
     '#options' => array(
       'min' => t('Production (Minified)'),
-      'none' => t('Development (Uncompressed Code)'),
+      'none' => t('Development (Uncompressed code)'),
     ),
     '#default_value' => variable_get('fullcalendar_compression_type', 'min'),
   );

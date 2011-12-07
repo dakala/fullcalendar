@@ -33,7 +33,6 @@ function hook_fullcalendar_classes($entity) {
  *   Array of CSS classes.
  * @param $entity
  *   Object representing the entity.
- *
  */
 function hook_fullcalendar_classes_alter(&$classes, $entity) {
   // Remove all classes set by modules.
@@ -69,7 +68,7 @@ function hook_fullcalendar_droppable() {
  *   A boolean value dictating whether of not the calendar is editable.
  */
 function hook_fullcalendar_editable($entity, $view) {
-   return _fullcalendar_update_access($entity);
+  return _fullcalendar_update_access($entity);
 }
 
 /**

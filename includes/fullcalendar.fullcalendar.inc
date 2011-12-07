@@ -463,7 +463,7 @@ function fullcalendar_fullcalendar_options_form(&$form, &$form_state, &$view) {
   );
   $form['fields']['title_field'] = array(
     '#type' => 'select',
-    '#title' => t('Title Field'),
+    '#title' => t('Title field'),
     '#options' => $field_options,
     '#default_value' => $view->options['fields']['title_field'],
     '#description' => t('Choose the field with the custom title.'),
@@ -480,7 +480,7 @@ function fullcalendar_fullcalendar_options_form(&$form, &$form_state, &$view) {
   );
   $form['fields']['url_field'] = array(
     '#type' => 'select',
-    '#title' => t('URL Field'),
+    '#title' => t('URL field'),
     '#options' => $field_options,
     '#default_value' => $view->options['fields']['url_field'],
     '#description' => t('Choose the field with the custom link.'),
@@ -497,7 +497,7 @@ function fullcalendar_fullcalendar_options_form(&$form, &$form_state, &$view) {
   );
   $form['fields']['date_field'] = array(
     '#type' => 'select',
-    '#title' => t('Date Fields'),
+    '#title' => t('Date fields'),
     '#options' => $date_fields,
     '#default_value' => $view->options['fields']['date_field'],
     '#description' => t('Select one or more date fields.'),
@@ -536,7 +536,6 @@ function fullcalendar_fullcalendar_options_submit(&$form, &$form_state, $view) {
  *
  * @param $values
  *   The unprocessed Views style option values.
- *
  */
 function fullcalendar_process_options(&$values) {
   global $language;

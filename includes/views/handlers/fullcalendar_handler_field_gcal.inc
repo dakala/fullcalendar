@@ -38,7 +38,7 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
     );
     $form['class'] = array(
       '#type' => 'textfield',
-      '#title' => t('CSS Class'),
+      '#title' => t('CSS class'),
       '#default_value' => $this->options['class'],
     );
     $form['timezone'] = array(

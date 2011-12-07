@@ -125,7 +125,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         if (empty($fullcalendar_options[$module]['no_fieldset'])) {
           $form[$module] = array(
             '#type' => 'fieldset',
-            '#title' => t('!module options', array('!module' => $fullcalendar_options[$module]['name'])),
+            '#title' => t('@module options', array('@module' => $fullcalendar_options[$module]['name'])),
             '#collapsible' => TRUE,
             '#collapsed' => TRUE,
             '#attributes' => array('class' => array($module)),

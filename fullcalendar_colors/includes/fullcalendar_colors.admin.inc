@@ -15,12 +15,12 @@ function fullcalendar_colors_admin_node_type_settings() {
 
   $form['node_type_colors'] = array(
     '#type' => 'item',
-    '#title' => t('Node Type Colors'),
+    '#title' => t('Node type colors'),
     '#description' => t('Colors for node types. If enabled, you may set colors for each node type below.'),
   );
   $form['fieldset'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Node Type Colors'),
+    '#title' => t('Node type colors'),
     '#collapsible' => TRUE,
     '#collapsed' => !variable_get('fullcalendar_colors_node_types_enabled', FALSE),
   );
@@ -85,7 +85,7 @@ function fullcalendar_colors_admin_taxonomy_settings() {
 
   $form['taxonomy_colors'] = array(
     '#type' => 'item',
-    '#title' => t('Taxonomy Colors'),
+    '#title' => t('Taxonomy colors'),
     '#description' => t('Colors on a per-taxonomy basis. After enabling a vocabulary, you can set colors for individual taxonomy terms below.'),
   );
   foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
@@ -162,12 +162,12 @@ function fullcalendar_colors_admin_og_settings() {
   if (module_exists('og')) {
     $form['og_colors'] = array(
       '#type' => 'item',
-      '#title' => t('Group Colors'),
+      '#title' => t('Group colors'),
       '#description' => t('Colors for organic groups. If enabled, you may set colors for each group below.'),
     );
     $form['fieldset'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Group Colors'),
+      '#title' => t('Group colors'),
       '#collapsible' => TRUE,
       '#collapsed' => !variable_get('fullcalendar_colors_groups_enabled', FALSE),
     );
@@ -232,12 +232,12 @@ function fullcalendar_colors_admin_user_role_settings() {
 
   $form['user_role_colors'] = array(
     '#type' => 'item',
-    '#title' => t('User Role Colors'),
+    '#title' => t('User role colors'),
     '#description' => t('Colors for user roles. If enabled, you may set colors for each user role below.'),
   );
   $form['fieldset'] = array(
     '#type' => 'fieldset',
-    '#title' => t('User Roles Colors'),
+    '#title' => t('User roles colors'),
     '#collapsible' => TRUE,
     '#collapsed' => !variable_get('fullcalendar_colors_user_roles_enabled', FALSE),
   );
@@ -300,7 +300,7 @@ function fullcalendar_colors_admin_settings() {
 
   $form['default_color'] = array(
     '#type' => 'item',
-    '#title' => t('Default Color'),
+    '#title' => t('Default color'),
     '#tree' => TRUE,
     'input' => array(
       '#title' => t('default color'),

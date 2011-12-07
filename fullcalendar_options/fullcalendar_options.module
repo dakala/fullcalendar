@@ -48,7 +48,7 @@ function _fullcalendar_options_list($show_all = FALSE) {
 
   $form['firstHour'] = array(
     '#type' => 'textfield',
-    '#title' => t('First Hour'),
+    '#title' => t('First hour'),
     '#description' => t('Determines the first hour that will be visible in the scroll pane.'),
     '#size' => 2,
     '#maxlength' => 2,
@@ -57,7 +57,7 @@ function _fullcalendar_options_list($show_all = FALSE) {
   );
   $form['minTime'] = array(
     '#type' => 'textfield',
-    '#title' => t('Minimum Time'),
+    '#title' => t('Minimum time'),
     '#description' => t('Determines the first hour/time that will be displayed, even when the scrollbars have been scrolled all the way up.'),
     '#size' => 2,
     '#maxlength' => 2,
@@ -66,7 +66,7 @@ function _fullcalendar_options_list($show_all = FALSE) {
   );
   $form['maxTime'] = array(
     '#type' => 'textfield',
-    '#title' => t('Maximum Time'),
+    '#title' => t('Maximum time'),
     '#description' => t('Determines the last hour/time (exclusively) that will be displayed, even when the scrollbars have been scrolled all the way down.'),
     '#size' => 2,
     '#maxlength' => 2,
@@ -75,7 +75,7 @@ function _fullcalendar_options_list($show_all = FALSE) {
   );
   $form['slotMinutes'] = array(
     '#type' => 'textfield',
-    '#title' => t('Slot Minutes'),
+    '#title' => t('Slot minutes'),
     '#description' => t('The frequency for displaying time slots, in minutes.'),
     '#size' => 2,
     '#maxlength' => 2,

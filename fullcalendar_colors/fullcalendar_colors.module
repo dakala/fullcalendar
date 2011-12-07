@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Provide integration with Colors module for FullCalendar.
+ */
+
+/**
  * Implements hook_menu().
  */
 function fullcalendar_colors_menu() {
@@ -22,7 +27,7 @@ function fullcalendar_colors_menu() {
   ) + $base;
 
   $items['admin/config/user-interface/fullcalendar/colors/node'] = array(
-    'title' => 'Node Type',
+    'title' => 'Node type',
     'page arguments' => array('fullcalendar_colors_admin_node_type_settings'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
@@ -38,7 +43,7 @@ function fullcalendar_colors_menu() {
   }
 
   $items['admin/config/user-interface/fullcalendar/colors/user'] = array(
-    'title' => 'User Role',
+    'title' => 'User role',
     'page arguments' => array('fullcalendar_colors_admin_user_role_settings'),
     'type' => MENU_LOCAL_TASK,
     'weight' => -6,
@@ -46,7 +51,7 @@ function fullcalendar_colors_menu() {
 
   if (module_exists('og')) {
     $items['admin/config/user-interface/fullcalendar/colors/og'] = array(
-      'title' => 'Organic Groups',
+      'title' => 'Organic groups',
       'page arguments' => array('fullcalendar_colors_admin_og_settings'),
       'type' => MENU_LOCAL_TASK,
       'weight' => -2,

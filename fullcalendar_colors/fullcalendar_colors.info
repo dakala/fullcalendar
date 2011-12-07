@@ -1,5 +1,5 @@
 name = FullCalendar Colors
-description = Allows definition of colors for fullcalendars based on taxonomies, node types, etc.
+description = Allows definition of colors for FullCalendar events based on taxonomies, node types, etc.
 core = 7.x
 package = FullCalendar
 configure = admin/config/user-interface/fullcalendar/colors

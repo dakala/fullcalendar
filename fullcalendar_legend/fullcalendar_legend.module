@@ -107,7 +107,7 @@ function fullcalendar_legend_build_legend($view, $type) {
  * @param $fields
  *   An array of results from field_info_field(), keyed by field name.
  *
- * @return array
+ * @return
  *   Array of bundles.
  */
 function fullcalendar_legend_get_type_taxonomy($fields) {
@@ -146,7 +146,7 @@ function fullcalendar_legend_get_type_taxonomy($fields) {
  * @param $fields
  *   An array of results from field_info_field(), keyed by field name.
  *
- * @return array
+ * @return
  *   Array of bundles.
  */
 function fullcalendar_legend_get_type_bundle($fields) {
