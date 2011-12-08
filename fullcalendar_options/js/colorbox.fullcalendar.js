@@ -42,4 +42,4 @@ Drupal.fullcalendar_options_colorbox.processOptions = function(settings) {
   };
 };
 
-})(jQuery);
+}(jQuery));

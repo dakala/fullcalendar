@@ -14,5 +14,4 @@ Drupal.behaviors.fullcalendar_options = {
   }
 };
 
-})(jQuery);
-
+}(jQuery));

@@ -1,4 +1,3 @@
-
 /**
  * @file
  * Integrates Views data with the FullCalendar plugin.
@@ -7,7 +6,8 @@
 (function ($) {
 
 Drupal.behaviors.fullcalendar = {
-  attach: function(context, settings) {
+  attach: function (context, settings) {
+    var calendar, options, extendedOptions;
     // Process each view and its settings.
     for (var dom_id in settings.fullcalendar) {
       if (!settings.fullcalendar.hasOwnProperty(dom_id)) {
@@ -15,16 +15,16 @@ Drupal.behaviors.fullcalendar = {
       }
 
       // Create an object of this calendar.
-      var calendar = $(dom_id);
+      calendar = $(dom_id);
 
       // Hide the failover display.
       $('.fullcalendar-content', calendar).hide();
 
       // Prepare our options.
-      var options = {};
+      options = {};
 
       // Allow other modules to overwrite options.
-      var extendedOptions = Drupal.fullcalendar.getOptions(dom_id);
+      extendedOptions = Drupal.fullcalendar.getOptions(dom_id);
 
       // Load the base FullCalendar options first.
       // @todo Use the weights system to order this.
@@ -42,7 +42,7 @@ Drupal.behaviors.fullcalendar = {
       $('.fullcalendar', calendar).once().fullCalendar(options);
     }
 
-    $('.fullcalendar-status-close', calendar).live('click', function() {
+    $('.fullcalendar-status-close', calendar).live('click', function () {
       $(this).parent().slideUp();
       return false;
     });
@@ -52,4 +52,4 @@ Drupal.behaviors.fullcalendar = {
   }
 };
 
-})(jQuery);
+}(jQuery));

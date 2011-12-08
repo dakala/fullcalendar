@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Provides FullCalendar defaults and functions.
+ */
+
 (function ($) {
 
 Drupal.fullcalendar = {};
@@ -24,7 +29,7 @@ Drupal.fullCalendar = Drupal.fullcalendar;
  *
  * @see http://arshaw.com/fullcalendar/docs
  */
-Drupal.fullcalendar.registerOptions = function(name, options, dom_id) {
+Drupal.fullcalendar.registerOptions = function (name, options, dom_id) {
   dom_id = dom_id || 'global';
   Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
   Drupal.fullcalendar.options[dom_id][name] = options;
@@ -38,18 +43,18 @@ Drupal.fullcalendar.registerOptions = function(name, options, dom_id) {
  * @param dom_id
  *   The dom id of the FullCalendar view.
  */
-Drupal.fullcalendar.getOptions = function(dom_id) {
+Drupal.fullcalendar.getOptions = function (dom_id) {
   Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
   return $.extend({}, Drupal.fullcalendar.options.global, Drupal.fullcalendar.options[dom_id]);
 };
 
-Drupal.fullcalendar.update = function(result) {
+Drupal.fullcalendar.update = function (result) {
   var fcStatus = $(result.dom_id).find('.fullcalendar-status');
-  if (fcStatus.text() === '') {
+  if (fcStatus.is(':hidden')) {
     fcStatus.html(result.msg).slideDown();
   }
   else {
-    fcStatus.effect('highlight', {}, 5000);
+    fcStatus.effect('highlight');
   }
   Drupal.attachBehaviors();
   return false;
@@ -58,11 +63,11 @@ Drupal.fullcalendar.update = function(result) {
 /**
  * Parse Drupal events from the DOM.
  */
-Drupal.fullcalendar.parseEvents = function(dom_id, calendar, callback) {
+Drupal.fullcalendar.parseEvents = function (dom_id, calendar, callback) {
   var events = [];
-  // Drupal events.
-  $('.fullcalendar-event-details', calendar).each(function() {
-    var event = $(this);
+  var details = $('.fullcalendar-event-details', calendar);
+  for (var i = 0; i < details.length; i++) {
+    var event = $(details[i]);
     events.push({
       field: event.attr('field'),
       index: event.attr('index'),
@@ -77,8 +82,8 @@ Drupal.fullcalendar.parseEvents = function(dom_id, calendar, callback) {
       editable: (event.attr('editable') === '1'),
       dom_id: dom_id
     });
-  });
+  }
   callback(events);
 };
 
-})(jQuery);
+}(jQuery));
