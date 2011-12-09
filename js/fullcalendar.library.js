@@ -10,30 +10,41 @@ Drupal.fullcalendar.navigate = false;
 Drupal.fullcalendar.options = {
   global: {}
 };
+Drupal.fullcalendar.plugins = {};
 Drupal.fullcalendar.droppableCallbacks = {};
 
 // Alias old fullCalendar namespace.
 Drupal.fullCalendar = Drupal.fullcalendar;
 
 Drupal.fullcalendar.fullcalendar = function (dom_id) {
+  this.dom_id = dom_id;
   this.$calendar = $(dom_id);
   this.$options = {};
+
+  // Allow other modules to overwrite options.
+  var $options = {};
+  for (var $plugin in Drupal.fullcalendar.plugins) {
+    if (Drupal.fullcalendar.plugins.hasOwnProperty($plugin)) {
+      if (typeof Drupal.fullcalendar.plugins[$plugin].options == 'function') {
+        var option = {};
+        option[$plugin] = Drupal.fullcalendar.plugins[$plugin].options(this);
+        $.extend($options, option);
+      }
+    }
+  }
 
   // Hide the failover display.
   $('.fullcalendar-content', this.$calendar).hide();
 
-  // Allow other modules to overwrite options.
-  var $extendedOptions = this.getOptions(dom_id);
-
   // Load the base FullCalendar options first.
   // @todo Use the weights system to order this.
-  $.extend(this.$options, $extendedOptions.fullcalendar);
-  delete $extendedOptions.fullcalendar;
+  $.extend(this.$options, $options.fullcalendar);
+  delete $options.fullcalendar;
 
   // Loop through additional options, overwriting the defaults.
-  for (var extendedOption in $extendedOptions) {
-    if ($extendedOptions.hasOwnProperty(extendedOption)) {
-      $.extend(this.$options, $extendedOptions[extendedOption]);
+  for (var option in $options) {
+    if ($options.hasOwnProperty(option)) {
+      $.extend(this.$options, $options[option]);
     }
   }
 
@@ -42,39 +53,6 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
     return false;
   });
 }
-
-/**
- * Add FullCalendar options for a specific view.
- *
- * If the dom id is not provided, the options will be added for all views.
- *
- * @param name
- *   The module name.
- * @param options
- *   An object containing official FullCalendar options.
- * @param dom_id
- *   (optional) The dom id of the FullCalendar view.
- *
- * @see http://arshaw.com/fullcalendar/docs
- */
-Drupal.fullcalendar.registerOptions = function (name, options, dom_id) {
-  dom_id = dom_id || 'global';
-  Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
-  Drupal.fullcalendar.options[dom_id][name] = options;
-};
-
-/**
- * Retrieve FullCalendar options for a specific view.
- *
- * Gathers all global and view-specific settings.
- *
- * @param dom_id
- *   The dom id of the FullCalendar view.
- */
-Drupal.fullcalendar.fullcalendar.prototype.getOptions = function (dom_id) {
-  Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
-  return $.extend({}, Drupal.fullcalendar.options.global, Drupal.fullcalendar.options[dom_id]);
-};
 
 Drupal.fullcalendar.update = function (result) {
   var fcStatus = $(result.dom_id).find('.fullcalendar-status');
