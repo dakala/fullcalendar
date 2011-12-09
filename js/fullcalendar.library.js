@@ -15,6 +15,34 @@ Drupal.fullcalendar.droppableCallbacks = {};
 // Alias old fullCalendar namespace.
 Drupal.fullCalendar = Drupal.fullcalendar;
 
+Drupal.fullcalendar.fullcalendar = function (dom_id) {
+  this.$calendar = $(dom_id);
+  this.$options = {};
+
+  // Hide the failover display.
+  $('.fullcalendar-content', this.$calendar).hide();
+
+  // Allow other modules to overwrite options.
+  var $extendedOptions = this.getOptions(dom_id);
+
+  // Load the base FullCalendar options first.
+  // @todo Use the weights system to order this.
+  $.extend(this.$options, $extendedOptions.fullcalendar);
+  delete $extendedOptions.fullcalendar;
+
+  // Loop through additional options, overwriting the defaults.
+  for (var extendedOption in $extendedOptions) {
+    if ($extendedOptions.hasOwnProperty(extendedOption)) {
+      $.extend(this.$options, $extendedOptions[extendedOption]);
+    }
+  }
+
+  $(this.$calendar).delegate('.fullcalendar-status-close', 'click', function () {
+    $(this).parent().slideUp();
+    return false;
+  });
+}
+
 /**
  * Add FullCalendar options for a specific view.
  *
@@ -43,7 +71,7 @@ Drupal.fullcalendar.registerOptions = function (name, options, dom_id) {
  * @param dom_id
  *   The dom id of the FullCalendar view.
  */
-Drupal.fullcalendar.getOptions = function (dom_id) {
+Drupal.fullcalendar.fullcalendar.prototype.getOptions = function (dom_id) {
   Drupal.fullcalendar.options[dom_id] = Drupal.fullcalendar.options[dom_id] || {};
   return $.extend({}, Drupal.fullcalendar.options.global, Drupal.fullcalendar.options[dom_id]);
 };
