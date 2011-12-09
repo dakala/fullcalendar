@@ -12,9 +12,6 @@ Drupal.behaviors.fullcalendar = {
       if (settings.fullcalendar.hasOwnProperty(dom_id)) {
         // Create a new fullcalendar object.
         var fullcalendar = new Drupal.fullcalendar.fullcalendar(dom_id);
-
-        // Use .once() to protect against extra AJAX calls from Colorbox.
-        $('.fullcalendar', fullcalendar.$calendar).once().fullCalendar(fullcalendar.$options);
       }
     }
 

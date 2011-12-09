@@ -19,10 +19,10 @@ Drupal.fullcalendar.plugins.fullcalendar = {
         return false;
       },
       drop: function (date, allDay, jsEvent, ui) {
-        for (var callback in Drupal.fullcalendar.droppableCallbacks) {
-          if (Drupal.fullcalendar.droppableCallbacks.hasOwnProperty(callback) && $.isFunction(Drupal.fullcalendar.droppableCallbacks[callback].callback)) {
+        for (var $plugin in Drupal.fullcalendar.plugins) {
+          if (Drupal.fullcalendar.plugins.hasOwnProperty($plugin) && $.isFunction(Drupal.fullcalendar.plugins[$plugin].drop)) {
             try {
-              Drupal.fullcalendar.droppableCallbacks[callback].callback(date, allDay, jsEvent, ui, this);
+              Drupal.fullcalendar.plugins[$plugin].drop(date, allDay, jsEvent, ui, this, fullcalendar);
             }
             catch (exception) {
               alert(exception);
@@ -32,7 +32,7 @@ Drupal.fullcalendar.plugins.fullcalendar = {
       },
       events: function (start, end, callback) {
         // Fetch new items from Views if possible.
-        if (Drupal.fullcalendar.navigate && settings.ajax) {
+        if (fullcalendar.navigate && settings.ajax) {
           var prev_date, next_date, date_argument, argument, fetch_url;
 
           prev_date = $.fullCalendar.formatDate(start, 'yyyy-MM-dd');
@@ -54,7 +54,7 @@ Drupal.fullcalendar.plugins.fullcalendar = {
               if (data.status) {
                 // Replace content.
                 $(fullcalendar.dom_id + ' .fullcalendar-content').html(data.content);
-                Drupal.fullcalendar.parseEvents(fullcalendar.dom_id, fullcalendar.$calendar, callback);
+                fullcalendar.parseEvents(callback);
               }
               // Remove the throbber.
               $(this.progress).remove();
@@ -65,10 +65,10 @@ Drupal.fullcalendar.plugins.fullcalendar = {
           });
         }
         else {
-          Drupal.fullcalendar.parseEvents(fullcalendar.dom_id, fullcalendar.$calendar, callback);
+          fullcalendar.parseEvents(callback);
         }
 
-        if (!Drupal.fullcalendar.navigate) {
+        if (!fullcalendar.navigate) {
           // Add events from Google Calendar feeds.
           for (var entry in settings.gcal) {
             if (settings.gcal.hasOwnProperty(entry)) {
@@ -81,13 +81,13 @@ Drupal.fullcalendar.plugins.fullcalendar = {
 
         // Set navigate to true which means we've starting clicking on
         // next and previous buttons if we re-enter here again.
-        Drupal.fullcalendar.navigate = true;
+        fullcalendar.navigate = true;
       },
       eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
         $.post(
           Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/' + event.eid,
           'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay + '&dom_id=' + event.dom_id,
-          Drupal.fullcalendar.update
+          fullcalendar.update
         );
         return false;
       },
@@ -95,7 +95,7 @@ Drupal.fullcalendar.plugins.fullcalendar = {
         $.post(
           Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/' + event.eid,
           'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
-          Drupal.fullcalendar.update
+          fullcalendar.update
         );
         return false;
       }
