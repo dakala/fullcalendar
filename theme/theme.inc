@@ -126,14 +126,14 @@ function theme_fullcalendar_event($variables) {
 /**
  * Build a render array representing the events.
  *
- * @param $view
+ * @param object $view
  *   The view object.
- * @param $rows
+ * @param array $rows
  *   An array of row objects.
- * @param $options
+ * @param array $options
  *   An array of options from the style plugin.
  *
- * @return
+ * @return array
  *   A render array of events.
  */
 function fullcalendar_prepare_events($view, $rows, $options) {

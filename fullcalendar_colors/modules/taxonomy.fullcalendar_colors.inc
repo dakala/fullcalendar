@@ -28,10 +28,10 @@ function taxonomy_fullcalendar_classes($entity) {
 /**
  * Filters all the term ids found in an array of fields.
  *
- * @param $fields
+ * @param array $fields
  *   An array filled with fields.
  *
- * @return
+ * @return array
  *   List of the term ids found in the given fields.
  */
 function _fullcalendar_colors_filter_term_ids($fields) {

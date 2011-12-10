@@ -123,11 +123,13 @@ function fullcalendar_fullcalendar_option_definition() {
         'default' => FALSE,
         'bool' => TRUE,
       ),
-      'date' => array('default' => array(
-        'year' => '1900',
-        'month' => '1',
-        'day' => '1',
-      )),
+      'date' => array(
+        'default' => array(
+          'year' => '1900',
+          'month' => '1',
+          'day' => '1',
+        ),
+      ),
     ),
   );
   $options['fields'] = array(
@@ -534,7 +536,7 @@ function fullcalendar_fullcalendar_options_submit(&$form, &$form_state, $view) {
 /**
  * Processes the raw FullCalendar values into options for the jQuery plugin.
  *
- * @param $values
+ * @param array $values
  *   The unprocessed Views style option values.
  */
 function fullcalendar_process_options(&$values) {
@@ -709,10 +711,10 @@ function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
  * info to the $settings array so we know in jQuery we can fetch
  * new data from the view.
  *
- * @param $view
+ * @param object $view
  *   The current view we're processing.
  *
- * @return $settings
+ * @return array
  *   A collection of extra settings.
  */
 function fullcalendar_check_arguments($view) {

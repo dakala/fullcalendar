@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @todo.
+ * Defines a CTools content type for FullCalendar Legends.
  */
 
 $plugin = array(
@@ -10,12 +10,14 @@ $plugin = array(
   'title' => t('FullCalendar Legend'),
   'description' => t('A legend, generally for use with FullCalendar Colors.'),
   'category' => t('FullCalendar'),
+  'render callback' => 'fullcalendar_legend_content_type_render',
+  'edit form' => 'fullcalendar_legend_content_type_edit_form',
 );
 
 /**
  * Implements MODULE_PLUGIN_content_type_render().
  */
-function fullcalendar_legend_fullcalendar_legend_content_type_render($subtype, $conf, $panel_args, $context) {
+function fullcalendar_legend_content_type_render($subtype, $conf, $panel_args, $context) {
   if (empty($conf['view']) || empty($conf['legend_type'])) {
     return;
   }
@@ -36,7 +38,7 @@ function fullcalendar_legend_fullcalendar_legend_content_type_render($subtype, $
 /**
  * Implements MODULE_PLUGIN_content_type_edit_form().
  */
-function fullcalendar_legend_fullcalendar_legend_content_type_edit_form($form, &$form_state) {
+function fullcalendar_legend_content_type_edit_form($form, &$form_state) {
   if (empty($form_state['display'])) {
     return $form;
   }
@@ -62,12 +64,24 @@ function fullcalendar_legend_fullcalendar_legend_content_type_edit_form($form, &
   return $form;
 }
 
-function fullcalendar_legend_fullcalendar_legend_content_type_edit_form_submit($form, &$form_state) {
+/**
+ * Form submission handler for fullcalendar_legend_content_type_edit_form().
+ */
+function fullcalendar_legend_content_type_edit_form_submit($form, &$form_state) {
   foreach (array('view', 'legend_type') as $key) {
     $form_state['conf'][$key] = $form_state['values'][$key];
   }
 }
 
+/**
+ * Gets the available View names.
+ *
+ * @param object $panel
+ *   The current panel object.
+ *
+ * @return array
+ *   An asssociative array of View names, keyed by machine name.
+ */
 function _fullcalendar_legend_get_views_panes($panel) {
   $views = array();
   foreach ($panel->content as $pid => $pane) {

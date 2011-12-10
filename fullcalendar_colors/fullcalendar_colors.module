@@ -79,15 +79,24 @@ function fullcalendar_colors_help($path, $arg) {
   }
 }
 
+/**
+ * Includes all FullCalendar Colors API plugins.
+ */
 function fullcalendar_colors_include_api() {
   ctools_include('plugins');
   return ctools_plugin_api_include('fullcalendar_colors', 'fullcalendar_colors', fullcalendar_colors_api_version(), fullcalendar_colors_api_minimum_version());
 }
 
+/**
+ * Implements hook_ctools_plugin_api_hook_name().
+ */
 function fullcalendar_colors_ctools_plugin_api_hook_name() {
   return 'fullcalendar_colors_api';
 }
 
+/**
+ * Implements hook_fullcalendar_colors_api().
+ */
 function fullcalendar_colors_fullcalendar_colors_api() {
   return array(
     'api' => fullcalendar_colors_api_version(),
@@ -95,10 +104,16 @@ function fullcalendar_colors_fullcalendar_colors_api() {
   );
 }
 
+/**
+ * Declares the current FullCalendar Colors API version.
+ */
 function fullcalendar_colors_api_version() {
   return '1';
 }
 
+/**
+ * Declares the minimum FullCalendar Colors API version.
+ */
 function fullcalendar_colors_api_minimum_version() {
   return '1';
 }
@@ -116,7 +131,7 @@ function fullcalendar_colors_generate_css($entity, $classes) {
     $function = $module . '_' . $hook;
     $class_names = $function($entity);
     foreach ($class_names as $class_name) {
-      $classes[$module][$class_name] =  $class_name;
+      $classes[$module][$class_name] = $class_name;
     }
   }
 
@@ -148,9 +163,9 @@ function fullcalendar_colors_colors_build_selector($class) {
 /**
  * Processes selectors.
  *
- * @param $selector
+ * @param array $selectors
  *   Selector that is being processed.
- * @param $reset
+ * @param bool $reset
  *   Boolean to print the CSS and reset the array.
  */
 function fullcalendar_colors_process_selectors($selectors = array(), $reset = FALSE) {
@@ -185,7 +200,7 @@ function fullcalendar_colors_process_selectors($selectors = array(), $reset = FA
 /**
  * Rearranges the selectors according to the weights.
  *
- * @param $selectors
+ * @param array $selectors
  *   The selectors that needs to be rearranged.
  */
 function fullcalendar_colors_rearrange_selectors(&$selectors) {
@@ -246,13 +261,13 @@ if (!function_exists('og_fullcalendar_colors_api')) {
 /**
  * Inserts or updates a FullCalendar color configuration.
  *
- * @param $classes
+ * @param array $classes
  *   CSS class you would like to insert or update.
- * @param $background
+ * @param string $background
  *   Background color used for the color configuration.
- * @param $border
+ * @param string $border
  *   Border color used for the color configuration.
- * @param $text
+ * @param string $text
  *   Text color used for the color configuration.
  */
 function fullcalendar_colors_set_color($classes, $background = '#000000', $border = '#000000', $text = '#ffffff') {

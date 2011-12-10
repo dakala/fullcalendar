@@ -20,10 +20,10 @@
  * If you want to add classes AND color at the same time you should use
  * hook_fullcalendar_classes().
  *
- * @param $entity
+ * @param object $entity
  *   Object representing the entity.
  *
- * @return
+ * @return array
  *   Array of classes that will be processed by FullCalendar for each entity.
  */
 function hook_fullcalendar_colors_css_classes($entity) {

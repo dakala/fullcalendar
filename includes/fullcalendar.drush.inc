@@ -16,7 +16,7 @@ define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fu
 function fullcalendar_drush_command() {
   $items = array();
 
-  // the key in the $items array is the name of the command.
+  // The key in the $items array is the name of the command.
   $items['fullcalendar-plugin'] = array(
     'description' => dt("Downloads the FullCalendar plugin."),
     'arguments' => array(
@@ -58,24 +58,24 @@ function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
   $filename = basename(FULLCALENDAR_DOWNLOAD_URI);
   $dirname = basename(FULLCALENDAR_DOWNLOAD_URI, '.zip');
 
-  // Remove any existing FullCalendar plugin directory
+  // Remove any existing FullCalendar plugin directory.
   if (is_dir($dirname)) {
     drush_log(dt('A existing FullCalendar plugin was overwritten at @path', array('@path' => $path)), 'notice');
   }
-  // Remove any existing FullCalendar plugin zip archive
+  // Remove any existing FullCalendar plugin zip archive.
   if (is_file($filename)) {
     drush_op('unlink', $filename);
   }
 
-  // Download the zip archive
+  // Download the zip archive.
   if (!drush_shell_exec('wget ' . FULLCALENDAR_DOWNLOAD_URI)) {
     drush_shell_exec('curl -O ' . FULLCALENDAR_DOWNLOAD_URI);
   }
 
   if (is_file($filename)) {
-    // Decompress the zip archive
+    // Decompress the zip archive.
     drush_shell_exec('unzip -qq -o ' . $filename);
-    // Remove the zip archive
+    // Remove the zip archive.
     drush_op('unlink', $filename);
     if (is_dir('fullcalendar')) {
       drush_shell_exec('rm -rf fullcalendar');

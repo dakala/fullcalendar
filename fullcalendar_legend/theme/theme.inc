@@ -5,6 +5,9 @@
  * Theme functions for FullCalendar Legend.
  */
 
+/**
+ * Build the legend as a render array.
+ */
 function template_preprocess_fullcalendar_legend(&$variables) {
   $element = array(
     '#attached' => array(
@@ -40,19 +43,22 @@ function template_preprocess_fullcalendar_legend(&$variables) {
   $variables['element'] = $element;
 }
 
+/**
+ * Render the legend.
+ */
 function theme_fullcalendar_legend($variables) {
   return drupal_render($variables['element']);
 }
 
 /**
- * Helper function to spoof an entity and then get its classes.
+ * Spoofs an entity to get its classes.
  *
- * @param $type
+ * @param array $type
  *   An array containing the following keys:
  *    - "entity_type": The entity type; e.g. 'node' or 'user'.
  *    - "bundle": The bundle name.
  *
- * @return
+ * @return array
  *   An array of CSS classes.
  */
 function _fullcalendar_legend_get_classes($type) {

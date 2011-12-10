@@ -84,6 +84,17 @@ function fullcalendar_legend_block_view($delta = '') {
   return $block;
 }
 
+/**
+ * Builds the legend as a render array.
+ *
+ * @param object $view
+ *   The View object.
+ * @param string $type
+ *   The type of legend to build, either 'bundle' or 'taxonomy'.
+ *
+ * @return array
+ *   The render array representing the legend.
+ */
 function fullcalendar_legend_build_legend($view, $type) {
   // Restrict the fields to only date fields used by the view.
   $fields = array();
@@ -104,10 +115,10 @@ function fullcalendar_legend_build_legend($view, $type) {
 /**
  * Finds the bundle of a given date field.
  *
- * @param $fields
+ * @param array $fields
  *   An array of results from field_info_field(), keyed by field name.
  *
- * @return
+ * @return array
  *   Array of bundles.
  */
 function fullcalendar_legend_get_type_taxonomy($fields) {
@@ -143,10 +154,10 @@ function fullcalendar_legend_get_type_taxonomy($fields) {
 /**
  * Finds the bundle of a given date field.
  *
- * @param $fields
+ * @param array $fields
  *   An array of results from field_info_field(), keyed by field name.
  *
- * @return
+ * @return array
  *   Array of bundles.
  */
 function fullcalendar_legend_get_type_bundle($fields) {
@@ -198,12 +209,18 @@ function fullcalendar_legend_ctools_plugin_directory($module, $plugin_type) {
   }
 }
 
+/**
+ * Implements hook_preprocess_panels_pane().
+ */
 function fullcalendar_legend_preprocess_panels_pane(&$variables) {
   if ($variables['pane']->type == 'fullcalendar_legend') {
     $variables['classes_array'][] = 'fullcalendar-legend';
   }
 }
 
+/**
+ * Implements hook_preprocess_block().
+ */
 function fullcalendar_legend_preprocess_block(&$variables) {
   if ($variables['block']->module == 'fullcalendar_legend') {
     $variables['classes_array'][] = 'fullcalendar-legend';

@@ -18,4 +18,3 @@ function fullcalendar_options_install() {
 function fullcalendar_options_uninstall() {
   variable_del('fullcalendar_options');
 }
-

@@ -30,6 +30,9 @@ function fullcalendar_admin_settings() {
   return system_settings_form($form);
 }
 
+/**
+ * Form validation handler for fullcalendar_admin_settings().
+ */
 function fullcalendar_admin_settings_validate($form, &$form_state) {
   form_set_value($form['fullcalendar_path'], rtrim($form['fullcalendar_path']['#value'], "/"), $form_state);
 }

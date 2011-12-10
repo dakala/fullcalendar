@@ -13,10 +13,10 @@
 /**
  * Constructs CSS classes for an entity.
  *
- * @param $entity
+ * @param object $entity
  *   Object representing the entity.
  *
- * @return
+ * @return array
  *   Array of CSS classes.
  */
 function hook_fullcalendar_classes($entity) {
@@ -29,9 +29,9 @@ function hook_fullcalendar_classes($entity) {
 /**
  * Alter the CSS classes for an entity.
  *
- * @param $classes
+ * @param array $classes
  *   Array of CSS classes.
- * @param $entity
+ * @param object $entity
  *   Object representing the entity.
  */
 function hook_fullcalendar_classes_alter(&$classes, $entity) {
@@ -59,12 +59,12 @@ function hook_fullcalendar_droppable() {
  * If any module implementing this hook returns FALSE, the value will be set to
  * FALSE. Use hook_fullcalendar_editable_alter() to override this if necessary.
  *
- * @param $entity
+ * @param object $entity
  *   Object representing the entity.
- * @param $view
+ * @param object $view
  *   Object representing the view.
  *
- * @return
+ * @return bool
  *   A boolean value dictating whether of not the calendar is editable.
  */
 function hook_fullcalendar_editable($entity, $view) {
@@ -74,11 +74,11 @@ function hook_fullcalendar_editable($entity, $view) {
 /**
  * Allows your module to forcibly override the editability of the calendar.
  *
- * @param $editable
+ * @param bool $editable
  *   A boolean value dictating whether of not the calendar is editable.
- * @param $entity
+ * @param object $entity
  *   Object representing the entity.
- * @param $view
+ * @param object $view
  *   Object representing the view.
  */
 function hook_fullcalendar_editable_alter(&$editable, $entity, $view) {
@@ -88,7 +88,7 @@ function hook_fullcalendar_editable_alter(&$editable, $entity, $view) {
 /**
  * Defines the location of your FullCalendar API includes.
  *
- * @return
+ * @return array
  *   An associative array containing the following key-value pairs:
  *   - api: The version of the FullCalendar API your module implements.
  *   - path: The location of your MODULENAME.fullcalendar.inc files.
@@ -103,7 +103,7 @@ function hook_fullcalendar_api() {
 /**
  * Declares your FullCalendar configuration extender.
  *
- * @return
+ * @return array
  *   An associative array, keyed by your module's machine name, containing an
  *   associative array with the following key-value pairs:
  *   - name: The translated name of your module.
@@ -130,7 +130,7 @@ function hook_fullcalendar_option_info() {
 /**
  * Return an array to be added to FullCalendar's Views option definition.
  *
- * @return
+ * @return array
  *   An associative array in the form expected by Views option_definition().
  *   For usage in this context, it will generally be an associative array keyed
  *   by the module name, containing an associative array with the key
@@ -161,11 +161,11 @@ function hook_fullcalendar_option_definition() {
 /**
  * Return an array to be added to FullCalendar's Views options form.
  *
- * @param $form
+ * @param array $form
  *   The FullCalendar style plugin options form structure.
- * @param $form_state
+ * @param array $form_state
  *   The FullCalendar style plugin options form state.
- * @param $view
+ * @param object $view
  *   The FullCalendar view object.
  *
  * @see views_object::options_form()
@@ -203,11 +203,11 @@ function hook_fullcalendar_options_form(&$form, &$form_state, &$view) {
 /**
  * Allows validation of the FullCalendar Views options form.
  *
- * @param $form
+ * @param array $form
  *   The FullCalendar style plugin options form structure.
- * @param $form_state
+ * @param array $form_state
  *   The FullCalendar style plugin options form state.
- * @param $view
+ * @param object $view
  *   The FullCalendar view object.
  *
  * @see views_object::options_validate()
@@ -221,43 +221,46 @@ function hook_fullcalendar_options_validate(&$form, &$form_state, &$view) {
 /**
  * Allows custom submission handling for the FullCalendar Views options form.
  *
- * @param $form
+ * @param array $form
  *   The FullCalendar style plugin options form structure.
- * @param $form_state
+ * @param array $form_state
  *   The FullCalendar style plugin options form state.
- * @param $view
+ * @param object $view
  *   The FullCalendar view object.
  *
  * @see views_object::options_submit()
  */
 function hook_fullcalendar_options_submit($form, &$form_state, $view) {
-  // @todo.
+  $options = &$form_state['values']['style_options'];
+  unset($options['my_unwanted_setting');
 }
 
 /**
  * Allow any modules to have access to the view after the query is run.
  *
- * @param $variables
+ * @param array $variables
  *   The variables array, containing the view object.
- * @param $settings
+ * @param array $settings
  *   An array of settings to be passed to JavaScript.
  */
 function hook_fullcalendar_options_process(&$variables, &$settings) {
   $view = &$variables['view'];
-  // @todo.
+  $view->my_setting = TRUE;
 }
 
 /**
  * Allow any modules to have access to the view before the query is run.
  *
- * @param $settings
+ * @param array $settings
  *   An array of settings to be passed to JavaScript.
- * @param $view
+ * @param object $view
  *   The FullCalendar view object.
  */
 function hook_fullcalendar_options_pre_view(&$settings, &$view) {
-  $view = &$variables['view'];
-  // @todo.
+  $settings['my_setting'] = array(
+    'my_other_setting' => $settings['my_other_setting'],
+    'my_another_setting' => $settings['my_another_setting'],
+  );
 }
 
 /**

@@ -189,13 +189,13 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
   /**
    * If #data_type is defined, use that as the type for casting the value.
    *
-   * @param $values
+   * @param array $values
    *   An array of View option form values.
-   * @param $form
+   * @param array $form
    *   The Views option form definition.
-   * @param $current_key
+   * @param string $current_key
    *   The current key being processed.
-   * @param $parents
+   * @param array $parents
    *   An array of parent keys when recursing through the nested array.
    */
   function fullcalendar_cast_nested_value(&$values, $form, $current_key = NULL, $parents = array()) {

@@ -104,8 +104,7 @@ function fullcalendar_colors_admin_taxonomy_settings() {
     if (variable_get('fullcalendar_colors_taxo_' . $vid . '_enabled')) {
       // If enabled, get all the terms in the taxonomy.
       $term_ids = taxonomy_get_tree($vid);
-      // Print textfield for each term, where user can add a hex value for a color.
-      // @todo - Look into moving these into a custom db table, rather than variables...
+      // Print textfield for each term so user can add a hex value for a color.
       foreach ($term_ids as $term) {
         $class = 'fullcalendar_colors_taxo_term_' . $term->tid;
         $colors = colors_get_colors($class, 'fullcalendar_colors');
@@ -372,7 +371,7 @@ function fullcalendar_colors_admin_settings() {
     'submit' => array(
       '#type' => 'submit',
       '#value' => t('Save settings'),
-      '#submit' => array('fullcalendar_colors_admin_settings_submit')
+      '#submit' => array('fullcalendar_colors_admin_settings_submit'),
     ),
   );
 
@@ -396,7 +395,7 @@ function fullcalendar_colors_admin_settings_submit($form, &$form_state) {
 /**
  * Returns HTML for the settings form.
  *
- * @param $variables
+ * @param array $variables
  *   An associative array containing:
  *   - form: A render element representing the form.
  */
