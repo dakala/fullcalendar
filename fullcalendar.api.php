@@ -232,7 +232,7 @@ function hook_fullcalendar_options_validate(&$form, &$form_state, &$view) {
  */
 function hook_fullcalendar_options_submit($form, &$form_state, $view) {
   $options = &$form_state['values']['style_options'];
-  unset($options['my_unwanted_setting');
+  unset($options['my_unwanted_setting']);
 }
 
 /**
