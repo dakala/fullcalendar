@@ -707,6 +707,8 @@ function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
 }
 
 /**
+ * Override date settings when using FullCalendar AJAX pager.
+ *
  * Check arguments on a view. If a date handler is found, add more
  * info to the $settings array so we know in jQuery we can fetch
  * new data from the view.

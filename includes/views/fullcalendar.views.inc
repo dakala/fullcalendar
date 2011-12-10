@@ -2,17 +2,14 @@
 
 /**
  * @file
- * Contains views module hooks
+ * Contains Views module hooks.
  */
 
 /**
  * Implements hook_views_plugins().
  */
 function fullcalendar_views_plugins() {
-  $module_path = drupal_get_path('module', 'fullcalendar');
-  $theme_path = $module_path . '/theme';
-  $path = $module_path . '/includes/views/plugins';
-  $views_path = drupal_get_path('module', 'views');
+  $path = drupal_get_path('module', 'fullcalendar');
   return array(
     'module' => 'fullcalendar',
     'display' => array(
@@ -20,7 +17,7 @@ function fullcalendar_views_plugins() {
         'title' => t('FullCalendar'),
         'handler' => 'fullcalendar_plugin_display_page',
         'help' => t('For use with FullCalendar style'),
-        'path' => $path,
+        'path' => $path . '/includes/views/plugins',
         'parent' => 'page',
         'theme' => 'views_view',
         'uses hook menu' => TRUE,
@@ -32,10 +29,10 @@ function fullcalendar_views_plugins() {
         'title' => t('FullCalendar'),
         'help' => t('Displays items on a calendar.'),
         'handler' => 'fullcalendar_plugin_style_fullcalendar',
-        'path' => $path,
+        'path' => $path . '/includes/views/plugins',
         'theme' => 'fullcalendar',
         'theme file' => 'theme.inc',
-        'theme path' => $theme_path,
+        'theme path' => $path . '/theme',
         'uses row plugin' => FALSE,
         'uses fields' => TRUE,
         'uses options' => TRUE,
