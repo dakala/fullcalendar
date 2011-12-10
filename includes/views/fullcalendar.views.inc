@@ -142,6 +142,9 @@ function fullcalendar_views_query_alter(&$view, &$query) {
     return;
   }
 
+  // @todo Remove this once http://drupal.org/node/1367304 is resolved.
+  $query->group_operator = 'AND';
+
   // Remove our arguments from the main set.
   $arguments = array();
   for ($i = 0; $i < $view->fullcalendar_args; $i++) {
