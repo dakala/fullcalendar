@@ -6,12 +6,38 @@
  */
 
 /**
+ * Implements hook_preprocess_fullcalendar().
+ *
+ * Process FullCalendar Colors after the structure is built.
+ */
+function fullcalendar_colors_preprocess_fullcalendar(&$variables) {
+  $variables['element']['#attached']['css'][] = colors_create_css('fullcalendar_colors');
+}
+
+/**
+ * Implements hook_colors_rebuild().
+ */
+function fullcalendar_colors_colors_rebuild() {
+  return TRUE;
+}
+
+/**
  * Implements hook_colors_build_selector().
  */
 function fullcalendar_colors_colors_build_selector($class) {
-  $selector = ' .' . $class . ',';
-  $selector .= ' .' . $class . ' .fc-event-skin,';
-  $selector .= ' .' . $class . ' .fc-event-time,';
-  $selector .= ' .' . $class . ' a';
-  return $selector;
+  $selector = array(
+    ".$class",
+    ".$class .fc-event-skin",
+    ".$class .fc-event-time",
+    ".$class a",
+  );
+  return implode(', ', $selector);
+}
+
+/**
+ * Implements hook_fullcalendar_classes().
+ */
+function fullcalendar_colors_fullcalendar_classes($entity) {
+  colors_include_api();
+  return module_invoke_all('colors_classes', $entity);
 }
