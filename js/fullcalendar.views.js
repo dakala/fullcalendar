@@ -10,8 +10,10 @@ Drupal.behaviors.fullcalendar = {
     // Process each view and its settings.
     for (var dom_id in settings.fullcalendar) {
       if (settings.fullcalendar.hasOwnProperty(dom_id)) {
-        // Create a new fullcalendar object.
-        var fullcalendar = new Drupal.fullcalendar.fullcalendar(dom_id);
+        // Create a new fullcalendar object unless one exists.
+        if (typeof Drupal.fullcalendar.cache[dom_id] === "undefined") {
+          Drupal.fullcalendar.cache[dom_id] = new Drupal.fullcalendar.fullcalendar(dom_id);
+        }
       }
     }
 

@@ -1,6 +1,6 @@
 (function($) {
 
-Drupal.fullcalendar.plugins.fullcalendar_options_colorbox = {
+Drupal.fullcalendar.plugins.colorbox = {
   options: function (fullcalendar) {
     var settings = Drupal.settings.fullcalendar[fullcalendar.dom_id].colorbox;
     var options = {

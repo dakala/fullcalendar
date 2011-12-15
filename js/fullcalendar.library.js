@@ -7,6 +7,7 @@
 
 Drupal.fullcalendar = Drupal.fullcalendar || {};
 Drupal.fullcalendar.plugins = Drupal.fullcalendar.plugins || {};
+Drupal.fullcalendar.cache = Drupal.fullcalendar.cache || {};
 
 // Alias old fullCalendar namespace.
 Drupal.fullCalendar = Drupal.fullcalendar;
@@ -17,28 +18,15 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
   this.$options = {};
   this.navigate = false;
 
-  // Allow other modules to overwrite options.
-  var $options = {};
-  for (var $plugin in Drupal.fullcalendar.plugins) {
-    if (Drupal.fullcalendar.plugins.hasOwnProperty($plugin) && $.isFunction(Drupal.fullcalendar.plugins[$plugin].options)) {
-      var option = {};
-      option[$plugin] = Drupal.fullcalendar.plugins[$plugin].options(this);
-      $.extend($options, option);
-    }
-  }
-
   // Hide the failover display.
   $('.fullcalendar-content', this.$calendar).hide();
 
-  // Load the base FullCalendar options first.
-  // @todo Use the weights system to order this.
-  $.extend(this.$options, $options.fullcalendar);
-  delete $options.fullcalendar;
-
-  // Loop through additional options, overwriting the defaults.
-  for (var option in $options) {
-    if ($options.hasOwnProperty(option)) {
-      $.extend(this.$options, $options[option]);
+  // Allow other modules to overwrite options.
+  var $plugins = Drupal.fullcalendar.plugins;
+  for (var i = 0; i < Drupal.settings.fullcalendar[dom_id].weights.length; i++) {
+    var $plugin = Drupal.settings.fullcalendar[dom_id].weights[i];
+    if ($plugins.hasOwnProperty($plugin) && $.isFunction($plugins[$plugin].options)) {
+      $.extend(this.$options, $plugins[$plugin].options(this));
     }
   }
 

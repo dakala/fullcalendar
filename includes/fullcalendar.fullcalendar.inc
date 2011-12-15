@@ -657,7 +657,21 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
 
   // Add CSS and JS for each option plugin that provides it.
   fullcalendar_include_api();
+  $weights = array();
+  $delta = 0;
   foreach (module_invoke_all('fullcalendar_option_info') as $module => $info) {
+    // If a weight is specified, use it.
+    if (isset($info['weight']) && !isset($weights[$info['weight']])) {
+      $weights[$info['weight']] = $module;
+    }
+    // If not, make sure there are no conflicts.
+    else {
+      while (isset($weights[$delta])) {
+        $delta++;
+      }
+      $weights[$delta] = $module;
+    }
+
     // If this function is being provided by another module, set the parent.
     $parent = isset($info['parent']) ? $info['parent'] : $module;
     if (!empty($info['js'])) {
@@ -667,6 +681,8 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
       $variables['element']['#attached']['css'][] = ctools_attach_css("$module.fullcalendar", $parent);
     }
   }
+  ksort($weights);
+  $settings['weights'] = array_values($weights);
 }
 
 /**
