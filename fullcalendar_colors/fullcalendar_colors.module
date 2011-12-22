@@ -206,7 +206,7 @@ function fullcalendar_colors_process_selectors($selectors = array(), $reset = FA
 function fullcalendar_colors_rearrange_selectors(&$selectors) {
   $modules = array();
   if (variable_get('fullcalendar_colors_process_order_enabled', FALSE)) {
-    $hook = 'fullcalendar_colors_class_names';
+    $hook = 'fullcalendar_classes';
     foreach (module_implements($hook) as $module) {
       $modules[$module] = variable_get('fullcalendar_colors_weight_' . $module, 0);
     }
