@@ -70,11 +70,6 @@ function _fullcalendar_legend_get_classes($type) {
   $entity->bundle = $entity->type = $type['bundle'];
   $entity->entity_type = $type['entity_type'];
 
-  // Enable FullCalendar Colors API if needed.
-  if (module_exists('fullcalendar_colors')) {
-    fullcalendar_colors_include_api();
-  }
-
   $classes = module_invoke_all('fullcalendar_classes', $entity);
   drupal_alter('fullcalendar_classes', $classes, $entity);
 

@@ -71,15 +71,6 @@ function template_preprocess_fullcalendar(&$variables) {
 }
 
 /**
- * Process FullCalendar Colors after the structure is built.
- */
-function template_process_fullcalendar(&$variables) {
-  if (module_exists('fullcalendar_colors')) {
-    fullcalendar_colors_process_selectors(array(), TRUE);
-  }
-}
-
-/**
  * Render the FullCalendar.
  */
 function theme_fullcalendar($variables) {
@@ -198,14 +189,8 @@ function fullcalendar_prepare_events($view, $rows, $options) {
       $entity->editable = $editable;
     }
 
-    // Enable FullCalendar Colors API if needed.
-    if (module_exists('fullcalendar_colors')) {
-      fullcalendar_colors_include_api();
-    }
-
      // Create a string of class names.
     $classes = array();
-    $colors = array();
     foreach (module_implements('fullcalendar_classes') as $module) {
       // Fetch all the class names.
       $function = $module . '_fullcalendar_classes';
@@ -213,13 +198,6 @@ function fullcalendar_prepare_events($view, $rows, $options) {
 
       // Merge for normal classes.
       $classes = array_merge($classes, $class_names);
-
-      // Prepare an array for the FullCalendar Colors module.
-      if (module_exists('fullcalendar_colors')) {
-        foreach ($class_names as $class_name) {
-          $colors[$module][$class_name] = $class_name;
-        }
-      }
     }
 
     // Alter the classes array if needed.
@@ -227,11 +205,6 @@ function fullcalendar_prepare_events($view, $rows, $options) {
 
     // Add classes to the FullCalendar event.
     $entity->class = implode(' ', array_unique($classes));
-
-    // Call FullCalendar Colors when needed.
-    if (module_exists('fullcalendar_colors')) {
-      fullcalendar_colors_generate_css($entity, $colors);
-    }
 
     // Default URL.
     $uri = entity_uri($entity_type, $entity);

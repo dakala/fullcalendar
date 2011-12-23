@@ -6,52 +6,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function fullcalendar_colors_install() {
-  $color_options = array(
-    'background' => '#3366cc',
-    'border' => '#3366cc',
-    'text' => '#ffffff',
-  );
-  colors_set_colors('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
-}
-
-/**
- * Implements hook_uninstall().
- */
-function fullcalendar_colors_uninstall() {
-  colors_delete_selectors('fullcalendar_colors');
-
-  db_delete('variable')
-    ->condition('name', db_like('fullcalendar_colors_') . '%', 'LIKE')
-    ->execute();
-  cache_clear_all('variables', 'cache_bootstrap');
-}
-
-/**
- * Implements hook_requirements().
- */
-function fullcalendar_colors_requirements($phase) {
-  $requirements = array();
-
-  if ($phase == 'update') {
-    $t = get_t();
-
-    if (!module_exists('colors')) {
-      $requirements['fullcalendar_colors'] = array(
-        'title' => $t('FullCalendar colors dependencies'),
-        'value' => $t('Missing dependency'),
-        'severity' => REQUIREMENT_ERROR,
-        'description' => $t('From now on FullCalendar colors requires the !colors', array('!colors' => l(t('Colors module'), 'http://drupal.org/project/colors'))),
-      );
-    }
-  }
-
-  return $requirements;
-}
-
-/**
  * Move the colors in the variable table to the colors table.
  */
 function fullcalendar_colors_update_7200(&$sandbox) {
