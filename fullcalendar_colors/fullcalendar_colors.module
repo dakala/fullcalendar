@@ -11,6 +11,11 @@
  * Process FullCalendar Colors after the structure is built.
  */
 function fullcalendar_colors_preprocess_fullcalendar(&$variables) {
+  // @todo Remove in 7.x-2.1.
+  if (!function_exists('colors_include_api')) {
+    return;
+  }
+
   $variables['element']['#attached']['css'][] = colors_create_css('fullcalendar_colors');
 }
 
@@ -38,6 +43,11 @@ function fullcalendar_colors_colors_build_selector($class) {
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_colors_fullcalendar_classes($entity) {
+  // @todo Remove in 7.x-2.1.
+  if (!function_exists('colors_include_api')) {
+    return array();
+  }
+
   colors_include_api();
   return module_invoke_all('colors_classes', $entity);
 }
