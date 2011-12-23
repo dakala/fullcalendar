@@ -79,3 +79,90 @@ function fullcalendar_colors_update_7200(&$sandbox) {
   );
   colors_set_colors('fullcalendar_colors_default', $color_options, 'fullcalendar_colors');
 }
+
+/**
+ * Upgrade FullCalendar Colors beta1 to new Colors API.
+ */
+function fullcalendar_colors_update_7201(&$sandbox) {
+  // Get all default and module specific colors and update them.
+  foreach (colors_get_module_colors('fullcalendar_colors') as $name => $color) {
+    $key = substr($name, 20);
+    if ($key == 'default') {
+      $prefix = '';
+      $module = 'colors';
+      $suffix = '_default';
+    }
+    else {
+      $prefix = 'colors_';
+      $position = strrpos($key, '_');
+      $module = substr($key, 0, $position);
+      $suffix = substr($key, $position);
+      if ($module == 'taxo_term') {
+        $module = 'taxonomy_term';
+      }
+    }
+    $selector = $prefix . $module . $suffix;
+    colors_set_colors($selector, $color, $module);
+  }
+
+  // Delete the old values.
+  colors_delete_selectors('fullcalendar_colors');
+
+  // Retrieve and unserialize the variables.
+  $items = array_map('unserialize',
+    db_select('variable', 'v')
+      ->fields('v', array('name', 'value'))
+      ->condition('name', db_like('fullcalendar_colors_') . '%', 'LIKE')
+      ->execute()
+      ->fetchAllKeyed()
+  );
+
+  // Map old variable names to new ones.
+  $map = array(
+    'node' => 'node_type',
+    'node_types' => 'node_type',
+    'taxo' => 'taxonomy_term',
+    'taxonomy' => 'taxonomy_term',
+    'user' => 'user_role',
+    'user_roles' => 'user_role',
+    'process_order' => 'process_order',
+  );
+
+  // There are two sets of variables, enabled and weight.
+  $taxonomy = FALSE;
+  foreach ($items as $item => $value) {
+    $key = substr($item, 20);
+    // Weight variables.
+    if (strpos($key, 'weight_') === 0) {
+      $prefix = 'weight_';
+      $suffix = '';
+      $key = substr($key, 7);
+    }
+    // Enabled variables.
+    elseif (($position = strrpos($key, '_enabled')) && $position !== FALSE) {
+      $prefix = '';
+      $suffix = '_enabled';
+      $key = substr($key, 0, $position);
+      $position = strrpos($key, '_');
+      // Taxonomy is enabled per vocabulary.
+      if (substr($key, 0, $position) == 'taxo') {
+        $taxonomy = TRUE;
+        $suffix = substr($key, $position) . $suffix;
+        $key = substr($key, 0, $position);
+      }
+    }
+
+    // If this isn't in our map, skip it.
+    if (!isset($map[$key])) {
+      continue;
+    }
+
+    variable_del($item);
+    variable_set('colors_' . $prefix . $map[$key] . $suffix, $value);
+  }
+
+  // Set a master variable if any vocabulary is enabled.
+  if ($taxonomy) {
+    variable_set('colors_taxonomy_term_enabled', TRUE);
+  }
+}
