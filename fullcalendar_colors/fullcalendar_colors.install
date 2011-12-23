@@ -37,6 +37,11 @@ function fullcalendar_colors_requirements($phase) {
  * Upgrade FullCalendar Colors alpha6 to beta1 FullCalendar Colors API.
  */
 function fullcalendar_colors_update_7200(&$sandbox) {
+  if (!function_exists('colors_include_api')) {
+    $t = get_t();
+    throw new DrupalUpdateException($t('You need to download the latest version of the !colors_module.', array('!colors_module' => l(t('Colors API module'), 'http://drupal.org/project/colors'))));
+  }
+
   // Changed variable names.
   variable_set('fullcalendar_colors_node_types_enabled', variable_get('fullcalendar_color_node_types_enabled', 0));
   variable_del('fullcalendar_color_node_types_enabled');
@@ -84,6 +89,11 @@ function fullcalendar_colors_update_7200(&$sandbox) {
  * Upgrade FullCalendar Colors beta1 to new Colors API.
  */
 function fullcalendar_colors_update_7201(&$sandbox) {
+  if (!function_exists('colors_include_api')) {
+    $t = get_t();
+    throw new DrupalUpdateException($t('You need to download the latest version of the Colors API module: !colors_module.', array('!colors_module' => 'http://drupal.org/project/colors')));
+  }
+
   // Get all default and module specific colors and update them.
   foreach (colors_get_module_colors('fullcalendar_colors') as $name => $color) {
     $key = substr($name, 20);
