@@ -34,31 +34,40 @@ function fullcalendar_colors_requirements($phase) {
 }
 
 /**
- * Move the colors in the variable table to the colors table.
+ * Upgrade FullCalendar Colors alpha6 to beta1 FullCalendar Colors API.
  */
 function fullcalendar_colors_update_7200(&$sandbox) {
   // Changed variable names.
   variable_set('fullcalendar_colors_node_types_enabled', variable_get('fullcalendar_color_node_types_enabled', 0));
   variable_del('fullcalendar_color_node_types_enabled');
 
-  $taxonomies = taxonomy_get_vocabularies();
-  foreach ($taxonomies as $vid => $vocab) {
-    variable_set('fullcalendar_colors_taxo_' . $vid . '_enabled', variable_get('fullcalendar_color_taxo_' . $vid . '_enabled', 0));
-    variable_del('fullcalendar_color_taxo_' . $vid . '_enabled');
+  if (module_exists('taxonomy')) {
+    $taxonomies = taxonomy_get_vocabularies();
+    foreach ($taxonomies as $vid => $vocab) {
+      variable_set('fullcalendar_colors_taxo_' . $vid . '_enabled', variable_get('fullcalendar_color_taxo_' . $vid . '_enabled', 0));
+      variable_del('fullcalendar_color_taxo_' . $vid . '_enabled');
+    }
   }
 
   variable_set('fullcalendar_colors_user_roles_enabled', variable_get('fullcalendar_color_user_roles_enabled', 0));
   variable_del('fullcalendar_color_user_roles_enabled');
 
   // Move the node type, taxonomy terms and user roles colors.
-  $items = db_select('variable', 'v')
-    ->fields('v', array('name'))
-    ->condition('name', db_like('fullcalendar_color_') . '%', 'LIKE')
-    ->execute()
-    ->fetchAllAssoc('name', PDO::FETCH_ASSOC);
+  $items = array_map('unserialize',
+    db_select('variable', 'v')
+      ->fields('v', array('name', 'value'))
+      ->condition('name', db_like('fullcalendar_color_') . '%', 'LIKE')
+      ->execute()
+      ->fetchAllKeyed()
+  );
 
-  foreach ($items as $item) {
-    fullcalendar_colors_set_color(preg_replace('/_color_/', '_colors_', $item['name']), variable_get($item['name']));
+  foreach ($items as $key => $item) {
+    $colors = array(
+      'background' => $item,
+      'border' => $item,
+      'text' => '#ffffff',
+    );
+    colors_set_colors(preg_replace('/_color_/', '_colors_', $key), $colors, 'fullcalendar_colors');
     variable_del($item['name']);
   }
 
