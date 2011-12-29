@@ -205,10 +205,7 @@ function fullcalendar_fullcalendar_options_form(&$form, &$form_state, &$view) {
   $form['firstDay'] = array(
     '#type' => 'select',
     '#title' => t('Week starts on'),
-    '#options' => array(
-      '0' => t('Sunday'),
-      '1' => t('Monday'),
-    ),
+    '#options' => date_week_days(TRUE),
     '#default_value' => $view->options['firstDay'],
     '#prefix' => '<div class="views-left-30">',
     '#suffix' => '</div>',
@@ -295,87 +292,23 @@ function fullcalendar_fullcalendar_options_form(&$form, &$form_state, &$view) {
     '#fieldset' => 'times',
     '#dependency' => array('edit-style-options-advanced' => array(1)),
   );
-  $form['timeformatMonth'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Month'),
-    '#default_value' => $view->options['timeformatMonth'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'time',
-  );
-  $form['titleformatMonth'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Month'),
-    '#default_value' => $view->options['titleformatMonth'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'title',
-  );
-  $form['columnformatMonth'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Month'),
-    '#default_value' => $view->options['columnformatMonth'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'column',
-  );
-  $form['timeformatWeek'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Week'),
-    '#default_value' => $view->options['timeformatWeek'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'time',
-  );
-  $form['titleformatWeek'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Week'),
-    '#default_value' => $view->options['titleformatWeek'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'title',
-  );
-  $form['columnformatWeek'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Week'),
-    '#default_value' => $view->options['columnformatWeek'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'column',
-  );
-  $form['timeformatDay'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Day'),
-    '#default_value' => $view->options['timeformatDay'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'time',
-  );
-  $form['titleformatDay'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Day'),
-    '#default_value' => $view->options['titleformatDay'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'title',
-  );
-  $form['columnformatDay'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Day'),
-    '#default_value' => $view->options['columnformatDay'],
-    '#prefix' => '<div class="views-left-30">',
-    '#suffix' => '</div>',
-    '#size' => '30',
-    '#fieldset' => 'column',
-  );
+
+  // Add the nine time/date formats.
+  foreach (array('time', 'title', 'column') as $type) {
+    foreach (array('Month', 'Week', 'Day') as $range) {
+      $key = $type . 'format' . $range;
+      $form[$key] = array(
+        '#type' => 'textfield',
+        '#title' => t($range),
+        '#default_value' => $view->options[$key],
+        '#prefix' => '<div class="views-left-30">',
+        '#suffix' => '</div>',
+        '#size' => '30',
+        '#fieldset' => $type,
+      );
+    }
+  }
+
   $form['time'] = array(
     '#type' => 'fieldset',
     '#title' => t('Time format'),
