@@ -16,7 +16,8 @@ function fullcalendar_colors_preprocess_fullcalendar(&$variables) {
     return;
   }
 
-  $variables['element']['#attached']['css'][] = colors_create_css('fullcalendar_colors');
+  // @todo D8: Remove weight once http://drupal.org/node/1388546 is fixed.
+  $variables['element']['#attached']['css'][colors_create_css('fullcalendar_colors')] = array('weight' => 1);
 }
 
 /**
