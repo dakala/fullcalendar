@@ -143,6 +143,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
       if (fullcalendar_field_is_date($field)) {
         $date_fields[$field_name] = array(
           'value' => $field->get_items($row),
+          'field_alias' => $field->field_alias,
           'field_name' => $field->field_info['field_name'],
           'field_info' => $field->field_info,
         );
@@ -164,71 +165,84 @@ function fullcalendar_prepare_events($view, $rows, $options) {
       return $events;
     }
 
-    $alias = $view->base_field;
-    $entity = $row->_field_data[$alias]['entity'];
-    $entity->entity_type = $row->_field_data[$alias]['entity_type'];
-
-    list(, , $bundle) = entity_extract_ids($entity->entity_type, $entity);
-    $entity->bundle = $bundle;
-    $entity->eid = $row->{$alias};
-    $entity->options = $view->style_options;
-
-    // If the view disallows editing, that's it.
-    if (!empty($view->fullcalendar_disallow_editable)) {
-      $entity->editable = FALSE;
-    }
-    // Otherwise, see what other modules think.
-    else {
-      // Allow resize/drag/drop of an event if user has proper permissions.
-      $editable = module_invoke_all('fullcalendar_editable', $entity, $view);
-      // If one value is FALSE, return FALSE. The identical operator is needed
-      // because of the return value of array_search().
-      $editable = array_search(FALSE, $editable, TRUE) === FALSE;
-      drupal_alter('fullcalendar_editable', $editable, $entity, $view);
-      $entity->editable = $editable;
-    }
-
-     // Create a string of class names.
-    $classes = array();
-    foreach (module_implements('fullcalendar_classes') as $module) {
-      // Fetch all the class names.
-      $function = $module . '_fullcalendar_classes';
-      $class_names = $function($entity);
-
-      // Merge for normal classes.
-      $classes = array_merge($classes, $class_names);
-    }
-
-    // Alter the classes array if needed.
-    drupal_alter('fullcalendar_classes', $classes, $entity);
-
-    // Add classes to the FullCalendar event.
-    $entity->class = implode(' ', array_unique($classes));
-
-    // Default URL.
-    $uri = entity_uri($entity->entity_type, $entity);
-    $entity->url = $uri['path'];
-    // Fetch custom URL if needed.
-    if (!empty($options['url'])) {
-      $field_name = $options['url_field'];
-      if (!empty($fields[$field_name])) {
-        $entity->url = ltrim($fields[$field_name], '/');
-      }
-    }
-
-    // Fetch custom title if needed.
-    if (!isset($entity->title)) {
-      $entity->title = '';
-    }
-    if (!empty($options['title'])) {
-      $field_name = $options['title_field'];
-      if (!empty($fields[$field_name])) {
-        $entity->title = $fields[$field_name];
-      }
-    }
-
+    $entities = array();
     $event = array();
     foreach ($date_fields as $field) {
+      // If this row doesn't contain this entity, or if this entity has already
+      // been processed, skip it.
+      if (!isset($row->_field_data[$field['field_alias']])) {
+        continue;
+      }
+
+      if (!isset($entities[$field['field_alias']])) {
+        // Find the field's alias that refers to it's entity.
+        $alias = $field['field_alias'];
+        $entity = $row->_field_data[$alias]['entity'];
+        $entity->entity_type = $row->_field_data[$alias]['entity_type'];
+
+        list(, , $bundle) = entity_extract_ids($entity->entity_type, $entity);
+        $entity->bundle = $bundle;
+        $entity->eid = $row->{$alias};
+        $entity->options = $view->style_options;
+
+        // If the view disallows editing, that's it.
+        if (!empty($view->fullcalendar_disallow_editable)) {
+          $entity->editable = FALSE;
+        }
+        // Otherwise, see what other modules think.
+        else {
+          // Allow resize/drag/drop of an event if user has proper permissions.
+          $editable = module_invoke_all('fullcalendar_editable', $entity, $view);
+          // If one value is FALSE, return FALSE. The identical operator is needed
+          // because of the return value of array_search().
+          $editable = array_search(FALSE, $editable, TRUE) === FALSE;
+          drupal_alter('fullcalendar_editable', $editable, $entity, $view);
+          $entity->editable = $editable;
+        }
+
+        // Create a string of class names.
+        $classes = array();
+        foreach (module_implements('fullcalendar_classes') as $module) {
+          // Fetch all the class names.
+          $function = $module . '_fullcalendar_classes';
+          $class_names = $function($entity);
+
+          // Merge for normal classes.
+          $classes = array_merge($classes, $class_names);
+        }
+
+        // Alter the classes array if needed.
+        drupal_alter('fullcalendar_classes', $classes, $entity);
+
+        // Add classes to the FullCalendar event.
+        $entity->class = implode(' ', array_unique($classes));
+
+        // Default URL.
+        $uri = entity_uri($entity->entity_type, $entity);
+        $entity->url = $uri['path'];
+        // Fetch custom URL if needed.
+        if (!empty($options['url'])) {
+          $field_name = $options['url_field'];
+          if (!empty($fields[$field_name])) {
+            $entity->url = ltrim($fields[$field_name], '/');
+          }
+        }
+
+        // Fetch custom title if needed.
+        if (!isset($entity->title)) {
+          $entity->title = '';
+        }
+        if (!empty($options['title'])) {
+          $field_name = $options['title_field'];
+          if (!empty($fields[$field_name])) {
+            $entity->title = $fields[$field_name];
+          }
+        }
+
+        $entities[$alias] = $entity;
+      }
+
+      $entity = $entities[$field['field_alias']];
       // Filter fields without value.
       if (!empty($field['value'])) {
         $instance = field_info_instance($entity->entity_type, $field['field_name'], $bundle);
@@ -263,7 +277,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     $events[$delta] = array(
       '#theme' => 'fullcalendar_event',
       '#event' => $event,
-      '#entity' => $entity,
+      '#entity' => isset($entities[$view->base_field]) ? $entities[$view->base_field] : reset($entities),
     );
   }
   return $events;
