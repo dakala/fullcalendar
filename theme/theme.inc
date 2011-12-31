@@ -159,9 +159,10 @@ function fullcalendar_prepare_events($view, $rows, $options) {
       return $events;
     }
 
+    $alias = $view->base_field;
     if (isset($row->_field_data)) {
-      $entity = $row->_field_data[$view->base_field]['entity'];
-      $entity->entity_type = $row->_field_data[$view->base_field]['entity_type'];
+      $entity = $row->_field_data[$alias]['entity'];
+      $entity->entity_type = $row->_field_data[$alias]['entity_type'];
     }
     else {
       // This should never happen, but just in case.
@@ -170,7 +171,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
 
     list(, , $bundle) = entity_extract_ids($entity->entity_type, $entity);
     $entity->bundle = $bundle;
-    $entity->eid = $row->{$view->base_field};
+    $entity->eid = $row->{$alias};
     $entity->options = $view->style_options;
 
     // If the view disallows editing, that's it.
