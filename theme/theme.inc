@@ -159,15 +159,14 @@ function fullcalendar_prepare_events($view, $rows, $options) {
       return $events;
     }
 
-    $alias = $view->base_field;
-    if (isset($row->_field_data)) {
-      $entity = $row->_field_data[$alias]['entity'];
-      $entity->entity_type = $row->_field_data[$alias]['entity_type'];
-    }
-    else {
-      // This should never happen, but just in case.
+    // This should never happen, but just in case.
+    if (!isset($row->_field_data)) {
       return $events;
     }
+
+    $alias = $view->base_field;
+    $entity = $row->_field_data[$alias]['entity'];
+    $entity->entity_type = $row->_field_data[$alias]['entity_type'];
 
     list(, , $bundle) = entity_extract_ids($entity->entity_type, $entity);
     $entity->bundle = $bundle;
