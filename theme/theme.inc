@@ -161,17 +161,16 @@ function fullcalendar_prepare_events($view, $rows, $options) {
 
     if (isset($row->_field_data)) {
       $entity = $row->_field_data[$view->base_field]['entity'];
-      $entity_type = $row->_field_data[$view->base_field]['entity_type'];
+      $entity->entity_type = $row->_field_data[$view->base_field]['entity_type'];
     }
     else {
       // This should never happen, but just in case.
       return $events;
     }
 
-    list(, , $bundle) = entity_extract_ids($entity_type, $entity);
+    list(, , $bundle) = entity_extract_ids($entity->entity_type, $entity);
     $entity->bundle = $bundle;
     $entity->eid = $row->{$view->base_field};
-    $entity->entity_type = $entity_type;
     $entity->options = $view->style_options;
 
     // If the view disallows editing, that's it.
@@ -207,7 +206,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     $entity->class = implode(' ', array_unique($classes));
 
     // Default URL.
-    $uri = entity_uri($entity_type, $entity);
+    $uri = entity_uri($entity->entity_type, $entity);
     $entity->url = $uri['path'];
     // Fetch custom URL if needed.
     if (!empty($options['url'])) {
@@ -232,9 +231,9 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     foreach ($date_fields as $field) {
       // Filter fields without value.
       if (!empty($field['value'])) {
-        $instance = field_info_instance($entity_type, $field['field_name'], $bundle);
+        $instance = field_info_instance($entity->entity_type, $field['field_name'], $bundle);
         foreach ($field['value'] as $index => $item) {
-          $date = date_formatter_process($instance['display']['default']['type'], $entity_type, $entity, $field['field_info'], $instance, LANGUAGE_NONE, $item['raw'], $instance['display']['default']);
+          $date = date_formatter_process($instance['display']['default']['type'], $entity->entity_type, $entity, $field['field_info'], $instance, LANGUAGE_NONE, $item['raw'], $instance['display']['default']);
           $date1 = $date['value']['local']['object'];
           $date2 = $date['value2']['local']['object'];
           $event[] = array(
@@ -250,7 +249,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
                 'field' => $field['field_name'],
                 'index' => $index,
                 'eid' => $entity->eid,
-                'entity_type' => $entity_type,
+                'entity_type' => $entity->entity_type,
                 'cn' => $entity->class . ' fc-event-field-' . $field['field_name'],
                 'title' => strip_tags($entity->title),
                 'class' => array('fullcalendar-event-details'),
