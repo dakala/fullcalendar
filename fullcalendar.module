@@ -197,6 +197,12 @@ function fullcalendar_fullcalendar_classes($entity) {
     'fc-event-default',
     $entity->bundle,
   );
+
+  // Add a class for the date field being used.
+  if (isset($entity->fullcalendar_date_field)) {
+    $classes[] = "fc-event-field-$entity->fullcalendar_date_field";
+  }
+
   return $classes;
 }
 

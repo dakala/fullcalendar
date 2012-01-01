@@ -200,6 +200,9 @@ function fullcalendar_prepare_events($view, $rows, $options) {
           $entity->editable = $editable;
         }
 
+        // Store the current date field name for later.
+        $entity->fullcalendar_date_field = $field['field_name'];
+
         // Create a string of class names.
         $classes = array();
         foreach (module_implements('fullcalendar_classes') as $module) {
@@ -213,6 +216,9 @@ function fullcalendar_prepare_events($view, $rows, $options) {
 
         // Alter the classes array if needed.
         drupal_alter('fullcalendar_classes', $classes, $entity);
+
+        // Ensure that the classes are valid HTML classes.
+        $classes = array_map('drupal_html_class', $classes);
 
         // Add classes to the FullCalendar event.
         $entity->class = implode(' ', array_unique($classes));
@@ -264,7 +270,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
                 'index' => $index,
                 'eid' => $entity->eid,
                 'entity_type' => $entity->entity_type,
-                'cn' => $entity->class . ' fc-event-field-' . $field['field_name'],
+                'cn' => $entity->class,
                 'title' => strip_tags($entity->title),
                 'class' => array('fullcalendar-event-details'),
               ),
