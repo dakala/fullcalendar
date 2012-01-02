@@ -262,7 +262,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
             '#path' => $entity->url,
             '#options' => array(
               'attributes' => array(
-                'allDay' => date_field_all_day($field['field_info'], $instance, $date1, $date2),
+                'allDay' => _fullcalendar_date_all_day_field($field['field_info'], $instance, $date1, $date2),
                 'start' => $date1->format(DATE_FORMAT_DATETIME),
                 'end' => $date2->format(DATE_FORMAT_DATETIME),
                 'editable' => $entity->editable,
@@ -287,4 +287,27 @@ function fullcalendar_prepare_events($view, $rows, $options) {
     );
   }
   return $events;
+}
+
+/**
+ * Provide a wrapper around the deprecated date_field_all_day().
+ *
+ * @see date_all_day_field()
+ * @see date_field_all_day().
+ */
+function _fullcalendar_date_all_day_field($field, $instance, $date1, $date2 = NULL) {
+  // Try the old function first since it is more likely to be available.
+  if (function_exists('date_field_all_day')) {
+    return date_field_all_day($field, $instance, $date1, $date2);
+  }
+
+  // Now try the new function.
+  if (function_exists('date_all_day_field')) {
+    return date_all_day_field($field, $instance, $date1, $date2);
+  }
+
+  // This means the old function has been removed, and they haven't enabled the
+  // new module yet. All day events will be displayed as not all day.
+  watchdog('fullcalendar', 'All day events will not function correctly until the Date All Day module is enabled.', array(), WATCHDOG_NOTICE);
+  return FALSE;
 }
