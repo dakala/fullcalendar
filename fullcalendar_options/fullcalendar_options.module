@@ -135,10 +135,35 @@ function _fullcalendar_options_list($show_all = FALSE) {
     '#default_value' => 500,
     '#data_type' => 'int',
   );
+  $form['dayClick'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Day click'),
+    '#description' => t('Switch the display when a day is clicked'),
+    '#default_value' => FALSE,
+    '#data_type' => 'bool',
+  );
 
   // By default, restrict the form to options allowed by the admin settings.
   if (!$show_all) {
     $form = array_intersect_key($form, array_filter(variable_get('fullcalendar_options', array())));
+
+    if (isset($form['dayClick'])) {
+      // Add in dependency form elements.
+      $form['dayClickView'] = array(
+        '#type' => 'select',
+        '#title' => t('Display'),
+        '#description' => t('The display to switch to when a day is clicked.'),
+        '#default_value' => 'agendaWeek',
+        '#options' => array(
+          'month' => 'Month',
+          'agendaWeek' => 'Week (Agenda)',
+          'basicWeek' => 'Week (Basic)',
+          'agendaDay' => 'Day (Agenda)',
+          'basicDay' => 'Day (Basic)',
+        ),
+        '#dependency' => array('edit-style-options-fullcalendar-options-dayclick' => array(1)),
+      );
+    }
   }
 
   return $form;
