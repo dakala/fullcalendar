@@ -271,7 +271,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
                 'eid' => $entity->eid,
                 'entity_type' => $entity->entity_type,
                 'cn' => $entity->class,
-                'title' => strip_tags($entity->title),
+                'title' => strip_tags(htmlspecialchars_decode($entity->title, ENT_QUOTES)),
                 'class' => array('fullcalendar-event-details'),
               ),
               'html' => TRUE,
