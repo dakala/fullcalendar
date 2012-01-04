@@ -112,14 +112,17 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
   foreach ($view->display_handler->get_handlers('field') as $field) {
     if (fullcalendar_field_is_date($field)) {
       // Add an argument for the date field.
-      $view->add_item($display_id, 'argument', 'field_data_' . $field->field, $field->field . '_value', array(
-          'default_action' => 'default',
-          'default_argument_type' => 'fixed',
-          'default_argument_options' => array(
-            'argument' => $range,
-          ),
-        )
+      $options = array(
+        'default_action' => 'default',
+        'default_argument_type' => 'fixed',
+        'default_argument_options' => array(
+          'argument' => $range,
+        ),
       );
+      if (!empty($field->options['relationship'])) {
+        $options['relationship'] = $field->options['relationship'];
+      }
+      $view->add_item($display_id, 'argument', 'field_data_' . $field->field, $field->field . '_value', $options);
       $view->fullcalendar_args++;
     }
   }
