@@ -81,7 +81,7 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
   $settings = $view->display_handler->get_option('style_options');
 
   fullcalendar_include_api();
-  $fullcalendar_options = module_invoke_all('fullcalendar_option_info');
+  $fullcalendar_options = module_invoke_all('fullcalendar_options_info');
   uasort($fullcalendar_options, 'drupal_sort_weight');
   foreach (array_intersect(array_keys($fullcalendar_options), module_implements('fullcalendar_options_pre_view')) as $module) {
     $function = $module . '_fullcalendar_options_pre_view';

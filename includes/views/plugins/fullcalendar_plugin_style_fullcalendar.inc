@@ -110,13 +110,13 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
   function option_definition() {
     // Load all FullCalendar options and merge in their form info.
     fullcalendar_include_api();
-    return module_invoke_all('fullcalendar_option_definition');
+    return module_invoke_all('fullcalendar_options_definition');
   }
 
   function options_form(&$form, &$form_state) {
     // Load all FullCalendar options and merge in their form info.
     fullcalendar_include_api();
-    $fullcalendar_options = module_invoke_all('fullcalendar_option_info');
+    $fullcalendar_options = module_invoke_all('fullcalendar_options_info');
     uasort($fullcalendar_options, 'drupal_sort_weight');
     if (!empty($fullcalendar_options)) {
       $arguments = array(&$form, &$form_state, &$this);

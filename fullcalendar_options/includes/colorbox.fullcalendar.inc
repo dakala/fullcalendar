@@ -6,9 +6,9 @@
  */
 
 /**
- * Implements hook_fullcalendar_option_info().
+ * Implements hook_fullcalendar_options_info().
  */
-function colorbox_fullcalendar_option_info() {
+function colorbox_fullcalendar_options_info() {
   return array(
     'colorbox' => array(
       'name' => t('Colorbox'),
@@ -19,9 +19,9 @@ function colorbox_fullcalendar_option_info() {
 }
 
 /**
- * Implements hook_fullcalendar_option_definition().
+ * Implements hook_fullcalendar_options_definition().
  */
-function colorbox_fullcalendar_option_definition() {
+function colorbox_fullcalendar_options_definition() {
   $options['colorbox']['contains'] = array(
     'colorbox' => array(
       'default' => FALSE,

@@ -115,7 +115,7 @@ function hook_fullcalendar_api() {
  *     processed and added to the form.
  *   - no_fieldset: (optional) TRUE if the module provides its own fieldset.
  */
-function hook_fullcalendar_option_info() {
+function hook_fullcalendar_options_info() {
   // Colorbox integration is currently provided by fullcalendar_options, and it
   // provides a JS file.
   return array(
@@ -141,7 +141,7 @@ function hook_fullcalendar_option_info() {
  *
  * @see views_object::option_definition()
  */
-function hook_fullcalendar_option_definition() {
+function hook_fullcalendar_options_definition() {
   $options['colorbox']['contains'] = array(
     'colorbox' => array(
       'default' => FALSE,

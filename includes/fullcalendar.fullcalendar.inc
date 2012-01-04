@@ -6,9 +6,9 @@
  */
 
 /**
- * Implements hook_fullcalendar_option_info().
+ * Implements hook_fullcalendar_options_info().
  */
-function fullcalendar_fullcalendar_option_info() {
+function fullcalendar_fullcalendar_options_info() {
   return array(
     'fullcalendar' => array(
       'name' => t('FullCalendar'),
@@ -20,9 +20,9 @@ function fullcalendar_fullcalendar_option_info() {
 }
 
 /**
- * Implements hook_fullcalendar_option_definition().
+ * Implements hook_fullcalendar_options_definition().
  */
-function fullcalendar_fullcalendar_option_definition() {
+function fullcalendar_fullcalendar_options_definition() {
   $formats = array(
     '12' => array(
       'time' => 'h:mm{ - h:mm}',
@@ -592,7 +592,7 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
   fullcalendar_include_api();
   $weights = array();
   $delta = 0;
-  foreach (module_invoke_all('fullcalendar_option_info') as $module => $info) {
+  foreach (module_invoke_all('fullcalendar_options_info') as $module => $info) {
     // If a weight is specified, use it.
     if (isset($info['weight']) && !isset($weights[$info['weight']])) {
       $weights[$info['weight']] = $module;
