@@ -211,7 +211,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
 
         // Default URL.
         $uri = entity_uri($entity->entity_type, $entity);
-        $entity->url = $uri['path'];
+        $entity->url = isset($uri['path']) ? $uri['path'] : '';
         // Fetch custom URL if needed.
         if (!empty($options['url'])) {
           $field_name = $options['url_field'];
