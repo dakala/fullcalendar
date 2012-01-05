@@ -26,6 +26,8 @@ function template_preprocess_fullcalendar_legend(&$variables) {
         'field' => $type['field_name'],
       ),
     );
+    // Sanitize the label.
+    $type['label'] = check_plain($type['label']);
     if (isset($type['uri'])) {
       $element[$type_name]['type'] = array(
         '#type' => 'link',

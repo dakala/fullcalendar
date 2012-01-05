@@ -123,6 +123,7 @@ function fullcalendar_legend_build_legend($view, $type) {
  */
 function fullcalendar_legend_get_type_taxonomy($fields) {
   $types = array();
+  $use_i18n = module_exists('i18n_taxonomy');
   $field_info = field_info_fields();
   foreach ($fields as $field_name => $field) {
     // Then by entity type.
@@ -138,7 +139,7 @@ function fullcalendar_legend_get_type_taxonomy($fields) {
               $types[$term->tid]['entity_type'] = $entity_type;
               $types[$term->tid]['field_name'] = $field_name;
               $types[$term->tid]['bundle'] = $bundle;
-              $types[$term->tid]['label'] = $term->name;
+              $types[$term->tid]['label'] = ($use_i18n) ? i18n_taxonomy_term_name($term) : $term->name;
               $types[$term->tid]['taxonomy_field'] = $taxonomy_field_name;
               $types[$term->tid]['tid'] = $term->tid;
               $types[$term->tid]['uri'] = taxonomy_term_uri($term);
