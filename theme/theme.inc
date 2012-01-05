@@ -203,24 +203,10 @@ function fullcalendar_prepare_events($view, $rows, $options) {
         // Store the current date field name for later.
         $entity->fullcalendar_date_field = $field['field_name'];
 
-        // Create a string of class names.
-        $classes = array();
-        foreach (module_implements('fullcalendar_classes') as $module) {
-          // Fetch all the class names.
-          $function = $module . '_fullcalendar_classes';
-          $class_names = $function($entity);
-
-          // Merge for normal classes.
-          $classes = array_merge($classes, $class_names);
-        }
-
-        // Alter the classes array if needed.
+        // Create a string of valid HTML class names and add them to the entity.
+        $classes = module_invoke_all('fullcalendar_classes', $entity);
         drupal_alter('fullcalendar_classes', $classes, $entity);
-
-        // Ensure that the classes are valid HTML classes.
         $classes = array_map('drupal_html_class', $classes);
-
-        // Add classes to the FullCalendar event.
         $entity->class = implode(' ', array_unique($classes));
 
         // Default URL.
