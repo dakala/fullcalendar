@@ -239,18 +239,21 @@ function fullcalendar_prepare_events($view, $rows, $options) {
       if (!empty($field['value'])) {
         $instance = field_info_instance($entity->entity_type, $field['field_name'], $bundle);
         foreach ($field['value'] as $index => $item) {
-          $date = date_formatter_process($instance['display']['default']['type'], $entity->entity_type, $entity, $field['field_info'], $instance, LANGUAGE_NONE, $item['raw'], $instance['display']['default']);
-          $date1 = $date['value']['local']['object'];
-          $date2 = $date['value2']['local']['object'];
+          $dates = _fullcalendar_process_dates($instance, $entity, $field['field_info'], $item['raw']);
+          if (empty($dates)) {
+            continue;
+          }
+
+          list($start, $end, $all_day) = $dates;
           $event[] = array(
             '#theme' => 'link',
             '#text' => $item['rendered']['#markup'],
             '#path' => $entity->url,
             '#options' => array(
               'attributes' => array(
-                'allDay' => _fullcalendar_date_all_day_field($field['field_info'], $instance, $date1, $date2),
-                'start' => $date1->format(DATE_FORMAT_DATETIME),
-                'end' => $date2->format(DATE_FORMAT_DATETIME),
+                'allDay' => $all_day,
+                'start' => $start,
+                'end' => $end,
                 'editable' => $entity->editable,
                 'field' => $field['field_name'],
                 'index' => $index,
@@ -266,13 +269,57 @@ function fullcalendar_prepare_events($view, $rows, $options) {
         }
       }
     }
-    $events[$delta] = array(
-      '#theme' => 'fullcalendar_event',
-      '#event' => $event,
-      '#entity' => isset($entities[$view->base_field]) ? $entities[$view->base_field] : reset($entities),
-    );
+
+    if (!empty($event)) {
+      $events[$delta] = array(
+        '#theme' => 'fullcalendar_event',
+        '#event' => $event,
+        '#entity' => isset($entities[$view->base_field]) ? $entities[$view->base_field] : reset($entities),
+      );
+    }
   }
   return $events;
+}
+
+/**
+ * Process the dates, format them, and determine if it is all day.
+ *
+ * @param array $instance
+ *   The field instance.
+ * @param object $entity
+ *   The entity object
+ * @param array $field
+ *   The field info.
+ * @param array $item
+ *   The date item.
+ *
+ * @return array
+ *   A numerically indexed array containing these elements:
+ *   - 0: The start date object.
+ *   - 1: The end date object.
+ *   - 2: A boolean representing whether the date is all day.
+ */
+function _fullcalendar_process_dates($instance, $entity, $field, $item) {
+  if (isset($item['db']['value'])) {
+    $date1 = $item['db']['value'];
+    date_timezone_set($date1, timezone_open($item['timezone']));
+    $date2 = $item['db']['value2'];
+    date_timezone_set($date2, timezone_open($item['timezone']));
+  }
+  else {
+    $date = date_formatter_process($instance['display']['default']['type'], $entity->entity_type, $entity, $field, $instance, LANGUAGE_NONE, $item, $instance['display']['default']);
+    if (empty($date['value']['local']['object'])) {
+      return;
+    }
+
+    $date1 = $date['value']['local']['object'];
+    $date2 = $date['value2']['local']['object'];
+  }
+
+  $start = $date1->format(DATE_FORMAT_DATETIME);
+  $end = $date2->format(DATE_FORMAT_DATETIME);
+  $all_day = _fullcalendar_date_all_day_field($field, $instance, $date1, $date2);
+  return array($start, $end, $all_day);
 }
 
 /**
