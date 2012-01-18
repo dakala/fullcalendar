@@ -212,7 +212,7 @@ function fullcalendar_fullcalendar_classes($entity) {
  * Since we force the query to be distinct, reflect that in the UI.
  */
 function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_state['view']->display_handler->get_option('style_plugin') != 'fullcalendar' && empty($form['options']['query']['options']['distinct'])) {
+  if ($form_state['view']->display_handler->get_option('style_plugin') != 'fullcalendar' || empty($form['options']['query']['options']['distinct'])) {
     return;
   }
 
