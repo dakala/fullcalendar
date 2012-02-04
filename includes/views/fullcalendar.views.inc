@@ -78,7 +78,8 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
   }
 
   // Get the current view settings.
-  $settings = $view->display_handler->get_option('style_options');
+  $view->init_style();
+  $settings = $view->style_plugin->options;
 
   fullcalendar_include_api();
   $fullcalendar_options = module_invoke_all('fullcalendar_options_info');
@@ -89,7 +90,7 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
   }
 
   // Set the new view settings.
-  $view->display_handler->set_option('style_options', $settings);
+  $view->style_plugin->options = $settings;
 
   // If we're not using ajax, we're done.
   if (!$view->display_handler->get_option('use_ajax')) {
