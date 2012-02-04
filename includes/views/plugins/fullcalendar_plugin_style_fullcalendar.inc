@@ -175,15 +175,18 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     return parent::validate();
   }
 
-  function fullcalendar_parse_fields() {
+  function fullcalendar_parse_fields($include_gcal = TRUE) {
+    // Ensure the handlers are there.
+    $this->view->init_handlers();
+
     $labels = $this->display->handler->get_field_labels();
-    $field_options = array();
-    foreach ($this->display->handler->get_handlers('field') as $id => $field) {
-      if (fullcalendar_field_is_date($field, TRUE)) {
-        $field_options[$id] = $labels[$id];
+    $date_fields = array();
+    foreach ($this->view->field as $id => $field) {
+      if (fullcalendar_field_is_date($field, $include_gcal)) {
+        $date_fields[$id] = $labels[$id];
       }
     }
-    return $field_options;
+    return $date_fields;
   }
 
   /**
