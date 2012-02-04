@@ -19,7 +19,6 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
     $options['gcal'] = array('default' => '');
     $options['class'] = array('default' => 'fc-event-default fc-event-gcal');
     $options['timezone'] = array('default' => date_default_timezone_get());
-    $options['editable'] = array('default' => FALSE);
     return $options;
   }
 
@@ -47,11 +46,6 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
       '#default_value' => $this->options['timezone'],
       '#options' => system_time_zones(),
       '#attributes' => array('class' => array('timezone-detect')),
-    );
-    $form['editable'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Allow editing of events'),
-      '#default_value' => $this->options['editable'],
     );
   }
 
