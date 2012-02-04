@@ -184,6 +184,7 @@ function fullcalendar_update($action, $eid) {
   }
 
   // Save the new start/end values.
+  field_attach_presave($entity_type, $entity);
   field_attach_update($entity_type, $entity);
 
   drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $_POST['dom_id']));

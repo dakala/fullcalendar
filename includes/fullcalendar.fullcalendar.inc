@@ -460,84 +460,6 @@ function fullcalendar_fullcalendar_options_form(&$form, &$form_state, &$view) {
 }
 
 /**
- * Implements hook_fullcalendar_options_submit().
- */
-function fullcalendar_fullcalendar_options_submit(&$form, &$form_state, $view) {
-  fullcalendar_process_options($form_state['values']['style_options']);
-}
-
-/**
- * Processes the raw FullCalendar values into options for the jQuery plugin.
- *
- * @param array $values
- *   The unprocessed Views style option values.
- */
-function fullcalendar_process_options(&$values) {
-  global $language;
-
-  $options = array(
-    'buttonText' => array(
-      'day' => t('Day'),
-      'week' => t('Week'),
-      'month' => t('Month'),
-      'today' => t('Today'),
-    ),
-    'allDayText' => t('All day'),
-    'monthNames' => array_values(date_month_names(TRUE)),
-    'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
-    'dayNames' => date_week_days(TRUE),
-    'dayNamesShort' => date_week_days_abbr(TRUE),
-    'isRTL' => (bool) $language->direction,
-  );
-  $advanced = !empty($values['advanced']);
-  foreach ($values as $key => $value) {
-    if (is_array($value)) {
-      if ($key == 'times' && !empty($value['default_date'])) {
-        $options['year'] = $value['date']['year'];
-        $options['month'] = $value['date']['month'];
-        $options['date'] = $value['date']['day'];
-      }
-      continue;
-    }
-
-    if (in_array($key, array('left', 'center', 'right'))) {
-      $options['header'][$key] = $value;
-    }
-    elseif (in_array($key, array('timeformatMonth', 'timeformatWeek', 'timeformatDay'))) {
-      if ($advanced) {
-        $options['timeFormat'][strtolower(substr($key, 10))] = $value;
-      }
-    }
-    elseif (in_array($key, array('columnformatMonth', 'columnformatWeek', 'columnformatDay'))) {
-      if ($advanced) {
-        $options['columnFormat'][strtolower(substr($key, 12))] = $value;
-      }
-    }
-    elseif (in_array($key, array('titleformatMonth', 'titleformatWeek', 'titleformatDay'))) {
-      if ($advanced) {
-        $options['titleFormat'][strtolower(substr($key, 11))] = $value;
-      }
-    }
-    elseif ($advanced && $key == 'axisFormat') {
-      $options[$key] = $value;
-    }
-    elseif ($key == 'timeformat') {
-      if (!$advanced) {
-        $options['timeFormat'] = $value;
-      }
-    }
-    elseif ($key == 'contentHeight' && empty($value)) {
-      // Don't add this if it is 0.
-    }
-    else {
-      $options[$key] = $value;
-    }
-  }
-  unset($options['advanced']);
-  $values['fullcalendar'] = $options;
-}
-
-/**
  * Implements hook_fullcalendar_options_process().
  */
 function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
@@ -622,6 +544,71 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
  * Implements hook_fullcalendar_options_pre_view().
  */
 function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
+  global $language;
+
+  $options = array(
+    'buttonText' => array(
+      'day' => t('Day'),
+      'week' => t('Week'),
+      'month' => t('Month'),
+      'today' => t('Today'),
+    ),
+    'allDayText' => t('All day'),
+    'monthNames' => array_values(date_month_names(TRUE)),
+    'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
+    'dayNames' => date_week_days(TRUE),
+    'dayNamesShort' => date_week_days_abbr(TRUE),
+    'isRTL' => (bool) $language->direction,
+  );
+  $advanced = !empty($settings['advanced']);
+  foreach ($settings as $key => $value) {
+    if (is_array($value)) {
+      if ($key == 'times') {
+        $settings[$key]['date']['date'] = $value['date']['day'];
+        unset($settings[$key]['date']['day']);
+      }
+      continue;
+    }
+    elseif (in_array($key, array('left', 'center', 'right'))) {
+      $options['header'][$key] = $value;
+    }
+    elseif (in_array($key, array('timeformatMonth', 'timeformatWeek', 'timeformatDay'))) {
+      if ($advanced) {
+        $options['timeFormat'][strtolower(substr($key, 10))] = $value;
+      }
+    }
+    elseif (in_array($key, array('columnformatMonth', 'columnformatWeek', 'columnformatDay'))) {
+      if ($advanced) {
+        $options['columnFormat'][strtolower(substr($key, 12))] = $value;
+      }
+    }
+    elseif (in_array($key, array('titleformatMonth', 'titleformatWeek', 'titleformatDay'))) {
+      if ($advanced) {
+        $options['titleFormat'][strtolower(substr($key, 11))] = $value;
+      }
+    }
+    elseif ($advanced && $key == 'axisFormat') {
+      $options[$key] = $value;
+    }
+    elseif ($key == 'timeformat') {
+      if (!$advanced) {
+        $options['timeFormat'] = $value;
+      }
+    }
+    elseif ($key == 'contentHeight' && empty($value)) {
+      // Don't add this if it is 0.
+    }
+    elseif ($key == 'advanced') {
+      // Don't add this value ever.
+    }
+    else {
+      $options[$key] = $value;
+    }
+    // Unset all values that have been migrated.
+    unset($settings[$key]);
+  }
+  $settings['fullcalendar'] = $options;
+
   // First, use the default date if set.
   if (!empty($settings['times']['default_date'])) {
     $settings['date'] = $settings['times']['date'];

@@ -87,10 +87,9 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
       unset($this->options['times']['fc_timeformat']);
     }
 
-    // If the options are from before the plugin system, update them.
+    // Move Colorbox settings into their own array.
     $options = $this->options;
-    if (!isset($options['fullcalendar'])) {
-      // Move Colorbox settings into their own array.
+    if (isset($options['colorbox']) && !is_array($options['colorbox'])) {
       $colorbox = array();
       foreach ($options as $key => $value) {
         if (substr($key, 0, 8) == 'colorbox') {
@@ -99,10 +98,6 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         }
       }
       $options['colorbox'] = $colorbox;
-
-      // Process the old values.
-      fullcalendar_include_api();
-      fullcalendar_process_options($options);
       $this->unpack_options($this->options, $options);
     }
   }
