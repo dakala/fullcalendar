@@ -1,11 +1,11 @@
 (function($) {
 
 Drupal.fullcalendar.plugins.colorbox = {
-  options: function (fullcalendar) {
-    var settings = Drupal.settings.fullcalendar[fullcalendar.dom_id].colorbox;
+  options: function (fullcalendar, settings) {
     if (!settings.colorbox) {
       return;
     }
+    settings = settings.colorbox;
 
     var options = {
       eventClick: function(calEvent, jsEvent, view) {

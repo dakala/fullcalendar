@@ -6,8 +6,7 @@
 (function ($) {
 
 Drupal.fullcalendar.plugins.fullcalendar = {
-  options: function (fullcalendar) {
-    var settings = Drupal.settings.fullcalendar[fullcalendar.dom_id];
+  options: function (fullcalendar, settings) {
     var options = {
       eventClick: function (calEvent, jsEvent, view) {
         if (settings.sameWindow) {

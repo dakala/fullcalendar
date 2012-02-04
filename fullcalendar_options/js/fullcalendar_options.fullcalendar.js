@@ -1,8 +1,11 @@
 (function($) {
 
 Drupal.fullcalendar.plugins.fullcalendar_options = {
-  options: function (fullcalendar) {
-    var options = Drupal.settings.fullcalendar[fullcalendar.dom_id].fullcalendar_options;
+  options: function (fullcalendar, settings) {
+    if (!settings.fullcalendar_options) {
+      return;
+    }
+    var options = settings.fullcalendar_options;
 
     if (options.dayClick) {
       options.dayClick = function (date, allDay, jsEvent, view) {

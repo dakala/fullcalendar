@@ -26,7 +26,7 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
   for (var i = 0; i < Drupal.settings.fullcalendar[dom_id].weights.length; i++) {
     var $plugin = Drupal.settings.fullcalendar[dom_id].weights[i];
     if ($plugins.hasOwnProperty($plugin) && $.isFunction($plugins[$plugin].options)) {
-      $.extend(this.$options, $plugins[$plugin].options(this));
+      $.extend(this.$options, $plugins[$plugin].options(this, Drupal.settings.fullcalendar[this.dom_id]));
     }
   }
 
