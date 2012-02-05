@@ -76,3 +76,12 @@ function colorbox_fullcalendar_options_form(&$form, &$form_state, &$view) {
 
   $form['sameWindow']['#dependency'] = array('edit-style-options-colorbox-colorbox' => array(0));
 }
+
+/**
+ * Implements hook_fullcalendar_options_process().
+ */
+function colorbox_fullcalendar_options_process(&$variables, &$settings) {
+  if (empty($settings['colorbox']['colorbox'])) {
+    unset($settings['colorbox']);
+  }
+}
