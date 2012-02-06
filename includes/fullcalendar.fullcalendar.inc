@@ -493,9 +493,6 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
     }
   }
 
-  if (!empty($options['editable'])) {
-    $view->fullcalendar_disallow_editable = TRUE;
-  }
   unset($options['fields']);
 
   $settings += $options + array(
@@ -559,6 +556,10 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
  */
 function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
   global $language;
+
+  if (!empty($settings['editable'])) {
+    $view->fullcalendar_disallow_editable = TRUE;
+  }
 
   $options = array(
     'buttonText' => array(
