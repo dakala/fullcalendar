@@ -30,7 +30,7 @@ Drupal.fullcalendar.plugins.awesome = {
    * @param date
    *   The JavaScript Date object of where the event was dropped.
    * @param allDay
-   *   A boolean of where the event was dropped, TRUE for an all-day cell, or
+   *   A Boolean of where the event was dropped, TRUE for an all-day cell, or
    *   FALSE for a slot with a specific time.
    * @param jsEvent
    *   The primitive JavaScript event, with information like mouse coordinates.

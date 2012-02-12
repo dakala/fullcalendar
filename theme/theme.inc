@@ -297,7 +297,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
  *   A numerically indexed array containing these elements:
  *   - 0: The start date object.
  *   - 1: The end date object.
- *   - 2: A boolean representing whether the date is all day.
+ *   - 2: A Boolean representing whether the date is all day.
  */
 function _fullcalendar_process_dates($instance, $entity, $field, $item) {
   if (isset($item['db']['value'])) {

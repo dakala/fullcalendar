@@ -65,7 +65,7 @@ function hook_fullcalendar_droppable() {
  *   Object representing the view.
  *
  * @return bool
- *   A boolean value dictating whether of not the calendar is editable.
+ *   A Boolean value dictating whether of not the calendar is editable.
  */
 function hook_fullcalendar_editable($entity, $view) {
   return _fullcalendar_update_access($entity);
@@ -75,7 +75,7 @@ function hook_fullcalendar_editable($entity, $view) {
  * Allows your module to forcibly override the editability of the calendar.
  *
  * @param bool $editable
- *   A boolean value dictating whether of not the calendar is editable.
+ *   A Boolean value dictating whether of not the calendar is editable.
  * @param object $entity
  *   Object representing the entity.
  * @param object $view
@@ -137,7 +137,7 @@ function hook_fullcalendar_options_info() {
  *   'contains', which contains an associative array with the following
  *   key-value pairs:
  *   - default: The default value for this item.
- *   - bool: (optional) Whether or not the value is a boolean.
+ *   - bool: (optional) Whether or not the value is a Boolean.
  *
  * @see views_object::option_definition()
  */
