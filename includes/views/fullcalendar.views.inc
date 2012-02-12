@@ -12,18 +12,6 @@ function fullcalendar_views_plugins() {
   $path = drupal_get_path('module', 'fullcalendar');
   return array(
     'module' => 'fullcalendar',
-    'display' => array(
-      'fullcalendar' => array(
-        'title' => t('FullCalendar'),
-        'handler' => 'fullcalendar_plugin_display_page',
-        'help' => t('For use with FullCalendar style'),
-        'path' => $path . '/includes/views/plugins',
-        'parent' => 'page',
-        'theme' => 'views_view',
-        'uses hook menu' => TRUE,
-        'use pager' => TRUE,
-      ),
-    ),
     'style' => array(
       'fullcalendar' => array(
         'title' => t('FullCalendar'),
@@ -42,6 +30,17 @@ function fullcalendar_views_plugins() {
       ),
     ),
   );
+}
+
+/**
+ * Implements hook_views_plugins_alter().
+ */
+function fullcalendar_views_plugins_alter(&$plugins) {
+  $plugins['display']['fullcalendar'] = array(
+    'title' => t('FullCalendar - Deprecated, use page display instead!'),
+    'help' => t('Stop using this display, use page instead'),
+    'no ui' => TRUE,
+  ) + $plugins['display']['page'];
 }
 
 /**
