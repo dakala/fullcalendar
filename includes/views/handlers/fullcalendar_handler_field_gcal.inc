@@ -53,7 +53,7 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
     return array(
       $this->options['gcal'],
       array(
-        'editable' => $this->options['editable'],
+        'editable' => FALSE,
         'className' => $this->options['class'],
         'currentTimezone' => $this->options['timezone'],
       ),
