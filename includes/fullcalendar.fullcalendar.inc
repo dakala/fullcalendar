@@ -616,6 +616,10 @@ function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
     elseif ($key == 'advanced') {
       // Don't add this value ever.
     }
+    elseif ($key == 'sameWindow') {
+      // Keep this at the top level.
+      continue;
+    }
     else {
       $options[$key] = $value;
     }
