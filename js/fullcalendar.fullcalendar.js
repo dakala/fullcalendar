@@ -47,12 +47,12 @@ Drupal.fullcalendar.plugins.fullcalendar = {
             beforeSend: function () {
               // Add a throbber.
               this.progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
-              $(fullcalendar.dom_id + ' .fc-header-title').after(this.progress);
+              fullcalendar.$calendar.find('.fc-header-title').after(this.progress);
             },
             success: function (data) {
               if (data.status) {
                 // Replace content.
-                $(fullcalendar.dom_id + ' .fullcalendar-content').html(data.content);
+                fullcalendar.$calendar.find('.fullcalendar-content').html(data.content);
                 fullcalendar.parseEvents(callback);
               }
               // Remove the throbber.
@@ -71,7 +71,7 @@ Drupal.fullcalendar.plugins.fullcalendar = {
           // Add events from Google Calendar feeds.
           for (var entry in settings.gcal) {
             if (settings.gcal.hasOwnProperty(entry)) {
-              $('.fullcalendar', fullcalendar.$calendar).fullCalendar('addEventSource',
+              fullcalendar.$calendar.find('.fullcalendar').fullCalendar('addEventSource',
                 $.fullCalendar.gcalFeed(settings.gcal[entry][0], settings.gcal[entry][1])
               );
             }

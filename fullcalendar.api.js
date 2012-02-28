@@ -46,6 +46,6 @@ Drupal.fullcalendar.plugins.awesome = {
     eventObject.start = date;
     eventObject.allDay = allDay ? 1 : 0;
 
-    $('.fullcalendar', fullcalendar.$calendar).fullCalendar('renderEvent', eventObject, true);
+    fullcalendar.$calendar.find('.fullcalendar').fullCalendar('renderEvent', eventObject, true);
   }
 };

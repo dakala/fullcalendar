@@ -19,7 +19,7 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
   this.navigate = false;
 
   // Hide the failover display.
-  $('.fullcalendar-content', this.$calendar).hide();
+  this.$calendar.find('.fullcalendar-content').hide();
 
   // Allow other modules to overwrite options.
   var $plugins = Drupal.fullcalendar.plugins;
@@ -30,7 +30,7 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
     }
   }
 
-  $('.fullcalendar', this.$calendar).once().fullCalendar(this.$options);
+  this.$calendar.find('.fullcalendar').once().fullCalendar(this.$options);
 
   $(this.$calendar).delegate('.fullcalendar-status-close', 'click', function () {
     $(this).parent().slideUp();
@@ -55,7 +55,7 @@ Drupal.fullcalendar.fullcalendar.prototype.update = function (result) {
  */
 Drupal.fullcalendar.fullcalendar.prototype.parseEvents = function (callback) {
   var events = [];
-  var details = $('.fullcalendar-event-details', this.$calendar);
+  var details = this.$calendar.find('.fullcalendar-event-details');
   for (var i = 0; i < details.length; i++) {
     var event = $(details[i]);
     events.push({

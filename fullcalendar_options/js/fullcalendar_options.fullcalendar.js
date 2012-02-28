@@ -14,7 +14,7 @@ Drupal.fullcalendar.plugins.fullcalendar_options = {
           return;
         }
 
-        $('.fullcalendar', fullcalendar.$calendar)
+        fullcalendar.$calendar.find('.fullcalendar')
           .fullCalendar('gotoDate', date)
           .fullCalendar('changeView', options.dayClickView);
       };
