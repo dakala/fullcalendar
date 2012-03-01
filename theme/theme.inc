@@ -316,6 +316,10 @@ function _fullcalendar_process_dates($instance, $entity, $field, $item) {
     $date2 = $date['value2']['local']['object'];
   }
 
+  // Allow modules to alter the date objects.
+  $context = array('instance' => $instance, 'entity' => $entity, 'field' => $field);
+  drupal_alter('fullcalendar_process_dates', $date1, $date2, $context);
+
   $start = $date1->format(DATE_FORMAT_DATETIME);
   $end = $date2->format(DATE_FORMAT_DATETIME);
   $all_day = _fullcalendar_date_all_day_field($field, $instance, $date1, $date2);

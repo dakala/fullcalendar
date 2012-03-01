@@ -86,6 +86,26 @@ function hook_fullcalendar_editable_alter(&$editable, $entity, $view) {
 }
 
 /**
+ * Alter the dates after they're loaded, before they're added for rendering.
+ *
+ * @param object $date1
+ *   The start date object.
+ * @param object $date2
+ *   The end date object.
+ * @param array $context
+ *   An associative array containing the following key-value pairs:
+ *   - instance: The field instance.
+ *   - entity: The entity object for this date.
+ *   - field: The field info.
+ */
+function hook_fullcalendar_process_dates_alter(&$date1, &$date2, $context) {
+  // Always display dates only on one day.
+  if ($date1->format(DATE_FORMAT_DATE) != $date2->format(DATE_FORMAT_DATE)) {
+    $date2 = $date1;
+  }
+}
+
+/**
  * Defines the location of your FullCalendar API includes.
  *
  * @return array
