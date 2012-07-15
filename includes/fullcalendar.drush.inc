@@ -8,7 +8,7 @@
 /**
  * The FullCalendar plugin URI.
  */
-define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-' . FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION . '.zip');
+define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-1.5.3.zip');
 
 /**
  * Implements hook_drush_command().
@@ -34,6 +34,21 @@ function fullcalendar_drush_help($section) {
   switch ($section) {
     case 'drush:fullcalendar-plugin':
       return dt("Downloads the FullCalendar plugin from arshaw.com, default location is sites/all/libraries.");
+  }
+}
+
+/**
+ * Implements drush_MODULE_post_COMMAND().
+ */
+function drush_fullcalendar_post_pm_enable() {
+  $extensions = func_get_args();
+  // Deal with comma delimited extension list.
+  if (strpos($extensions[0], ',') !== FALSE) {
+    $extensions = explode(',', $extensions[0]);
+  }
+
+  if (in_array('fullcalendar', $extensions) && !drush_get_option('skip')) {
+    drush_fullcalendar_plugin();
   }
 }
 
@@ -88,7 +103,7 @@ function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
   chdir($olddir);
 
   if (is_dir($path . '/fullcalendar')) {
-    drush_log(dt('FullCalendar plugin has been downloaded to @path', array('@path' => $path)), 'success');
+    drush_log(dt('FullCalendar plugin has been downloaded to @path.', array('@path' => $path)), 'success');
   }
   else {
     drush_log(dt('Drush was unable to download the FullCalendar plugin to @path', array('@path' => $path)), 'error');
