@@ -9,7 +9,7 @@
  * General configuration form for controlling the FullCalendar behaviour.
  */
 function fullcalendar_admin_settings() {
-  $fullcalendar_path = variable_get('fullcalendar_path', FULLCALENDAR_PATH);
+  $fullcalendar_path = variable_get('fullcalendar_path', fullcalendar_default_path());
 
   $form['fullcalendar_path'] = array(
     '#type' => 'textfield',
