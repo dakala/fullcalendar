@@ -131,6 +131,8 @@ function fullcalendar_menu() {
     'description' => 'Get events from views with arguments',
     'page callback' => 'fullcalendar_results',
     'access arguments' => array('access content'),
+    'delivery callback' => 'ajax_deliver',
+    'theme callback' => 'ajax_base_page_theme',
     'type' => MENU_CALLBACK,
   );
 
@@ -238,45 +240,49 @@ function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state
 /**
  * Returns events for FullCalendar.
  */
-function fullcalendar_results($view_name = NULL, $view_display = NULL, $args = NULL) {
-  $content = NULL;
-
+function fullcalendar_results($view_name = NULL, $view_display = NULL) {
   // Bail out if no view_name or view_display is passed.
-  if (empty($view_name) && empty($view_display)) {
+  if (empty($view_name) || empty($view_display) || empty($_POST['dom_id'])) {
     return;
   }
 
+  // Find Views arguments.
+  $args = func_get_args();
+  unset($args[0], $args[1]);
+  $args = array_values($args);
+
+  $dom_id = check_plain($_POST['dom_id']);
+  $view_name = check_plain($view_name);
+  $view_display = check_plain($view_display);
+
+  // Add all $_POST data, because AJAX is always a post and many things,
+  // such as tablesorts, exposed filters and paging assume $_GET.
+  $_GET += $_POST;
+
   // Get the view and check access.
   $view = views_get_view($view_name);
-  if ($view && $view->access($view_display)) {
-
-    $view->set_display($view_display);
-
-    // Add arguments.
-    if (!empty($args)) {
-      $args = explode('|', $args);
-      $view->set_arguments($args);
-    }
-
-    // Execute the display and render results
-    // if available into $content variable.
-    $view->preview($view_display);
-    if (!empty($view->result)) {
-      $view->fullcalendar_ajax = TRUE;
-      $content = theme('fullcalendar', array('view' => $view, 'rows' => $view->result, 'options' => $view->style_options));
-    }
+  if (!$view || !$view->access($view_display)) {
+    return;
   }
 
-  drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
-  print drupal_json_encode(array(
-    'status' => TRUE,
-    'content' => $content,
-  ));
+  if (!$view->set_display($view_display)) {
+    return;
+  }
 
-  // Let's call drupal_page_footer(), so even page cache can work.
-  drupal_page_footer();
+  $view->dom_id = $dom_id;
+  $view->fullcalendar_ajax = TRUE;
+  $view->pre_execute($args);
+  $view->init_style();
+  $view->execute($view_display);
+  $output = $view->style_plugin->render();
+  $view->post_execute();
 
-  exit();
+  return array(
+    '#type' => 'ajax',
+    '#commands' => array(
+      array('command' => 'fullcalendar_results_response', 'data' => $output),
+    ),
+  );
 }
 
 /**

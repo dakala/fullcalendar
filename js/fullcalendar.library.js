@@ -17,6 +17,7 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
   this.$calendar = $(dom_id);
   this.$options = {};
   this.navigate = false;
+  this.refetch = false;
 
   // Hide the failover display.
   this.$calendar.find('.fullcalendar-content').hide();

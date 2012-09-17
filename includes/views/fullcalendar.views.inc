@@ -88,51 +88,68 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
     $function($settings, $view);
   }
 
-  // Set the new view settings.
-  $view->style_plugin->options = $settings;
+  $settings['ajax'] = FALSE;
 
   // If we're not using ajax, we're done.
   if (!$view->display_handler->get_option('use_ajax')) {
+    // Set the new view settings.
+    $view->style_plugin->options = $settings;
     return;
   }
 
-  // If a date is specifed to be the default find the range needed.
-  if (!empty($settings['date'])) {
-    $date_string = $settings['date']['year'] . '-' . $settings['date']['month'];
-    // The month value is zero-based, so use that for start and add 2 for end.
-    $start = date('Y-m', strtotime($date_string));
-    $end = date('Y-m', strtotime($date_string . ' +2 months'));
-    $range = $start . '--' . $end;
-  }
-  else {
-    $range = date('Y-m', strtotime('-1 month')) . '--' . date('Y-m', strtotime('+1 month'));
+  $settings['fullcalendar_fields_count'] = 0;
+  $exposed_input = $view->get_exposed_input();
+  // Loop through each date field and provide an argument for it.
+  foreach ($view->display_handler->get_handlers('field') as $field_id => $field) {
+    if (!fullcalendar_field_is_date($field)) {
+      continue;
+    }
+
+    $settings['ajax'] = TRUE;
+    // Add an exposed filter for the date field.
+    $field_value_id = $field->real_field . str_replace($field->field, '', $field_id);
+    if (isset($exposed_input[$field_value_id])) {
+      $timestamp = (strtotime($exposed_input[$field_value_id]['min']['date']) + strtotime($exposed_input[$field_value_id]['max']['date'])) / 2;
+      $min = date('Y-m', $timestamp);
+      $max = date('Y-m', strtotime($min . ' +1 month'));
+    }
+    else {
+      $min = $settings['date']['year'] . '-' . ($settings['date']['month'] + 1);
+      $max = $settings['date']['year'] . '-' . ($settings['date']['month'] + 2);
+    }
+    $min = date('Y-m-d', strtotime($min . ' -2 weeks'));
+    $max = date('Y-m-d', strtotime($max . ' +2 weeks'));
+    $options = array(
+      'exposed' => TRUE,
+      'form_type' => 'date_text',
+      'operator' => 'between',
+      'default_date' => $min,
+      'default_to_date' => $max,
+      'group' => 0,
+    );
+    if (!empty($field->options['relationship'])) {
+      $options['relationship'] = $field->options['relationship'];
+    }
+    $option_id = $view->add_item($display_id, 'filter', 'field_data_' . $field->field, $field->field . '_value', $options);
+    $settings['fullcalendar_fields'][$option_id] = drupal_html_class($option_id);
+    $settings['fullcalendar_fields_count']++;
+    $view->set_item_option($display_id, 'filter', $option_id, 'expose', array('identifier' => $option_id, 'operator' => $option_id . '_op'));
+
   }
 
-  // Loop through each date field and provide an argument for it.
-  foreach ($view->display_handler->get_handlers('field') as $field) {
-    if (fullcalendar_field_is_date($field)) {
-      // Add an argument for the date field.
-      $options = array(
-        'default_action' => 'default',
-        'default_argument_type' => 'fixed',
-        'default_argument_options' => array(
-          'argument' => $range,
-        ),
-      );
-      if (!empty($field->options['relationship'])) {
-        $options['relationship'] = $field->options['relationship'];
-      }
-      $view->add_item($display_id, 'argument', 'field_data_' . $field->field, $field->field . '_value', $options);
-      $view->fullcalendar_args++;
-    }
+  if (isset($timestamp)) {
+    $settings['date']['date'] = date('d', $timestamp);
+    $settings['date']['month'] = date('n', $timestamp) - 1;
+    $settings['date']['year'] = date('Y', $timestamp);
   }
+
+  $view->style_plugin->options = $settings;
 }
 
 /**
  * Implements hook_views_query_alter().
  *
- * Force the query to be distinct. Also, if there are multiple date arguments,
- * group them with 'OR'.
+ * Force the query to be distinct.
  */
 function fullcalendar_views_query_alter(&$view, &$query) {
   if ($view->display_handler->get_option('style_plugin') != 'fullcalendar') {
@@ -140,23 +157,13 @@ function fullcalendar_views_query_alter(&$view, &$query) {
   }
 
   $query->distinct = TRUE;
+}
 
-  if (empty($view->fullcalendar_args) || count($view->args) < $view->fullcalendar_args) {
-    return;
+/**
+ * Implements hook_views_ajax_data_alter().
+ */
+function fullcalendar_views_ajax_data_alter(&$commands, &$view) {
+  if ($view->display_handler->get_option('style_plugin') == 'fullcalendar') {
+    $commands = array();
   }
-
-  // @todo Remove this once http://drupal.org/node/1367304 is resolved.
-  $query->group_operator = 'AND';
-
-  // Remove our arguments from the main set.
-  $arguments = array();
-  for ($i = 0; $i < $view->fullcalendar_args; $i++) {
-    $arguments[] = array_pop($query->where[0]['conditions']);
-  }
-  // Add them as a second set of conditions.
-  $query->where[] = array(
-    'conditions' => $arguments,
-    'args' => array(),
-    'type' => 'OR',
-  );
 }

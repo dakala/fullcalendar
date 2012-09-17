@@ -500,13 +500,6 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
     'view_display' => $view->current_display,
   );
 
-  // Check if there is an argument which is an instance the default
-  // date argument class and create month, year variables as well as next
-  // and previous urls from all arguments.
-  if (!empty($view->argument) && $view->use_ajax) {
-    $settings += fullcalendar_check_arguments($view);
-  }
-
   // Add JS and CSS files.
   $variables['element']['#attached'] = array(
     'library' => array(
@@ -520,6 +513,10 @@ function fullcalendar_fullcalendar_options_process(&$variables, &$settings) {
       ctools_attach_css('fullcalendar.theme', 'fullcalendar'),
     ),
   );
+
+  if (!empty($settings['ajax'])) {
+    $variables['element']['#attached']['js'][] = ctools_attach_js('fullcalendar.ajax', 'fullcalendar');
+  }
 
   // Add CSS and JS for each option plugin that provides it.
   fullcalendar_include_api();
@@ -659,52 +656,4 @@ function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {
   }
   // Change month to zero-based.
   $settings['date']['month']--;
-}
-
-/**
- * Override date settings when using FullCalendar AJAX pager.
- *
- * Check arguments on a view. If a date handler is found, add more
- * info to the $settings array so we know in jQuery we can fetch
- * new data from the view.
- *
- * @param object $view
- *   The current view we're processing.
- *
- * @return array
- *   A collection of extra settings.
- */
-function fullcalendar_check_arguments($view) {
-  $date_handler = NULL;
-  $args = array();
-  $settings = array('ajax' => FALSE);
-
-  $position = 0;
-  foreach ($view->argument as $argument_key => $handler) {
-    if (date_views_handler_is_date($handler, 'argument')) {
-      $date_handler = $handler;
-      $args[] = 'fullcalendar_browse';
-    }
-    else {
-      $args[] = $view->args[$position];
-    }
-    $position++;
-  }
-
-  if ($date_handler) {
-    $date_range = explode('--', $date_handler->argument);
-    $timestamp = strtotime($date_range[0] . " +1 month");
-
-    // Add ajax for date argument.
-    $settings['args'] = implode('|', $args);
-    $settings['ajax'] = TRUE;
-
-    // Settings for FullCalendar.
-    $month = date('n', $timestamp);
-    $year = date('Y', $timestamp);
-    $settings['date']['month'] = $month - 1;
-    $settings['date']['year'] = $year;
-  }
-
-  return $settings;
 }

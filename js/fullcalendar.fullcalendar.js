@@ -7,6 +7,10 @@
 
 Drupal.fullcalendar.plugins.fullcalendar = {
   options: function (fullcalendar, settings) {
+    if (settings.ajax) {
+      fullcalendar.submitInit(settings);
+    }
+
     var options = {
       eventClick: function (calEvent, jsEvent, view) {
         if (settings.sameWindow) {
@@ -31,41 +35,17 @@ Drupal.fullcalendar.plugins.fullcalendar = {
       },
       events: function (start, end, callback) {
         // Fetch new items from Views if possible.
-        if (fullcalendar.navigate && settings.ajax) {
-          var prev_date, next_date, date_argument, argument, fetch_url;
-
-          prev_date = $.fullCalendar.formatDate(start, 'yyyy-MM-dd');
-          next_date = $.fullCalendar.formatDate(end, 'yyyy-MM-dd');
-          date_argument = prev_date + '--' + next_date;
-          argument = settings.args.replace('fullcalendar_browse', date_argument);
-          fetch_url = Drupal.settings.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + argument;
-
-          $.ajax({
-            type: 'GET',
-            url: fetch_url,
-            dataType: 'json',
-            beforeSend: function () {
-              // Add a throbber.
-              this.progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
-              fullcalendar.$calendar.find('.fc-header-title').after(this.progress);
-            },
-            success: function (data) {
-              if (data.status) {
-                // Replace content.
-                fullcalendar.$calendar.find('.fullcalendar-content').html(data.content);
-                fullcalendar.parseEvents(callback);
-              }
-              // Remove the throbber.
-              $(this.progress).remove();
-            },
-            error: function (xmlhttp) {
-              alert(Drupal.t('An HTTP error @status occurred.', {'@status': xmlhttp.status}));
+        if (settings.ajax && settings.fullcalendar_fields) {
+          fullcalendar.dateChange(settings.fullcalendar_fields);
+          if (fullcalendar.navigate) {
+            if (!fullcalendar.refetch) {
+              fullcalendar.fetchEvents();
             }
-          });
+            fullcalendar.refetch = false;
+          }
         }
-        else {
-          fullcalendar.parseEvents(callback);
-        }
+
+        fullcalendar.parseEvents(callback);
 
         if (!fullcalendar.navigate) {
           // Add events from Google Calendar feeds.
