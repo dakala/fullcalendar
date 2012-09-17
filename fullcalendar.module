@@ -8,7 +8,9 @@
 /**
  * The default path to the FullCalendar plugin.
  */
-define('FULLCALENDAR_PATH', 'sites/all/libraries/fullcalendar');
+function fullcalendar_default_path() {
+  return module_exists('libraries') ? libraries_get_path('fullcalendar') : 'sites/all/libraries/fullcalendar';
+}
 
 /**
  * The minimum supported version of the FullCalendar plugin.
@@ -50,7 +52,7 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  * Implements hook_library().
  */
 function fullcalendar_library() {
-  $path = variable_get('fullcalendar_path', FULLCALENDAR_PATH);
+  $path = variable_get('fullcalendar_path', fullcalendar_default_path());
   $css_files = array($path . '/fullcalendar.css' => array('media' => 'screen'));
 
   // Add fullcalendar.print.css if it is available.
@@ -395,7 +397,7 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  */
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
-  return variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
+  return variable_get('fullcalendar_path', fullcalendar_default_path()) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
 }
 
 /**
