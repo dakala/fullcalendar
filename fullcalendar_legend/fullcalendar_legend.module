@@ -136,13 +136,14 @@ function fullcalendar_legend_get_type_taxonomy($fields) {
           foreach ($field_info[$taxonomy_field_name]['settings']['allowed_values'] as $vocab) {
             $vocabulary = taxonomy_vocabulary_machine_name_load($vocab['vocabulary']);
             foreach (taxonomy_get_tree($vocabulary->vid) as $term) {
+              $term->vocabulary_machine_name = $vocabulary->machine_name;
               $types[$term->tid]['entity_type'] = $entity_type;
               $types[$term->tid]['field_name'] = $field_name;
               $types[$term->tid]['bundle'] = $bundle;
               $types[$term->tid]['label'] = ($use_i18n) ? i18n_taxonomy_term_name($term) : $term->name;
               $types[$term->tid]['taxonomy_field'] = $taxonomy_field_name;
               $types[$term->tid]['tid'] = $term->tid;
-              $types[$term->tid]['uri'] = taxonomy_term_uri($term);
+              $types[$term->tid]['uri'] = entity_uri('taxonomy_term', $term);
             }
           }
         }

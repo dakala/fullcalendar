@@ -32,6 +32,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
       $element[$type_name]['type'] = array(
         '#type' => 'link',
         '#href' => $type['uri']['path'],
+        '#options' => isset($type['uri']['options']) ? $type['uri']['options'] : array(),
         '#title' => $type['label'],
       );
     }
