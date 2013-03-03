@@ -6,20 +6,6 @@
  */
 
 /**
- * Implements hook_fullcalendar_options_submit().
- */
-function fullcalendar_fullcalendar_options_submit($form, &$form_state, $view) {
-  $options = &$form_state['values']['style_options'];
-
-  // These field options have empty defaults, make sure they stay that way.
-  foreach (array('title', 'url', 'date') as $field) {
-    if (empty($options['fields'][$field])) {
-      unset($options['fields'][$field . '_field']);
-    }
-  }
-}
-
-/**
  * Implements hook_fullcalendar_options_pre_view().
  */
 function fullcalendar_fullcalendar_options_pre_view(&$settings, &$view) {

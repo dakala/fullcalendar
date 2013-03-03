@@ -6,33 +6,6 @@
  */
 
 /**
- * Implements hook_views_plugins().
- */
-function fullcalendar_views_plugins() {
-  $path = drupal_get_path('module', 'fullcalendar');
-  return array(
-    'module' => 'fullcalendar',
-    'style' => array(
-      'fullcalendar' => array(
-        'title' => t('FullCalendar'),
-        'help' => t('Displays items on a calendar.'),
-        'handler' => 'fullcalendar_plugin_style_fullcalendar',
-        'path' => $path . '/includes/views/plugins',
-        'theme' => 'fullcalendar',
-        'theme file' => 'theme.inc',
-        'theme path' => $path . '/theme',
-        'uses row plugin' => FALSE,
-        'uses fields' => TRUE,
-        'uses options' => TRUE,
-        'uses grouping' => TRUE,
-        'even empty' => TRUE,
-        'type' => 'normal',
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_views_plugins_alter().
  */
 function fullcalendar_views_plugins_alter(&$plugins) {

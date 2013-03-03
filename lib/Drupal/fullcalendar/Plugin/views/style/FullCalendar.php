@@ -78,6 +78,16 @@ class FullCalendar extends StylePluginBase {
   /**
    * @todo.
    */
+  public function submitOptionsForm(&$form, &$form_state) {
+    parent::submitOptionsForm($form, $form_state);
+    foreach ($this->pluginBag as $plugin) {
+      $plugin->submitOptionsForm($form, $form_state);
+    }
+  }
+
+  /**
+   * @todo.
+   */
   public function parseFields($include_gcal = TRUE) {
     $this->view->initHandlers();
     $labels = $this->displayHandler->getFieldLabels();

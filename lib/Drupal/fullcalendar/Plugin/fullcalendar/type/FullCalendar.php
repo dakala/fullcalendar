@@ -501,4 +501,18 @@ class Fullcalendar extends PluginBase implements FullcalendarInterface {
     }
   }
 
+  /**
+   * @todo.
+   */
+  public function submitOptionsForm(&$form, &$form_state) {
+    $options = &$form_state['values']['style_options'];
+
+    // These field options have empty defaults, make sure they stay that way.
+    foreach (array('title', 'url', 'date') as $field) {
+      if (empty($options['fields'][$field])) {
+        unset($options['fields'][$field . '_field']);
+      }
+    }
+  }
+
 }

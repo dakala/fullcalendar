@@ -16,4 +16,6 @@ interface FullcalendarInterface {
 
   public function buildOptionsForm(&$form, &$form_state);
 
+  public function submitOptionsForm(&$form, &$form_state);
+
 }

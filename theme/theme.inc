@@ -55,7 +55,7 @@ function template_preprocess_fullcalendar(&$variables) {
   $settings = array();
   $manager = drupal_container()->get('plugin.manager.fullcalendar');
   foreach ($manager->getDefinitions() as $plugin_id => $definition) {
-    $plugin = $manager->createInstance($plugin_id);
+    $plugin = $manager->createInstance($plugin_id, array(), $variables['view']->style_plugin);
     $plugin->process($variables, $settings);
     if (isset($definition['weight'])) {
       if (!isset($weights[$definition['weight']])) {
