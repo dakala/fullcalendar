@@ -278,17 +278,17 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL) {
     return;
   }
 
-  if (!$view->set_display($view_display)) {
+  if (!$view->setDisplay($view_display)) {
     return;
   }
 
   $view->dom_id = $dom_id;
   $view->fullcalendar_ajax = TRUE;
-  $view->pre_execute($args);
-  $view->init_style();
+  $view->preExecute($args);
+  $view->initStyle();
   $view->execute($view_display);
   $output = $view->style_plugin->render();
-  $view->post_execute();
+  $view->postExecute();
 
   return array(
     '#type' => 'ajax',

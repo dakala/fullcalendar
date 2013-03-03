@@ -48,6 +48,13 @@ class FullCalendar extends StylePluginBase {
     return TRUE;
   }
 
+  /**
+   * @todo.
+   */
+  public function getPlugins() {
+    return $this->pluginBag;
+  }
+
   public function __construct(array $configuration, $plugin_id, DiscoveryInterface $discovery) {
     parent::__construct($configuration, $plugin_id, $discovery);
 

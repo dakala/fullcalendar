@@ -9,6 +9,8 @@ namespace Drupal\fullcalendar\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\fullcalendar\Plugin\FullcalendarInterface;
+use Drupal\views\Plugin\views\style\StylePluginBase;
+use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
 
 /**
  * @todo.
