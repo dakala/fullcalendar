@@ -60,6 +60,9 @@ class FullCalendar extends StylePluginBase {
     return $this->pluginBag;
   }
 
+  /**
+   * @todo.
+   */
   public function __construct(array $configuration, $plugin_id, DiscoveryInterface $discovery) {
     parent::__construct($configuration, $plugin_id, $discovery);
 
@@ -110,6 +113,16 @@ class FullCalendar extends StylePluginBase {
       }
     }
     return $date_fields;
+  }
+
+  /**
+   * @todo.
+   */
+  public function validate() {
+    if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
+      drupal_set_message(t('Display "@display" requires at least one date field.', array('@display' => $this->displayHandler->display['display_title'])), 'error');
+    }
+    return parent::validate();
   }
 
 }
