@@ -11,7 +11,6 @@ use Drupal\Core\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
 use Drupal\datetime\DateHelper;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
-use Drupal\views\Plugin\views\style\StylePluginBase;
 
 /**
  * @todo.
@@ -185,26 +184,26 @@ class Fullcalendar extends FullcalendarBase {
     $form['#pre_render'][] = 'views_ui_pre_render_add_fieldset_markup';
 
     $form['display'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Display settings'),
       '#collapsible' => TRUE,
     );
     $form['header'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Header settings'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
     $form['times'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Time/date settings'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
     $form['style'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Style settings'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
@@ -289,7 +288,11 @@ class Fullcalendar extends FullcalendarBase {
       '#title' => t('Custom initial date'),
       '#title_display' => 'invisible',
       '#default_value' => $this->style->options['times']['date'],
-      '#dependency' => array('edit-style-options-times-default-date' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[times][default_date]"]' => array('checked' => TRUE),
+        ),
+      ),
       '#fieldset' => 'times',
     );
     $form['timeformat'] = array(
@@ -298,7 +301,11 @@ class Fullcalendar extends FullcalendarBase {
       '#default_value' => $this->style->options['timeformat'],
       '#size' => '30',
       '#fieldset' => 'times',
-      '#dependency' => array('edit-style-options-advanced' => array(0)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[advanced]"]' => array('checked' => FALSE),
+        ),
+      ),
     );
     $form['advanced'] = array(
       '#type' => 'checkbox',
@@ -314,7 +321,11 @@ class Fullcalendar extends FullcalendarBase {
       '#default_value' => $this->style->options['axisFormat'],
       '#size' => '30',
       '#fieldset' => 'times',
-      '#dependency' => array('edit-style-options-advanced' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
+        ),
+      ),
     );
 
     // Add the nine time/date formats.
@@ -334,31 +345,43 @@ class Fullcalendar extends FullcalendarBase {
     }
 
     $form['time'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Time format'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/text/timeFormat', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#fieldset' => 'times',
-      '#dependency' => array('edit-style-options-advanced' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['title'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Title format'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/text/titleFormat', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#fieldset' => 'times',
-      '#dependency' => array('edit-style-options-advanced' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['column'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Column format'),
       '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/text/columnFormat', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#fieldset' => 'times',
-      '#dependency' => array('edit-style-options-advanced' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['theme'] = array(
       '#type' => 'checkbox',
@@ -407,7 +430,7 @@ class Fullcalendar extends FullcalendarBase {
     $date_fields = $this->style->parseFields();
 
     $form['fields'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Customize fields'),
       '#description' => t('Add fields to the view in order to customize fields below.'),
       '#collapsible' => TRUE,
@@ -427,7 +450,11 @@ class Fullcalendar extends FullcalendarBase {
       '#default_value' => $this->style->options['fields']['title_field'],
       '#description' => t('Choose the field with the custom title.'),
       '#process' => array('form_process_select'),
-      '#dependency' => array('edit-style-options-fields-title' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[fields][title]"]' => array('checked' => TRUE),
+        ),
+      ),
       '#fieldset' => 'fields',
     );
     $form['fields']['url'] = array(
@@ -444,7 +471,11 @@ class Fullcalendar extends FullcalendarBase {
       '#default_value' => $this->style->options['fields']['url_field'],
       '#description' => t('Choose the field with the custom link.'),
       '#process' => array('form_process_select'),
-      '#dependency' => array('edit-style-options-fields-url' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[fields][url]"]' => array('checked' => TRUE),
+        ),
+      ),
       '#fieldset' => 'fields',
     );
     $form['fields']['date'] = array(
@@ -463,7 +494,11 @@ class Fullcalendar extends FullcalendarBase {
       '#multiple' => TRUE,
       '#size' => count($date_fields),
       '#process' => array('form_process_select'),
-      '#dependency' => array('edit-style-options-fields-date' => array(1)),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="style_options[fields][date]"]' => array('checked' => TRUE),
+        ),
+      ),
       '#fieldset' => 'fields',
     );
 
@@ -522,10 +557,6 @@ class Fullcalendar extends FullcalendarBase {
     $advanced = !empty($settings['advanced']);
     foreach ($settings as $key => $value) {
       if (is_array($value)) {
-        if ($key == 'times') {
-          $settings[$key]['date']['date'] = $value['date']['day'];
-          unset($settings[$key]['date']['day']);
-        }
         continue;
       }
       elseif (in_array($key, array('left', 'center', 'right'))) {
@@ -574,7 +605,8 @@ class Fullcalendar extends FullcalendarBase {
 
     // First, use the default date if set.
     if (!empty($settings['times']['default_date'])) {
-      $settings['date'] = $settings['times']['date'];
+      list($date['year'], $date['month'], $date['date']) = explode('-', $settings['times']['date']);
+      $settings['date'] = $date;
     }
     // Unset times settings.
     unset($settings['times']);

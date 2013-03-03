@@ -35,6 +35,11 @@ class FullCalendar extends StylePluginBase {
   protected $usesFields = TRUE;
 
   /**
+   * @todo.
+   */
+  protected $usesGrouping = FALSE;
+
+  /**
    * @todo
    *
    * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginBag
