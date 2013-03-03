@@ -42,7 +42,7 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  * Implements hook_library_info().
  */
 function fullcalendar_library_info() {
-  $path = variable_get('fullcalendar_path', fullcalendar_default_path());
+  $path = config('fullcalendar.settings')->get('path');
   $module_path = drupal_get_path('module', 'fullcalendar');
   $css_files = array($path . '/fullcalendar.css' => array('media' => 'screen'));
 
@@ -116,18 +116,12 @@ function fullcalendar_menu() {
   $items['admin/config/user-interface/fullcalendar'] = array(
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
-    'file' => 'fullcalendar.admin.inc',
-    'file path' => drupal_get_path('module', 'fullcalendar') . '/includes',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('fullcalendar_admin_settings'),
+    'page callback' => 'NOT_USED',
     'access arguments' => array('administer site configuration'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 0,
   );
   $items['admin/config/user-interface/fullcalendar/default'] = array(
     'title' => 'FullCalendar',
     'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => 0,
   );
   $items['fullcalendar/ajax/update/%/%'] = array(
     'title' => 'Update event',
@@ -408,5 +402,6 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  */
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
-  return variable_get('fullcalendar_path', fullcalendar_default_path()) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
+  $config = config('fullcalendar.settings');
+  return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
 }

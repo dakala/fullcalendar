@@ -22,6 +22,8 @@ class FullcalendarBundle extends Bundle {
   public function build(ContainerBuilder $container) {
     $container->register('plugin.manager.fullcalendar', 'Drupal\fullcalendar\Plugin\FullcalendarManager')
       ->addArgument('%container.namespaces%');
+    $container->register('fullcalendar.form.settings', 'Drupal\fullcalendar\Form\SettingsForm')
+      ->addArgument(new Reference('config.factory'));
   }
 
 }
