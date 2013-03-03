@@ -9,7 +9,7 @@
  * The default path to the FullCalendar plugin.
  */
 function fullcalendar_default_path() {
-  return module_exists('libraries') ? libraries_get_path('fullcalendar') : 'sites/all/libraries/fullcalendar';
+  return 'libraries/fullcalendar';
 }
 
 /**
@@ -21,16 +21,6 @@ define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.10');
  * The recommended version of the FullCalendar plugin.
  */
 define('FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION', '1.5.1');
-
-/**
- * Implements hook_views_api().
- */
-function fullcalendar_views_api() {
-  return array(
-    'api' => '3',
-    'path' => drupal_get_path('module', 'fullcalendar') . '/includes/views',
-  );
-}
 
 /**
  * Implements hook_theme().
@@ -49,10 +39,11 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_library().
+ * Implements hook_library_info().
  */
-function fullcalendar_library() {
+function fullcalendar_library_info() {
   $path = variable_get('fullcalendar_path', fullcalendar_default_path());
+  $module_path = drupal_get_path('module', 'fullcalendar');
   $css_files = array($path . '/fullcalendar.css' => array('media' => 'screen'));
 
   // Add fullcalendar.print.css if it is available.
@@ -70,10 +61,29 @@ function fullcalendar_library() {
     ),
     'css' => $css_files,
     'dependencies' => array(
-      array('system', 'ui.draggable'),
-      array('system', 'ui.droppable'),
-      array('system', 'ui.resizable'),
-      array('system', 'effects.highlight'),
+      array('system', 'jquery'),
+      array('system', 'jquery.ui.draggable'),
+      array('system', 'jquery.ui.droppable'),
+      array('system', 'jquery.ui.resizable'),
+    ),
+  );
+  $libraries['fullcalendar-module'] = array(
+    'title' => 'FullCalendar module',
+    'version' => VERSION,
+    'js' => array(
+      $module_path . '/js/fullcalendar.library.js' => array('group' => JS_LIBRARY),
+      $module_path . '/js/fullcalendar.fullcalendar.js' => array(),
+      $module_path . '/js/fullcalendar.views.js' => array(),
+    ),
+    'css' => array(
+      $module_path . '/css/fullcalendar.theme.css',
+    ),
+    'dependencies' => array(
+      array('system', 'drupal'),
+      array('system', 'drupalSettings'),
+      array('system', 'jquery.once'),
+      array('system', 'jquery.effects.highlight'),
+      array('fullcalendar', 'fullcalendar'),
     ),
   );
   return $libraries;
@@ -205,7 +215,7 @@ function fullcalendar_update($action, $eid) {
 function fullcalendar_fullcalendar_classes($entity) {
   $classes = array(
     'fc-event-default',
-    $entity->bundle,
+    $entity->bundle(),
   );
 
   // Add a class for the date field being used.
@@ -222,7 +232,8 @@ function fullcalendar_fullcalendar_classes($entity) {
  * Since we force the query to be distinct, reflect that in the UI.
  */
 function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_state['view']->display_handler->get_option('style_plugin') != 'fullcalendar' || empty($form['options']['query']['options']['distinct'])) {
+  $style = $form_state['view']->get('executable')->display_handler->getOption('style');
+  if ($style['type'] != 'fullcalendar' || empty($form['options']['query']['options']['distinct'])) {
     return;
   }
 
@@ -335,7 +346,7 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
     return TRUE;
   }
 
-  return !empty($field->definition['is date']) && isset($field->field_info);
+  return isset($field->field_info) && $field->field_info['type'] == 'datetime';
 }
 
 /**
@@ -398,43 +409,4 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
   return variable_get('fullcalendar_path', fullcalendar_default_path()) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
-}
-
-/**
- * Includes all FullCalendar API plugins.
- */
-function fullcalendar_include_api() {
-  ctools_include('plugins');
-  return ctools_plugin_api_include('fullcalendar', 'fullcalendar', fullcalendar_api_version(), fullcalendar_api_minimum_version());
-}
-
-/**
- * Implements hook_ctools_plugin_api_hook_name().
- */
-function fullcalendar_ctools_plugin_api_hook_name() {
-  return 'fullcalendar_api';
-}
-
-/**
- * Declares the current FullCalendar API version.
- */
-function fullcalendar_api_version() {
-  return '1';
-}
-
-/**
- * Declares the minimum FullCalendar API version.
- */
-function fullcalendar_api_minimum_version() {
-  return '1';
-}
-
-/**
- * Implements hook_fullcalendar_api().
- */
-function fullcalendar_fullcalendar_api() {
-  return array(
-    'api' => fullcalendar_api_version(),
-    'path' => drupal_get_path('module', 'fullcalendar') . '/includes',
-  );
 }
