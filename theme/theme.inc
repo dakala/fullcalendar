@@ -50,58 +50,35 @@ function template_preprocess_fullcalendar(&$variables) {
   }
 
   // Gather options from all modules.
+  $weights = array();
+  $delta = 0;
   $settings = array();
-  /*
-  $fullcalendar_options = module_invoke_all('fullcalendar_options_info');
-  uasort($fullcalendar_options, 'drupal_sort_weight');
-  foreach (array_intersect(array_keys($fullcalendar_options), module_implements('fullcalendar_options_process')) as $module) {
-    $function = $module . '_fullcalendar_options_process';
-    $function($variables, $settings);
-  }
-  //*/
-  $view = &$variables['view'];
-
-  static $fc_dom_id = 1;
-  if (empty($view->dom_id)) {
-    $view->dom_id = 'fc-' . $fc_dom_id++;
-  }
-
-  $options = $view->style_plugin->options;
-
-  $options['gcal'] = array();
-  foreach ($view->field as $field) {
-    if ($field->field == 'gcal') {
-      $options['gcal'][] = $field->render(array());
+  $manager = drupal_container()->get('plugin.manager.fullcalendar');
+  foreach ($manager->getDefinitions() as $plugin_id => $definition) {
+    $plugin = $manager->createInstance($plugin_id);
+    $plugin->process($variables, $settings);
+    if (isset($definition['weight'])) {
+      if (!isset($weights[$definition['weight']])) {
+        $weights[$definition['weight']] = $plugin_id;
+      }
+      else {
+        while (isset($weights[$delta])) {
+          $delta++;
+        }
+        $weights[$delta] = $plugin_id;
+      }
     }
   }
-
-  unset($options['fields']);
-
-  $settings += $options + array(
-    'view_name' => $view->storage->id(),
-    'view_display' => $view->current_display,
-  );
-
-  // Add JS and CSS files.
-  $path = drupal_get_path('module', 'fullcalendar');
-  $variables['element']['#attached'] = array(
-    'library' => array(
-      array('fullcalendar', 'fullcalendar-module'),
-    ),
-  );
-
-  if (!empty($settings['ajax'])) {
-    $variables['element']['#attached']['js'][] = $path . '/js/fullcalendar.ajax.js';
-  }
-
-  // Add CSS and JS for each option plugin that provides it.
-  $weights = array();
-  $weights['-20'] = 'fullcalendar';
-  $delta = 0;
   ksort($weights);
   $settings['weights'] = array_values($weights);
 
   // Add settings to Drupal.settings.
+  // Add JS and CSS files.
+  $variables['element']['#attached']['library'][] = array('fullcalendar', 'fullcalendar-module');
+
+  if (!empty($settings['ajax'])) {
+    $variables['element']['#attached']['js'][] = drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.ajax.js';
+  }
   $variables['element']['#attached']['js'][] = array(
     'type' => 'setting',
     'data' => array(
