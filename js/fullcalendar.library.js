@@ -19,9 +19,6 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
   this.navigate = false;
   this.refetch = false;
 
-  // Hide the failover display.
-  this.$calendar.find('.fullcalendar-content').hide();
-
   // Allow other modules to overwrite options.
   var $plugins = Drupal.fullcalendar.plugins;
   for (var i = 0; i < Drupal.settings.fullcalendar[dom_id].weights.length; i++) {
