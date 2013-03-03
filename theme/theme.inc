@@ -70,6 +70,8 @@ function template_preprocess_fullcalendar(&$variables) {
   }
   ksort($weights);
   $settings['weights'] = array_values($weights);
+  // @todo.
+  $settings['fullcalendar']['disableResizing'] = TRUE;
 
   // Add settings to Drupal.settings.
   // Add JS and CSS files.
@@ -203,7 +205,7 @@ function fullcalendar_prepare_events($view, $rows, $options) {
                 'allDay' => $all_day,
                 'start' => $start,
                 'end' => $end,
-                'editable' => TRUE,//$entity->editable,
+                'editable' => (int) TRUE,//$entity->editable,
                 'field' => $field['field_name'],
                 'index' => $index,
                 'eid' => $entity->id(),

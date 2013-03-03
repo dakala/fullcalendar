@@ -24,6 +24,8 @@ class FullcalendarBundle extends Bundle {
       ->addArgument('%container.namespaces%');
     $container->register('fullcalendar.form.settings', 'Drupal\fullcalendar\Form\SettingsForm')
       ->addArgument(new Reference('config.factory'));
+    $container->register('access_check.fullcalendar.update', 'Drupal\fullcalendar\Access\UpdateAccessCheck')
+      ->addTag('access_check');
   }
 
 }

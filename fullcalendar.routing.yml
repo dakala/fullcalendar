@@ -4,4 +4,9 @@ fullcalendar_settings:
     _controller: 'fullcalendar.form.settings:getForm'
   requirements:
     _permission: 'administer site configuration'
-
+fullcalendar_update:
+  pattern: '/fullcalendar/ajax/update/drop/{entity_type}/{entity_id}/{field}/{index}'
+  defaults:
+    _controller: '\Drupal\fullcalendar\Ajax\Update::drop'
+  requirements:
+    _access_fullcalendar_update: 'TRUE'

@@ -123,15 +123,6 @@ function fullcalendar_menu() {
     'title' => 'FullCalendar',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['fullcalendar/ajax/update/%/%'] = array(
-    'title' => 'Update event',
-    'description' => 'Save the updated event datetime.',
-    'page callback' => 'fullcalendar_update',
-    'page arguments' => array(3, 4),
-    'access callback' => '_fullcalendar_update_access',
-    'access arguments' => array(4),
-    'type' => MENU_CALLBACK,
-  );
   $items['fullcalendar/ajax/results'] = array(
     'title' => 'Events',
     'description' => 'Get events from views with arguments',
@@ -143,64 +134,6 @@ function fullcalendar_menu() {
   );
 
   return $items;
-}
-
-/**
- * Saves the updated FullCalendar event's datetime.
- *
- * @param string $action
- *   Value can be 'drop' or 'resize'.
- * @param int $eid
- *   The id of the entity that will be updated.
- */
-function fullcalendar_update($action, $eid) {
-  if (empty($_POST['field']) || !isset($_POST['index'])) {
-    return;
-  }
-
-  // Retrieve the post vars form the ajax call.
-  $field = check_plain($_POST['field']);
-  $index = check_plain($_POST['index']);
-
-  $all_day = isset($_POST['all_day']) ? check_plain($_POST['all_day']) : '';
-  $delta = ' ' . check_plain($_POST['day_delta']) . ' days ' . check_plain($_POST['minute_delta']) . ' minutes';
-  $entity_type = check_plain($_POST['entity_type']);
-  $entity = entity_load($entity_type, array($eid));
-  $entity = reset($entity);
-
-  $langcode = field_language($entity_type, $entity, $field);
-  $item = &$entity->{$field}[$langcode][$index];
-  $old_start = $item['value'];
-  $old_end = $item['value2'];
-
-  // Adjust for different date formats.
-  $format = date_type_format($item['date_type']);
-
-  // Datestamp can't combine with words for strtotime, convert to ISO for now.
-  if ($format == DATE_FORMAT_UNIX) {
-    $old_start = date(DATE_FORMAT_ISO, $old_start);
-    $old_end = date(DATE_FORMAT_ISO, $old_end);
-  }
-
-  // No break after 'drop' so it will reuse the code of 'resize'.
-  switch ($action) {
-    case 'drop':
-      $item['value'] = date($format, strtotime($old_start . $delta));
-    case 'resize':
-      $item['value2'] = date($format, strtotime($old_end . $delta));
-      break;
-  }
-
-  // Save the new start/end values.
-  if (module_exists('entity')) {
-    entity_save($entity_type, $entity);
-  }
-  else {
-    field_attach_presave($entity_type, $entity);
-    field_attach_update($entity_type, $entity);
-  }
-
-  drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $_POST['dom_id']));
 }
 
 /**
@@ -290,29 +223,6 @@ function fullcalendar_results($view_name = NULL, $view_display = NULL) {
       array('command' => 'fullcalendar_results_response', 'data' => $output),
     ),
   );
-}
-
-/**
- * Checks if the user has access to update the given FullCalendar event.
- *
- * @param object $entity
- *   The entity that will be updated.
- *
- * @return bool
- *   TRUE if the user is allowed to update the entity;
- *   FALSE if the user is not permitted to update the entity.
- */
-function _fullcalendar_update_access($entity) {
-  global $user;
-
-  if (!empty($entity) && ((user_access('administer content')
-      || user_access('update any fullcalendar event')
-      || user_access('edit any ' . $entity->bundle . ' content')
-      || (user_access('edit own ' . $entity->bundle . ' content') && $entity->uid == $user->uid)))) {
-    return TRUE;
-  }
-
-  return FALSE;
 }
 
 /**

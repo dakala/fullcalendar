@@ -63,17 +63,19 @@ Drupal.fullcalendar.plugins.fullcalendar = {
         fullcalendar.navigate = true;
       },
       eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
+        // @todo Remove once http://drupal.org/node/1915752 is resolved.
+        var index = parseInt(event.index, 10) + 1;
         $.post(
-          Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/' + event.eid,
-          'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay + '&dom_id=' + event.dom_id,
+          Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/' + event.entity_type + '/' + event.eid + '/' + event.field + '/' + index,
+          'day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
           fullcalendar.update
         );
         return false;
       },
       eventResize: function (event, dayDelta, minuteDelta, revertFunc) {
         $.post(
-          Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/' + event.eid,
-          'field=' + event.field + '&entity_type=' + event.entity_type + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
+          Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/' + event.entity_type + '/' + event.eid + '/' + event.field + '/' + event.index,
+          'day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
           fullcalendar.update
         );
         return false;
