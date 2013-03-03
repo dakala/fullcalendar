@@ -168,7 +168,7 @@ class Fullcalendar extends FullcalendarBase {
     $options['gcal'] = array();
     foreach ($view->field as $field) {
       if ($field->field == 'gcal') {
-        $options['gcal'][] = $field->render(array());
+        $options['gcal'][] = $field->getSettings();
       }
     }
 

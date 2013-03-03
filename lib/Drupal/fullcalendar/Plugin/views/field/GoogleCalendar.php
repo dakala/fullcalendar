@@ -2,19 +2,40 @@
 
 /**
  * @file
- * Provide a field that attaches a Google Calendar feed.
+ * Contains \Drupal\fullcalendar\Plugin\views\field\FullCalendar.
  */
-class fullcalendar_handler_field_gcal extends views_handler_field {
-  function query() {
-    $this->query->add_field($this->view->base_table, $this->view->base_field);
-  }
 
-  function allow_advanced_render() {
+namespace Drupal\fullcalendar\Plugin\views\field;
+
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\Core\Annotation\Plugin;
+
+/**
+ * @todo.
+ *
+ * @Plugin(
+ *   id = "fullcalendar_gcal",
+ *   module = "fullcalendar"
+ * )
+ */
+class GoogleCalendar extends FieldPluginBase {
+
+  public function allow_advanced_render() {
     return FALSE;
   }
 
-  function option_definition() {
-    $options = parent::option_definition();
+  /**
+   * @todo.
+   */
+  public function query() {
+    $this->query->add_field($this->view->storage->get('base_table'), $this->view->storage->get('base_field'));
+  }
+
+  /**
+   * @todo.
+   */
+  protected function defineOptions() {
+    $options = parent::defineOptions();
     $options['label'] = array('default' => $this->definition['title'], 'translatable' => TRUE);
     $options['gcal'] = array('default' => '');
     $options['class'] = array('default' => 'fc-event-default fc-event-gcal');
@@ -22,7 +43,10 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
     return $options;
   }
 
-  function options_form(&$form, &$form_state) {
+  /**
+   * @todo.
+   */
+  public function buildOptionsForm(&$form, &$form_state) {
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => t('Label'),
@@ -49,7 +73,7 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
     );
   }
 
-  function render($values) {
+  public function getSettings() {
     return array(
       $this->options['gcal'],
       array(
@@ -59,4 +83,5 @@ class fullcalendar_handler_field_gcal extends views_handler_field {
       ),
     );
   }
+
 }

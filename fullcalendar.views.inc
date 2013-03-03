@@ -20,7 +20,7 @@ function fullcalendar_views_data() {
       'title' => t('Google Calendar'),
       'help' => t('Display events from a Google Calendar.'),
       'field' => array(
-        'handler' => 'fullcalendar_handler_field_gcal',
+        'id' => 'fullcalendar_gcal',
       ),
     ),
   );
