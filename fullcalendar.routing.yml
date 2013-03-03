@@ -10,3 +10,9 @@ fullcalendar_update:
     _controller: '\Drupal\fullcalendar\Ajax\Update::drop'
   requirements:
     _access_fullcalendar_update: 'TRUE'
+fullcalendar_results:
+  pattern: '/fullcalendar/ajax/results/{view}/{display_id}'
+  defaults:
+    _controller: '\Drupal\fullcalendar\Ajax\ResultsController::getResults'
+  requirements:
+    _permission: 'access content'
