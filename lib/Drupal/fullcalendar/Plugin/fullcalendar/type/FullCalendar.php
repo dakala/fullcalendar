@@ -7,12 +7,11 @@
 
 namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 
-use Drupal\fullcalendar\Plugin\FullcalendarInterface;
 use Drupal\Core\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
 use Drupal\datetime\DateHelper;
-use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
+use Drupal\fullcalendar\Plugin\FullcalendarBase;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 
 /**
@@ -23,14 +22,7 @@ use Drupal\views\Plugin\views\style\StylePluginBase;
  *   weight = "-20"
  * )
  */
-class Fullcalendar extends PluginBase implements FullcalendarInterface {
-
-  /**
-   * @todo.
-   *
-   * @var \Drupal\views\Plugin\views\style\StylePluginBase
-   */
-  protected $style;
+class Fullcalendar extends FullcalendarBase {
 
   /**
    * @todo.
@@ -83,15 +75,6 @@ class Fullcalendar extends PluginBase implements FullcalendarInterface {
       ),
     ),
   );
-
-  /**
-   * Constructs a Fullcalendar object.
-   */
-  public function __construct(array $configuration, $plugin_id, DiscoveryInterface $discovery, StylePluginBase $style) {
-    parent::__construct($configuration, $plugin_id, $discovery);
-
-    $this->style = $style;
-  }
 
   /**
    * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::defineOptions().
