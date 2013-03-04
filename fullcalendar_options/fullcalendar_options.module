@@ -142,13 +142,17 @@ function _fullcalendar_options_list($show_all = FALSE) {
         '#description' => t('The display to switch to when a day is clicked.'),
         '#default_value' => 'agendaWeek',
         '#options' => array(
-          'month' => 'Month',
-          'agendaWeek' => 'Week (Agenda)',
-          'basicWeek' => 'Week (Basic)',
-          'agendaDay' => 'Day (Agenda)',
-          'basicDay' => 'Day (Basic)',
+          'month' => t('Month'),
+          'agendaWeek' => t('Week (Agenda)'),
+          'basicWeek' => t('Week (Basic)'),
+          'agendaDay' => t('Day (Agenda)'),
+          'basicDay' => t('Day (Basic)'),
         ),
-        '#dependency' => array('edit-style-options-fullcalendar-options-dayclick' => array(1)),
+        '#states' => array(
+          'visible' => array(
+            ':input[name="style_options[fullcalendar_options][dayClick]"]' => array('checked' => TRUE),
+          ),
+        ),
       );
     }
   }
