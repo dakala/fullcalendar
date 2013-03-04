@@ -33,4 +33,22 @@ abstract class FullcalendarBase extends PluginBase implements FullcalendarInterf
     $this->style = $style;
   }
 
+  /**
+   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::submitOptionsForm().
+   */
+  public function submitOptionsForm(&$form, &$form_state) {
+  }
+
+  /**
+   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::process().
+   */
+  public function process(&$variables, &$settings) {
+  }
+
+  /**
+   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::preView().
+   */
+  public function preView(&$settings) {
+  }
+
 }

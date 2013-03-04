@@ -56,15 +56,19 @@ function template_preprocess_fullcalendar(&$variables) {
   foreach ($variables['view']->style_plugin->getPlugins() as $plugin_id => $plugin) {
     $definition = $plugin->getDefinition();
     $plugin->process($variables, $settings);
-    if (isset($definition['weight'])) {
-      if (!isset($weights[$definition['weight']])) {
-        $weights[$definition['weight']] = $plugin_id;
+    if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
+      $weights[$definition['weight']] = $plugin_id;
+    }
+    else {
+      while (isset($weights[$delta])) {
+        $delta++;
       }
-      else {
-        while (isset($weights[$delta])) {
-          $delta++;
-        }
-        $weights[$delta] = $plugin_id;
+      $weights[$delta] = $plugin_id;
+    }
+
+    foreach (array('css', 'js') as $type) {
+      if ($definition[$type]) {
+        $variables['element']['#attached'][$type][] = drupal_get_path('module', $definition['module']) . "/$type/$plugin_id.fullcalendar.$type";
       }
     }
   }

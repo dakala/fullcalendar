@@ -17,6 +17,8 @@ use Drupal\fullcalendar\Plugin\FullcalendarBase;
  *
  * @Plugin(
  *   id = "fullcalendar",
+ *   module = "fullcalendar",
+ *   js = TRUE,
  *   weight = "-20"
  * )
  */

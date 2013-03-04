@@ -56,7 +56,6 @@ function fullcalendar_library_info() {
     'version' => VERSION,
     'js' => array(
       $path . '/js/fullcalendar.library.js' => array('group' => JS_LIBRARY),
-      $path . '/js/fullcalendar.fullcalendar.js' => array(),
       $path . '/js/fullcalendar.views.js' => array(),
     ),
     'css' => array(

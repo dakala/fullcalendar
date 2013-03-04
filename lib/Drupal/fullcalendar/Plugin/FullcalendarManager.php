@@ -18,6 +18,14 @@ use Drupal\Core\Plugin\Discovery\AnnotatedClassDiscovery;
 class FullcalendarManager extends PluginManagerBase {
 
   /**
+   * @todo.
+   */
+  protected $defaults = array(
+    'css' => FALSE,
+    'js' => FALSE,
+  );
+
+  /**
    * Constructs a FullcalendarManager object.
    *
    * @param array $namespaces
