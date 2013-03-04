@@ -24,16 +24,6 @@ function fullcalendar_options_menu() {
 }
 
 /**
- * Implements hook_fullcalendar_api().
- */
-function fullcalendar_options_fullcalendar_api() {
-  return array(
-    'api' => fullcalendar_api_version(),
-    'path' => drupal_get_path('module', 'fullcalendar_options') . '/includes',
-  );
-}
-
-/**
  * Provide basic form element for each option.
  *
  * This is a helper function so that it can be reused in the admin settings.
@@ -164,13 +154,4 @@ function _fullcalendar_options_list($show_all = FALSE) {
   }
 
   return $form;
-}
-
-/**
- * Add Colorbox integration.
- */
-if (module_exists('colorbox') && !function_exists('colorbox_fullcalendar_api')) {
-  function colorbox_fullcalendar_api() {
-    return fullcalendar_options_fullcalendar_api();
-  }
 }
