@@ -22,8 +22,7 @@ use Drupal\fullcalendar\Plugin\FullcalendarPluginBag;
  *   help = @Translation("Displays items on a calendar."),
  *   module = "fullcalendar",
  *   theme = "fullcalendar",
- *   theme_file = "theme.inc",
- *   theme_path = "theme",
+ *   theme_file = "fullcalendar.theme.inc",
  *   type = "normal"
  * )
  */

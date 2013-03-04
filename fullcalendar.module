@@ -20,8 +20,7 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
         'event' => NULL,
         'entity' => NULL,
       ),
-      'file' => 'theme.inc',
-      'path' => $path . '/theme',
+      'file' => 'fullcalendar.theme.inc',
     ),
   );
 }
