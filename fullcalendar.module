@@ -159,7 +159,7 @@ function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state
  * Use our access callback as the editable setting.
  */
 function fullcalendar_fullcalendar_editable($entity, $view) {
-  return _fullcalendar_update_access($entity);
+  return drupal_container()->get('access_check.fullcalendar.update')->check($entity);
 }
 
 /**
