@@ -9,6 +9,7 @@ namespace Drupal\fullcalendar_options\Form;
 
 use Drupal\system\SystemConfigFormBase;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Component\Plugin\PluginManagerInterface;
 
 /**
  * @todo.
@@ -25,8 +26,15 @@ class SettingsForm extends SystemConfigFormBase {
   /**
    * @todo.
    */
-  public function __construct(ConfigFactory $config_factory) {
+  protected $options;
+
+  /**
+   * @todo.
+   */
+  public function __construct(ConfigFactory $config_factory, PluginManagerInterface $manager) {
     $this->configFactory = $config_factory;
+    $definition = $manager->getDefinition('fullcalendar_options');
+    $this->options = call_user_func(array($definition['class'], 'optionsList'));
   }
 
   /**
@@ -53,7 +61,7 @@ class SettingsForm extends SystemConfigFormBase {
       '#title' => t('Options'),
       '#description' => t('Each setting can be exposed for all views.'),
     );
-    foreach (_fullcalendar_options_list(TRUE) as $key => $info) {
+    foreach ($this->options as $key => $info) {
       $form['fullcalendar_options'][$key] = array(
         '#type' => 'checkbox',
         '#default_value' => $config->get($key),
@@ -68,7 +76,7 @@ class SettingsForm extends SystemConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     $config = $this->configFactory->get('fullcalendar_options.settings');
-    foreach (_fullcalendar_options_list(TRUE) as $key => $info) {
+    foreach ($this->options as $key => $info) {
       $config->set($key, $form_state['values'][$key]);
     }
     $config->save();
