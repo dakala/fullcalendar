@@ -1,0 +1,6 @@
+fullcalendar_options_settings:
+  pattern: '/admin/config/user-interface/fullcalendar/options'
+  defaults:
+    _controller: 'fullcalendar_options.form.settings:getForm'
+  requirements:
+    _permission: 'administer site configuration'

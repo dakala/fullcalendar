@@ -14,10 +14,7 @@ function fullcalendar_options_menu() {
   $items['admin/config/user-interface/fullcalendar/options'] = array(
     'title' => 'Options',
     'description' => 'Enable or disable extra FullCalendar options.',
-    'file' => 'fullcalendar_options.admin.inc',
-    'file path' => drupal_get_path('module', 'fullcalendar_options') . '/includes',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('fullcalendar_options_admin_settings'),
+    'page callback' => 'NOT_USED',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 2,
@@ -145,7 +142,7 @@ function _fullcalendar_options_list($show_all = FALSE) {
 
   // By default, restrict the form to options allowed by the admin settings.
   if (!$show_all) {
-    $form = array_intersect_key($form, array_filter(variable_get('fullcalendar_options', array())));
+    $form = array_intersect_key($form, array_filter(config('fullcalendar_options.settings')->get()));
 
     if (isset($form['dayClick'])) {
       // Add in dependency form elements.
