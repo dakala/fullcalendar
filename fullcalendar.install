@@ -13,9 +13,8 @@ function fullcalendar_requirements($phase) {
 
   if ($phase == 'runtime') {
     $t = get_t();
-    $status = _fullcalendar_status();
-
-    if (!$status['fullcalendar_plugin']) {
+    $path = fullcalendar_get_js_path();
+    if (!file_exists($path) || version_compare(fullcalendar_get_version($path), FULLCALENDAR_MIN_PLUGIN_VERSION, '<')) {
       $requirements['fullcalendar_plugin'] = array(
         'title' => $t('FullCalendar plugin'),
         'value' => $t('At least @a', array('@a' => FULLCALENDAR_MIN_PLUGIN_VERSION)),
@@ -24,33 +23,13 @@ function fullcalendar_requirements($phase) {
       );
     }
     else {
-      $plugin_version = fullcalendar_get_version();
-      if (version_compare(FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION, $plugin_version) > 0) {
-        $plugin_version .= ' (Recommended version: ' . FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION . ')';
-      }
-
       $requirements['fullcalendar_plugin'] = array(
         'title' => $t('FullCalendar plugin'),
         'severity' => REQUIREMENT_OK,
-        'value' => $plugin_version,
+        'value' => fullcalendar_get_version(),
       );
     }
   }
 
   return $requirements;
-}
-
-/**
- * Implements hook_uninstall().
- */
-function fullcalendar_uninstall() {
-  variable_del('fullcalendar_path');
-  variable_del('fullcalendar_compression_type');
-}
-
-/**
- * Force full cache clear to forget about old handlers and plugins.
- */
-function fullcalendar_update_7200(&$sandbox) {
-  drupal_flush_all_caches();
 }
