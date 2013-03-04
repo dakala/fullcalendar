@@ -12,7 +12,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
   $element = array(
     '#attached' => array(
       'css' => array(
-        ctools_attach_css('fullcalendar_legend.theme', 'fullcalendar_legend'),
+        drupal_get_path('module', 'fullcalendar_legend') . '/css/fullcalendar_legend.theme.css',
       ),
     ),
   );
@@ -66,12 +66,7 @@ function theme_fullcalendar_legend($variables) {
  */
 function _fullcalendar_legend_get_classes($type) {
   $values['type'] = $type['bundle'];
-  if (isset($type['taxonomy_field']) && isset($type['tid'])) {
-    $values[$type['taxonomy_field']] = array(array(array('tid' => $type['tid'])));
-  }
-  $entity = (module_exists('entity')) ? entity_create($type['entity_type'], $values) : new stdClass();
-  $entity->bundle = $entity->type = $type['bundle'];
-  $entity->entity_type = $type['entity_type'];
+  $entity = entity_create($type['entity_type'], $values);
 
   $classes = module_invoke_all('fullcalendar_classes', $entity);
   drupal_alter('fullcalendar_classes', $classes, $entity);
