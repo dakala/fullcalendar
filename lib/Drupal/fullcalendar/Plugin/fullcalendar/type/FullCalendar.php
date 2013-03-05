@@ -158,17 +158,15 @@ class Fullcalendar extends FullcalendarBase {
    * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::process().
    */
   public function process(&$settings) {
-    $view = $this->style->view;
-
     static $fc_dom_id = 1;
-    if (empty($view->dom_id)) {
-      $view->dom_id = 'fc-' . $fc_dom_id++;
+    if (empty($this->style->view->dom_id)) {
+      $this->style->view->dom_id = 'fc-' . $fc_dom_id++;
     }
 
-    $options = $view->style_plugin->options;
+    $options = $this->style->options;
 
     $options['gcal'] = array();
-    foreach ($view->field as $field) {
+    foreach ($this->style->view->field as $field) {
       if ($field->field == 'gcal') {
         $options['gcal'][] = $field->getSettings();
       }
@@ -177,8 +175,8 @@ class Fullcalendar extends FullcalendarBase {
     unset($options['fields']);
 
     $settings += $options + array(
-      'view_name' => $view->storage->id(),
-      'view_display' => $view->current_display,
+      'view_name' => $this->style->view->storage->id(),
+      'view_display' => $this->style->view->current_display,
     );
   }
 
@@ -535,11 +533,10 @@ class Fullcalendar extends FullcalendarBase {
   }
 
   public function preView(&$settings) {
-    $view = $this->style->view;
     global $language;
 
     if (!empty($settings['editable'])) {
-      $view->fullcalendar_disallow_editable = TRUE;
+      $this->style->view->fullcalendar_disallow_editable = TRUE;
     }
 
     $options = array(
@@ -614,7 +611,7 @@ class Fullcalendar extends FullcalendarBase {
     unset($settings['times']);
 
     // Get the values from the URL.
-    extract($view->getExposedInput(), EXTR_SKIP);
+    extract($this->style->view->getExposedInput(), EXTR_SKIP);
     if (isset($year) && is_numeric($year)) {
       $settings['date']['year'] = $year;
     }
