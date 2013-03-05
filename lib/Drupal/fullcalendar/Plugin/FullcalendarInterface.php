@@ -18,7 +18,7 @@ interface FullcalendarInterface {
 
   public function submitOptionsForm(&$form, &$form_state);
 
-  public function process(&$variables, &$settings);
+  public function process(&$settings);
 
   public function preView(&$settings);
 

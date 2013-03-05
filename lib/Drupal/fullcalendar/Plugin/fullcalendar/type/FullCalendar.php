@@ -157,8 +157,8 @@ class Fullcalendar extends FullcalendarBase {
   /**
    * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::process().
    */
-  public function process(&$variables, &$settings) {
-    $view = &$variables['view'];
+  public function process(&$settings) {
+    $view = $this->style->view;
 
     static $fc_dom_id = 1;
     if (empty($view->dom_id)) {

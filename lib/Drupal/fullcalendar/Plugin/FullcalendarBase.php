@@ -42,7 +42,7 @@ abstract class FullcalendarBase extends PluginBase implements FullcalendarInterf
   /**
    * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::process().
    */
-  public function process(&$variables, &$settings) {
+  public function process(&$settings) {
   }
 
   /**

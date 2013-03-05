@@ -124,22 +124,85 @@ class FullCalendar extends StylePluginBase {
     return parent::validate();
   }
 
+  /**
+   * @todo.
+   */
   public function render() {
+    if (empty($this->view->fullcalendar_ajax)) {
+      $this->options['#attached'] = $this->prepareAttached();
+    }
     return array(
       '#theme' => $this->themeFunctions(),
       '#view' => $this->view,
-      '#rows' => $this->prepareEvents($this->view->result, $this->options['fields']),
+      '#rows' => $this->prepareEvents(),
       '#options' => $this->options,
     );
   }
 
-  protected function prepareEvents($rows, $options) {
-    if (empty($rows)) {
-      return;
+  /**
+   * @todo.
+   */
+  protected function prepareAttached() {
+    $attached['library'][] = array('fullcalendar', 'fullcalendar-module');
+    foreach ($this->getPlugins() as $plugin_id => $plugin) {
+      $definition = $plugin->getDefinition();
+      foreach (array('css', 'js') as $type) {
+        if ($definition[$type]) {
+          $attached[$type][] = drupal_get_path('module', $definition['module']) . "/$type/$plugin_id.fullcalendar.$type";
+        }
+      }
+    }
+    if ($this->view->display_handler->getOption('use_ajax')) {
+      $attached['js'][] = drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.ajax.js';
+    }
+    $attached['js'][] = array(
+      'type' => 'setting',
+      'data' => array(
+        'fullcalendar' => array(
+          '.view-dom-id-' . $this->view->dom_id => $this->prepareSettings(),
+        ),
+      ),
+    );
+    return $attached;
+  }
+
+  /**
+   * @todo.
+   */
+  protected function prepareSettings() {
+    $settings = array();
+    $weights = array();
+    $delta = 0;
+    foreach ($this->getPlugins() as $plugin_id => $plugin) {
+      $definition = $plugin->getDefinition();
+      $plugin->process($settings);
+      if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
+        $weights[$definition['weight']] = $plugin_id;
+      }
+      else {
+        while (isset($weights[$delta])) {
+          $delta++;
+        }
+        $weights[$delta] = $plugin_id;
+      }
+    }
+    ksort($weights);
+    $settings['weights'] = array_values($weights);
+    // @todo.
+    $settings['fullcalendar']['disableResizing'] = TRUE;
+    return $settings;
+  }
+
+  /**
+   * @todo.
+   */
+  protected function prepareEvents() {
+    $events = array();
+    if (empty($this->view->result)) {
+      return $events;
     }
 
-    $events = array();
-    foreach ($rows as $delta => $row) {
+    foreach ($this->view->result as $delta => $row) {
       // Collect all fields for the customize options.
       $fields = array();
       // Collect only date fields.
@@ -157,8 +220,8 @@ class FullCalendar extends StylePluginBase {
       }
 
       // If using a custom date field, filter the fields to process.
-      if (!empty($options['date'])) {
-        $date_fields = array_intersect_key($date_fields, $options['date_field']);
+      if (!empty($this->options['fields']['date'])) {
+        $date_fields = array_intersect_key($date_fields, $this->options['fields']['date_field']);
       }
 
       // If there are no date fields (gcal only), return.
@@ -175,35 +238,36 @@ class FullCalendar extends StylePluginBase {
       $event = array();
       foreach ($date_fields as $field) {
         // Filter fields without value.
-        if (!empty($field['value'])) {
-          $instance = field_info_instance($entity->entityType(), $field['field_name'], $entity->bundle());
-          foreach ($field['value'] as $index => $item) {
-            $start = $item['raw']['value'];
-            $end = $start;
-            $all_day = FALSE;
-            $uri = $entity->uri();
-            $event[] = array(
-              '#theme' => 'link',
-              '#text' => $item['raw']['value'],
-              '#path' => $uri['path'],
-              '#options' => array(
-                'attributes' => array(
-                  'allDay' => $all_day,
-                  'start' => $start,
-                  'end' => $end,
-                  'editable' => (int) TRUE,//$entity->editable,
-                  'field' => $field['field_name'],
-                  'index' => $index,
-                  'eid' => $entity->id(),
-                  'entity_type' => $entity->entityType(),
-                  'cn' => $class,
-                  'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-                  'class' => array('fullcalendar-event-details'),
-                ),
-                'html' => TRUE,
+        if (empty($field['value'])) {
+          continue;
+        }
+        $instance = field_info_instance($entity->entityType(), $field['field_name'], $entity->bundle());
+        foreach ($field['value'] as $index => $item) {
+          $start = $item['raw']['value'];
+          $end = $start;
+          $all_day = FALSE;
+          $uri = $entity->uri();
+          $event[] = array(
+            '#theme' => 'link',
+            '#text' => $item['raw']['value'],
+            '#path' => $uri['path'],
+            '#options' => array(
+              'html' => TRUE,
+              'attributes' => array(
+                'allDay' => $all_day,
+                'start' => $start,
+                'end' => $end,
+                'editable' => (int) TRUE,//$entity->editable,
+                'field' => $field['field_name'],
+                'index' => $index,
+                'eid' => $entity->id(),
+                'entity_type' => $entity->entityType(),
+                'cn' => $class,
+                'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
+                'class' => array('fullcalendar-event-details'),
               ),
-            );
-          }
+            ),
+          );
         }
       }
 

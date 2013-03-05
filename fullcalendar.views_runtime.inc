@@ -35,8 +35,6 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
     $plugin->preView($settings);
   }
 
-  $settings['ajax'] = FALSE;
-
   // If we're not using ajax, we're done.
   if (!$view->display_handler->getOption('use_ajax')) {
     // Set the new view settings.
@@ -52,7 +50,6 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
       continue;
     }
 
-    $settings['ajax'] = TRUE;
     // Add an exposed filter for the date field.
     $field_value_id = $field->realField . str_replace($field->field, '', $field_id);
     if (isset($exposed_input[$field_value_id])) {
