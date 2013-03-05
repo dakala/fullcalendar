@@ -20,19 +20,22 @@ use Drupal\Core\Annotation\Plugin;
  */
 class GoogleCalendar extends FieldPluginBase {
 
+  /**
+   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::allow_advanced_render().
+   */
   public function allow_advanced_render() {
     return FALSE;
   }
 
   /**
-   * @todo.
+   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::query().
    */
   public function query() {
     $this->query->add_field($this->view->storage->get('base_table'), $this->view->storage->get('base_field'));
   }
 
   /**
-   * @todo.
+   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::defineOptions().
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
@@ -44,7 +47,7 @@ class GoogleCalendar extends FieldPluginBase {
   }
 
   /**
-   * @todo.
+   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::buildOptionsForm().
    */
   public function buildOptionsForm(&$form, &$form_state) {
     $form['label'] = array(

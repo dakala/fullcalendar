@@ -24,12 +24,14 @@ class SettingsForm extends SystemConfigFormBase {
   protected $configFactory;
 
   /**
-   * @todo.
+   * An array of Fullcalendar Options available to use.
+   *
+   * @var array
    */
   protected $options;
 
   /**
-   * @todo.
+   * Constructs a SettingsForm object.
    */
   public function __construct(ConfigFactory $config_factory, PluginManagerInterface $manager) {
     $this->configFactory = $config_factory;
@@ -38,21 +40,21 @@ class SettingsForm extends SystemConfigFormBase {
   }
 
   /**
-   * @todo.
+   * Implements \Drupal\Core\Form\FormInterface::getFormID().
    */
   public function getFormID() {
     return 'fullcalendar_options_admin_settings';
   }
 
   /**
-   * @todo.
+   * Creates a new instance of this form.
    */
   public function getForm() {
     return drupal_get_form($this);
   }
 
   /**
-   * @todo.
+   * Overrides \Drupal\system\SystemConfigFormBase::buildForm().
    */
   public function buildForm(array $form, array &$form_state) {
     $config = $this->configFactory->get('fullcalendar_options.settings');
@@ -72,7 +74,7 @@ class SettingsForm extends SystemConfigFormBase {
   }
 
   /**
-   * @todo.
+   * Overrides \Drupal\system\SystemConfigFormBase::submitForm().
    */
   public function submitForm(array &$form, array &$form_state) {
     $config = $this->configFactory->get('fullcalendar_options.settings');
