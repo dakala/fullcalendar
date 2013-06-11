@@ -21,7 +21,7 @@ function fullcalendar_views_plugins_alter(&$plugins) {
  *
  * Add an argument that provides the current date for each date field present.
  */
-function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
+function fullcalendar_views_pre_view($view, $display_id, $args) {
   $style = $view->display_handler->getOption('style');
   if ($style['type'] != 'fullcalendar') {
     return;
@@ -95,7 +95,7 @@ function fullcalendar_views_pre_view(&$view, &$display_id, &$args) {
  *
  * Force the query to be distinct.
  */
-function fullcalendar_views_query_alter(&$view, &$query) {
+function fullcalendar_views_query_alter($view, $query) {
   $style = $view->display_handler->getOption('style');
   if ($style['type'] != 'fullcalendar') {
     return;

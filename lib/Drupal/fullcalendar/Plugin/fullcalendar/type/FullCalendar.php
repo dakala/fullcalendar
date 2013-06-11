@@ -8,6 +8,7 @@
 namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Language\Language;
 use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\datetime\DateHelper;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
@@ -551,7 +552,7 @@ class Fullcalendar extends FullcalendarBase {
       'monthNamesShort' => array_values(DateHelper::monthNamesAbbr(TRUE)),
       'dayNames' => DateHelper::weekDays(TRUE),
       'dayNamesShort' => DateHelper::weekDaysAbbr(TRUE),
-      'isRTL' => (bool) language(LANGUAGE_TYPE_INTERFACE)->direction,
+      'isRTL' => (bool) \Drupal::service('language_manager')->getLanguage(Language::TYPE_INTERFACE)->direction,
     );
     $advanced = !empty($settings['advanced']);
     foreach ($settings as $key => $value) {
