@@ -1,0 +1,9 @@
+name: FullCalendar
+type: module
+description: Provides a views style plugin for FullCalendar
+core: 8.x
+package: FullCalendar
+configure: admin/config/user-interface/fullcalendar
+dependencies:
+  - views
+  - datetime

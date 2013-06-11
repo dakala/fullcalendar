@@ -20,12 +20,8 @@ class FullcalendarBundle extends Bundle {
    * Overrides \Symfony\Component\HttpKernel\Bundle\Bundle::build().
    */
   public function build(ContainerBuilder $container) {
-    $container->register('plugin.manager.fullcalendar', 'Drupal\fullcalendar\Plugin\FullcalendarManager')
-      ->addArgument('%container.namespaces%');
     $container->register('fullcalendar.form.settings', 'Drupal\fullcalendar\Form\SettingsForm')
       ->addArgument(new Reference('config.factory'));
-    $container->register('access_check.fullcalendar.update', 'Drupal\fullcalendar\Access\UpdateAccessCheck')
-      ->addTag('access_check');
   }
 
 }

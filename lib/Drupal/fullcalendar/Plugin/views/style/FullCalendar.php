@@ -8,9 +8,8 @@
 namespace Drupal\fullcalendar\Plugin\views\style;
 
 use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\Core\Annotation\Plugin;
+use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
-use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginBag;
 
 /**
@@ -29,12 +28,12 @@ use Drupal\fullcalendar\Plugin\FullcalendarPluginBag;
 class FullCalendar extends StylePluginBase {
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::$usesFields.
+   * {@inheritdoc}
    */
   protected $usesFields = TRUE;
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::$usesGrouping.
+   * {@inheritdoc}
    */
   protected $usesGrouping = FALSE;
 
@@ -46,9 +45,9 @@ class FullCalendar extends StylePluginBase {
   protected $pluginBag;
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::even_empty().
+   * {@inheritdoc}
    */
-  public function even_empty() {
+  public function evenEmpty() {
     return TRUE;
   }
 
@@ -64,14 +63,14 @@ class FullCalendar extends StylePluginBase {
   /**
    * Constructs a new Fullcalendar object.
    */
-  public function __construct(array $configuration, $plugin_id, DiscoveryInterface $discovery) {
-    parent::__construct($configuration, $plugin_id, $discovery);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->pluginBag = new FullcalendarPluginBag(drupal_container()->get('plugin.manager.fullcalendar'), $this);
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::defineOptions().
+   * {@inheritdoc}
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
@@ -82,7 +81,7 @@ class FullCalendar extends StylePluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::buildOptionsForm().
+   * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, &$form_state) {
     parent::buildOptionsForm($form, $form_state);
@@ -92,7 +91,7 @@ class FullCalendar extends StylePluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::submitOptionsForm().
+   * {@inheritdoc}
    */
   public function submitOptionsForm(&$form, &$form_state) {
     parent::submitOptionsForm($form, $form_state);
@@ -117,7 +116,7 @@ class FullCalendar extends StylePluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::validate().
+   * {@inheritdoc}
    */
   public function validate() {
     if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
@@ -127,7 +126,7 @@ class FullCalendar extends StylePluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\style\StylePluginBase::render().
+   * {@inheritdoc}
    */
   public function render() {
     if (empty($this->view->fullcalendar_ajax)) {
@@ -213,7 +212,7 @@ class FullCalendar extends StylePluginBase {
         $fields[$field_name] = $this->get_field($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
           $date_fields[$field_name] = array(
-            'value' => $field->get_items($row),
+            'value' => $field->getItems($row),
             'field_alias' => $field->field_alias,
             'field_name' => $field->field_info['field_name'],
             'field_info' => $field->field_info,

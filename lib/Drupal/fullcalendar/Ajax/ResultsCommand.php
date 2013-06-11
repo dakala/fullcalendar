@@ -19,7 +19,7 @@ class ResultsCommand implements CommandInterface {
   /**
    * Constructs a \Drupal\views\Ajax\ReplaceTitleCommand object.
    *
-   * @param string $output
+   * @param string $data
    *   The form to display in the modal.
    */
   public function __construct($data) {
@@ -27,7 +27,7 @@ class ResultsCommand implements CommandInterface {
   }
 
   /**
-   * Implements \Drupal\Core\Ajax\CommandInterface::render().
+   * {@inheritdoc}
    */
   public function render() {
     return array(

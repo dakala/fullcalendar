@@ -28,12 +28,13 @@ class FullcalendarManager extends PluginManagerBase {
   /**
    * Constructs a FullcalendarManager object.
    *
-   * @param array $namespaces
-   *   An array of paths keyed by it's corresponding namespaces.
+   * @param \Traversable $namespaces
+   *   An object that implements \Traversable which contains the root paths
+   *   keyed by the corresponding namespace to look for plugin implementations.
    */
-  public function __construct(array $namespaces = array()) {
-    $this->discovery = new AnnotatedClassDiscovery('fullcalendar', 'type', $namespaces);
-    $this->discovery = new ProcessDecorator($this->discovery, array($this, 'processDefinition'));
+  public function __construct(\Traversable $namespaces) {
+    $annotation_namespaces = array('Drupal\fullcalendar\Annotation' => $namespaces['Drupal\fullcalendar']);
+    $this->discovery = new AnnotatedClassDiscovery('fullcalendar/type', $namespaces, $annotation_namespaces, 'Drupal\fullcalendar\Annotation\FullcalendarOption');
 
     $this->factory = new DefaultFactory($this->discovery);
 
@@ -45,8 +46,9 @@ class FullcalendarManager extends PluginManagerBase {
    * Pass the TipsBag to the plugin constructor.
    */
   public function createInstance($plugin_id, array $configuration = array(), $style = NULL) {
-    $plugin_class = DefaultFactory::getPluginClass($plugin_id, $this->discovery);
-    return new $plugin_class($configuration, $plugin_id, $this->discovery, $style);
+    $plugin_definition = $this->discovery->getDefinition($plugin_id);
+    $plugin_class = DefaultFactory::getPluginClass($plugin_id, $plugin_definition);
+    return new $plugin_class($configuration, $plugin_id, $plugin_definition, $style);
   }
 
 }

@@ -8,15 +8,12 @@
 namespace Drupal\fullcalendar\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
-use Drupal\Core\Annotation\Plugin;
+use Drupal\Component\Annotation\PluginID;
 
 /**
  * @todo.
  *
- * @Plugin(
- *   id = "fullcalendar_gcal",
- *   module = "fullcalendar"
- * )
+ * @PluginID("fullcalendar_gcal")
  */
 class GoogleCalendar extends FieldPluginBase {
 

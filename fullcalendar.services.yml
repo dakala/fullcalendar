@@ -1,0 +1,8 @@
+services:
+  access_check.fullcalendar.update:
+    class: Drupal\fullcalendar\Access\UpdateAccessCheck
+    tags:
+      - { name: access_check }
+  plugin.manager.fullcalendar:
+    class: Drupal\fullcalendar\Plugin\FullcalendarManager
+    arguments: ['@container.namespaces']

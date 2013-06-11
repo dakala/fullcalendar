@@ -17,6 +17,9 @@ use Drupal\views\ViewStorageInterface;
  */
 class ResultsController {
 
+  /**
+   * @todo.
+   */
   public function getResults(ViewStorageInterface $view, $display_id, Request $request) {
     // Get the view and check access.
     $view = $view->get('executable');

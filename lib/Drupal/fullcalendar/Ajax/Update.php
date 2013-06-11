@@ -20,6 +20,9 @@ class Update {
   protected $delta;
   protected $format = DATETIME_DATETIME_STORAGE_FORMAT;
 
+  /**
+   * @todo.
+   */
   protected function prepare($entity_type, $entity_id, $field, Request $request) {
     $this->entity = entity_load($entity_type, $entity_id);
     $this->langcode = field_language($this->entity, $field);
@@ -29,6 +32,9 @@ class Update {
     $this->delta = " $day_delta days $minute_delta minutes";
   }
 
+  /**
+   * @todo.
+   */
   public function drop($entity_type, $entity_id, $field, $index, Request $request) {
     // @todo Remove once http://drupal.org/node/1915752 is resolved.
     $index--;

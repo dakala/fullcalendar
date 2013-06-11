@@ -7,15 +7,15 @@
 
 namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 
-use Drupal\Core\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
+use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\datetime\DateHelper;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 
 /**
  * @todo.
  *
- * @Plugin(
+ * @FullcalendarOption(
  *   id = "fullcalendar",
  *   module = "fullcalendar",
  *   js = TRUE,
