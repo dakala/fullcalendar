@@ -8,7 +8,6 @@
 namespace Drupal\fullcalendar\Form;
 
 use Drupal\system\SystemConfigFormBase;
-use Drupal\Core\Config\ConfigFactory;
 
 /**
  * @todo.
@@ -16,35 +15,14 @@ use Drupal\Core\Config\ConfigFactory;
 class SettingsForm extends SystemConfigFormBase {
 
   /**
-   * Stores the configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
-
-  /**
-   * @todo.
-   */
-  public function __construct(ConfigFactory $config_factory) {
-    $this->configFactory = $config_factory;
-  }
-
-  /**
-   * Implements \Drupal\Core\Form\FormInterface::getFormID().
+   * {@inheritdoc}
    */
   public function getFormID() {
     return 'fullcalendar_admin_settings';
   }
 
   /**
-   * Creates a new instance of this form.
-   */
-  public function getForm() {
-    return drupal_get_form($this);
-  }
-
-  /**
-   * Overrides \Drupal\system\SystemConfigFormBase::buildForm().
+   * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
     $config = $this->configFactory->get('fullcalendar.settings');
@@ -69,11 +47,12 @@ class SettingsForm extends SystemConfigFormBase {
   }
 
   /**
-   * Overrides \Drupal\system\SystemConfigFormBase::submitForm().
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
     $this->configFactory->get('fullcalendar.settings')
-      ->set('path', rtrim($form['fullcalendar_path']['#value'], "/"))
+      ->set('path', rtrim($form_state['values']['path'], '/'))
+      ->set('compression', $form_state['values']['compression'])
       ->save();
 
     parent::submitForm($form, $form_state);

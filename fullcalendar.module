@@ -99,8 +99,6 @@ function fullcalendar_menu() {
   $items['admin/config/user-interface/fullcalendar'] = array(
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
-    'page callback' => 'NOT_USED',
-    'access arguments' => array('administer site configuration'),
   );
   $items['admin/config/user-interface/fullcalendar/default'] = array(
     'title' => 'FullCalendar',

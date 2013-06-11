@@ -1,15 +1,17 @@
 fullcalendar_settings:
   pattern: '/admin/config/user-interface/fullcalendar'
   defaults:
-    _controller: 'fullcalendar.form.settings:getForm'
+    _form: '\Drupal\fullcalendar\Form\SettingsForm'
   requirements:
     _permission: 'administer site configuration'
+
 fullcalendar_update:
   pattern: '/fullcalendar/ajax/update/drop/{entity_type}/{entity_id}/{field}/{index}'
   defaults:
     _controller: '\Drupal\fullcalendar\Ajax\Update::drop'
   requirements:
     _access_fullcalendar_update: 'TRUE'
+
 fullcalendar_results:
   pattern: '/fullcalendar/ajax/results/{view}/{display_id}'
   defaults:
