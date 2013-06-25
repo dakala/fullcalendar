@@ -7,13 +7,13 @@
 
 namespace Drupal\fullcalendar_options\Plugin\fullcalendar\type;
 
-use Drupal\Core\Annotation\Plugin;
+use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 
 /**
  * @todo.
  *
- * @Plugin(
+ * @FullcalendarOption(
  *   id = "fullcalendar_options",
  *   module = "fullcalendar_options",
  *   js = TRUE

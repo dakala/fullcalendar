@@ -7,21 +7,16 @@
 
 namespace Drupal\fullcalendar_options\Form;
 
-use Drupal\system\SystemConfigFormBase;
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\Config\Context\ContextInterface;
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\system\SystemConfigFormBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @todo.
  */
 class SettingsForm extends SystemConfigFormBase {
-
-  /**
-   * Stores the configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
 
   /**
    * An array of Fullcalendar Options available to use.
@@ -33,28 +28,33 @@ class SettingsForm extends SystemConfigFormBase {
   /**
    * Constructs a SettingsForm object.
    */
-  public function __construct(ConfigFactory $config_factory, PluginManagerInterface $manager) {
-    $this->configFactory = $config_factory;
+  public function __construct(ConfigFactory $config_factory, ContextInterface $context, PluginManagerInterface $manager) {
+    parent::__construct($config_factory, $context);
+
     $definition = $manager->getDefinition('fullcalendar_options');
     $this->options = call_user_func(array($definition['class'], 'optionsList'));
   }
 
   /**
-   * Implements \Drupal\Core\Form\FormInterface::getFormID().
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('config.context.free'),
+      $container->get('plugin.manager.fullcalendar')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function getFormID() {
     return 'fullcalendar_options_admin_settings';
   }
 
   /**
-   * Creates a new instance of this form.
-   */
-  public function getForm() {
-    return drupal_get_form($this);
-  }
-
-  /**
-   * Overrides \Drupal\system\SystemConfigFormBase::buildForm().
+   * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
     $config = $this->configFactory->get('fullcalendar_options.settings');
@@ -74,7 +74,7 @@ class SettingsForm extends SystemConfigFormBase {
   }
 
   /**
-   * Overrides \Drupal\system\SystemConfigFormBase::submitForm().
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
     $config = $this->configFactory->get('fullcalendar_options.settings');
