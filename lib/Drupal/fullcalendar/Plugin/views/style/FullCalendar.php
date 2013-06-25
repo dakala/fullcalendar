@@ -8,6 +8,7 @@
 namespace Drupal\fullcalendar\Plugin\views\style;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Component\Annotation\Plugin;
@@ -111,6 +112,59 @@ class FullCalendar extends StylePluginBase {
     parent::buildOptionsForm($form, $form_state);
     foreach ($this->pluginBag as $plugin) {
       $plugin->buildOptionsForm($form, $form_state);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateOptionsForm(&$form, &$form_state) {
+    parent::validateOptionsForm($form, $form_state);
+
+    // Cast all submitted values to their proper type.
+    if (!empty($form_state['values']['style_options']) && is_array($form_state['values']['style_options'])) {
+      $this->castNestedValues($form_state['values']['style_options'], $form);
+    }
+  }
+
+  /**
+   * Casts form values to a given type, if defined.
+   *
+   * @param array $values
+   *   An array of fullcalendar option values.
+   * @param array $form
+   *   The fullcalendar option form definition.
+   * @param string|null $current_key
+   *   (optional) The current key being processed. Defaults to NULL.
+   * @param array $parents
+   *   (optional) An array of parent keys when recursing through the nested
+   *   array. Defaults to an empty array.
+   */
+  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = array()) {
+    foreach ($values as $key => &$value) {
+      // We are leaving a recursive loop, remove the last parent key.
+      if (empty($current_key)) {
+        array_pop($parents);
+      }
+
+      // In case we recurse into an array, or need to specify the key for
+      // drupal_array_get_nested_value(), add the current key to $parents.
+      $parents[] = $key;
+
+      if (is_array($value)) {
+        // Enter another recursive loop.
+        $this->castNestedValues($value, $form, $key, $parents);
+      }
+      else {
+        // Get the form definition for this key.
+        $form_value = NestedArray::getValue($form, $parents);
+        // Check to see if #data_type is specified, if so, cast the value.
+        if (isset($form_value['#data_type'])) {
+          settype($value, $form_value['#data_type']);
+        }
+        // Remove the current key from $parents to move on to the next key.
+        array_pop($parents);
+      }
     }
   }
 
