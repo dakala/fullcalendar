@@ -7,10 +7,13 @@
 
 namespace Drupal\fullcalendar\Plugin\views\style;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginBag;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @todo.
@@ -38,6 +41,13 @@ class FullCalendar extends StylePluginBase {
   protected $usesGrouping = FALSE;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Stores the FullCalendar plugins used by this style plugin.
    *
    * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginBag
@@ -63,10 +73,24 @@ class FullCalendar extends StylePluginBase {
   /**
    * Constructs a new Fullcalendar object.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->pluginBag = new FullcalendarPluginBag(drupal_container()->get('plugin.manager.fullcalendar'), $this);
+    $this->pluginBag = new FullcalendarPluginBag($fullcalendar_manager, $this);
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.fullcalendar'),
+      $container->get('module_handler')
+    );
   }
 
   /**
@@ -146,14 +170,14 @@ class FullCalendar extends StylePluginBase {
   protected function prepareAttached() {
     $attached['library'][] = array('fullcalendar', 'fullcalendar-module');
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
-      $definition = $plugin->getDefinition();
+      $definition = $plugin->getPluginDefinition();
       foreach (array('css', 'js') as $type) {
         if ($definition[$type]) {
           $attached[$type][] = drupal_get_path('module', $definition['module']) . "/$type/$plugin_id.fullcalendar.$type";
         }
       }
     }
-    if ($this->view->display_handler->getOption('use_ajax')) {
+    if ($this->displayHandler->getOption('use_ajax')) {
       $attached['js'][] = drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.ajax.js';
     }
     $attached['js'][] = array(
@@ -175,7 +199,7 @@ class FullCalendar extends StylePluginBase {
     $weights = array();
     $delta = 0;
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
-      $definition = $plugin->getDefinition();
+      $definition = $plugin->getPluginDefinition();
       $plugin->process($settings);
       if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
         $weights[$definition['weight']] = $plugin_id;
@@ -199,17 +223,13 @@ class FullCalendar extends StylePluginBase {
    */
   protected function prepareEvents() {
     $events = array();
-    if (empty($this->view->result)) {
-      return $events;
-    }
-
     foreach ($this->view->result as $delta => $row) {
       // Collect all fields for the customize options.
       $fields = array();
       // Collect only date fields.
       $date_fields = array();
       foreach ($this->view->field as $field_name => $field) {
-        $fields[$field_name] = $this->get_field($delta, $field_name);
+        $fields[$field_name] = $this->getField($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
           $date_fields[$field_name] = array(
             'value' => $field->getItems($row),
@@ -231,8 +251,8 @@ class FullCalendar extends StylePluginBase {
       }
 
       $entity = $row->_entity;
-      $classes = module_invoke_all('fullcalendar_classes', $entity);
-      drupal_alter('fullcalendar_classes', $classes, $entity);
+      $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', array($entity));
+      $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
       $classes = array_map('drupal_html_class', $classes);
       $class = implode(' ', array_unique($classes));
 
@@ -242,16 +262,15 @@ class FullCalendar extends StylePluginBase {
         if (empty($field['value'])) {
           continue;
         }
-        $instance = field_info_instance($entity->entityType(), $field['field_name'], $entity->bundle());
         foreach ($field['value'] as $index => $item) {
           $start = $item['raw']['value'];
           $end = $start;
           $all_day = FALSE;
           $uri = $entity->uri();
           $event[] = array(
-            '#theme' => 'link',
-            '#text' => $item['raw']['value'],
-            '#path' => $uri['path'],
+            '#type' => 'link',
+            '#title' => $item['raw']['value'],
+            '#href' => $uri['path'],
             '#options' => array(
               'html' => TRUE,
               'attributes' => array(

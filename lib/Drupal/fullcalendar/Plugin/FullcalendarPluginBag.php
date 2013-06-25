@@ -33,10 +33,10 @@ class FullcalendarPluginBag extends PluginBag {
   /**
    * Constructs a FullcalendarPluginBag object.
    *
-   * @param \Drupal\views\ViewExecutable
-   *   The view which has this displays attached.
    * @param \Drupal\Component\Plugin\PluginManagerInterface $manager
    *   The manager to be used for instantiating plugins.
+   * @param \Drupal\views\Plugin\views\style\StylePluginBase $style
+   *   The style plugin that contains these plugins.
    */
   public function __construct(PluginManagerInterface $manager, StylePluginBase $style) {
     $this->manager = $manager;
@@ -48,7 +48,7 @@ class FullcalendarPluginBag extends PluginBag {
   }
 
   /**
-   * Overrides \Drupal\Component\Plugin\PluginBag::initializePlugin().
+   * {@inheritdoc}
    */
   protected function initializePlugin($plugin_id) {
     if (isset($this->pluginInstances[$plugin_id])) {
@@ -57,6 +57,5 @@ class FullcalendarPluginBag extends PluginBag {
 
     $this->pluginInstances[$plugin_id] = $this->manager->createInstance($plugin_id, array(), $this->style);
   }
-
 
 }
