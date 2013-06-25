@@ -2,13 +2,14 @@
 
 /**
  * @file
- * Contains \Drupal\fullcalendar_legend\Plugin\block\block\Bundle.
+ * Contains \Drupal\fullcalendar_legend\Plugin\Block\Bundle.
  */
 
-namespace Drupal\fullcalendar_legend\Plugin\block\block;
+namespace Drupal\fullcalendar_legend\Plugin\Block;
 
-use Drupal\Core\Annotation\Plugin;
+use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
+use Drupal\fullcalendar_legend\Plugin\Block\FullcalendarLegendBase;
 
 /**
  * @todo.
@@ -21,7 +22,12 @@ use Drupal\Core\Annotation\Translation;
  */
 class Bundle extends FullcalendarLegendBase {
 
-  protected function buildLegend($fields) {
+  /**
+   * @param \Drupal\field\Plugin\Core\Entity\Field[] $fields
+   *
+   * @return array
+   */
+  protected function buildLegend(array $fields) {
     $types = array();
     foreach ($fields as $field_name => $field) {
       foreach ($field['bundles'] as $entity_type => $bundles) {

@@ -21,7 +21,7 @@ function fullcalendar_legend_theme($existing, $type, $theme, $path) {
  * Implements hook_preprocess_block().
  */
 function fullcalendar_legend_preprocess_block(&$variables) {
-  if ($variables['block']->module == 'fullcalendar_legend') {
+  if ($variables['configuration']['module'] == 'fullcalendar_legend') {
     $variables['attributes']['class'][] = 'fullcalendar-legend';
   }
 }

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\fullcalendar_legend\Plugin\block\block\FullcalendarLegendBase.
+ * Contains \Drupal\fullcalendar_legend\Plugin\Block\FullcalendarLegendBase.
  */
 
-namespace Drupal\fullcalendar_legend\Plugin\block\block;
+namespace Drupal\fullcalendar_legend\Plugin\Block;
 
 use Drupal\block\BlockBase;
 
@@ -38,6 +38,11 @@ abstract class FullcalendarLegendBase extends BlockBase {
     );
   }
 
-  abstract protected function buildLegend($fields);
+  /**
+   * @param \Drupal\field\Plugin\Core\Entity\Field[] $fields
+   *
+   * @return array
+   */
+  abstract protected function buildLegend(array $fields);
 
 }
