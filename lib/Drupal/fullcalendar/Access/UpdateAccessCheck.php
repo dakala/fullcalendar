@@ -38,7 +38,7 @@ class UpdateAccessCheck implements AccessCheckInterface {
    * @todo.
    */
   public function check(EntityInterface $entity) {
-    global $user;
+    $user = \Drupal::currentUser();
     if (!empty($entity) && ((user_access('administer content')
         || user_access('update any fullcalendar event')
         || user_access('edit any ' . $entity->bundle() . ' content')
