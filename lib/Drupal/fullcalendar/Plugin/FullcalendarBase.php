@@ -25,11 +25,9 @@ abstract class FullcalendarBase extends PluginBase implements FullcalendarInterf
   protected $style;
 
   /**
-   * Constructs a Fullcalendar object.
+   * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, StylePluginBase $style) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
+  public function setStyle(StylePluginBase $style) {
     $this->style = $style;
   }
 

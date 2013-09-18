@@ -10,13 +10,13 @@ namespace Drupal\fullcalendar_options\Form;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\system\SystemConfigFormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @todo.
  */
-class SettingsForm extends SystemConfigFormBase {
+class SettingsForm extends ConfigFormBase {
 
   /**
    * An array of Fullcalendar Options available to use.
@@ -57,11 +57,11 @@ class SettingsForm extends SystemConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $config = $this->configFactory->get('fullcalendar_options.settings');
+    $config = $this->config('fullcalendar_options.settings');
     $form['fullcalendar_options'] = array(
       '#type' => 'details',
-      '#title' => t('Options'),
-      '#description' => t('Each setting can be exposed for all views.'),
+      '#title' => $this->t('Options'),
+      '#description' => $this->t('Each setting can be exposed for all views.'),
     );
     foreach ($this->options as $key => $info) {
       $form['fullcalendar_options'][$key] = array(
@@ -77,7 +77,7 @@ class SettingsForm extends SystemConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $config = $this->configFactory->get('fullcalendar_options.settings');
+    $config = $this->config('fullcalendar_options.settings');
     foreach ($this->options as $key => $info) {
       $config->set($key, $form_state['values'][$key]);
     }

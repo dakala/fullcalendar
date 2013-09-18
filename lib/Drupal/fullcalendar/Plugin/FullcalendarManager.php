@@ -7,15 +7,12 @@
 
 namespace Drupal\fullcalendar\Plugin;
 
-use Drupal\Component\Plugin\PluginManagerBase;
-use Drupal\Component\Plugin\Factory\DefaultFactory;
-use Drupal\Component\Plugin\Discovery\ProcessDecorator;
-use Drupal\Core\Plugin\Discovery\AnnotatedClassDiscovery;
+use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * Plugin type manager for FullCalendar plugins.
  */
-class FullcalendarManager extends PluginManagerBase {
+class FullcalendarManager extends DefaultPluginManager {
 
   /**
    * @todo.
@@ -33,11 +30,7 @@ class FullcalendarManager extends PluginManagerBase {
    *   keyed by the corresponding namespace to look for plugin implementations.
    */
   public function __construct(\Traversable $namespaces) {
-    $annotation_namespaces = array('Drupal\fullcalendar\Annotation' => $namespaces['Drupal\fullcalendar']);
-    $this->discovery = new AnnotatedClassDiscovery('fullcalendar/type', $namespaces, $annotation_namespaces, 'Drupal\fullcalendar\Annotation\FullcalendarOption');
-
-    $this->factory = new DefaultFactory($this->discovery);
-
+    parent::__construct('Plugin/fullcalendar/type', $namespaces, 'Drupal\fullcalendar\Annotation\FullcalendarOption');
   }
 
   /**
@@ -46,9 +39,9 @@ class FullcalendarManager extends PluginManagerBase {
    * Pass the TipsBag to the plugin constructor.
    */
   public function createInstance($plugin_id, array $configuration = array(), $style = NULL) {
-    $plugin_definition = $this->discovery->getDefinition($plugin_id);
-    $plugin_class = DefaultFactory::getPluginClass($plugin_id, $plugin_definition);
-    return new $plugin_class($configuration, $plugin_id, $plugin_definition, $style);
+    $plugin = parent::createInstance($plugin_id, $configuration);
+    $plugin->setStyle($style);
+    return $plugin;
   }
 
 }

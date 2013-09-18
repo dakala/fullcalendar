@@ -53,7 +53,7 @@ function fullcalendar_library_info() {
   $path = drupal_get_path('module', 'fullcalendar');
   $libraries['fullcalendar-module'] = array(
     'title' => 'FullCalendar module',
-    'version' => VERSION,
+    'version' => \Drupal::VERSION,
     'js' => array(
       $path . '/js/fullcalendar.library.js' => array('group' => JS_LIBRARY),
       $path . '/js/fullcalendar.views.js' => array(),

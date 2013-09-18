@@ -11,7 +11,7 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\views\Annotation\ViewsStyle;
 use Drupal\Core\Annotation\Translation;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginBag;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,14 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * @todo.
  *
- * @Plugin(
+ * @ViewsStyle(
  *   id = "fullcalendar",
  *   title = @Translation("FullCalendar"),
  *   help = @Translation("Displays items on a calendar."),
- *   module = "fullcalendar",
  *   theme = "fullcalendar",
  *   theme_file = "fullcalendar.theme.inc",
- *   type = "normal"
+ *   display_types = {"normal"}
  * )
  */
 class FullCalendar extends StylePluginBase {
@@ -122,6 +121,7 @@ class FullCalendar extends StylePluginBase {
     parent::validateOptionsForm($form, $form_state);
 
     // Cast all submitted values to their proper type.
+    // @todo Remove once https://drupal.org/node/1653026 is in.
     if (!empty($form_state['values']['style_options']) && is_array($form_state['values']['style_options'])) {
       $this->castNestedValues($form_state['values']['style_options'], $form);
     }

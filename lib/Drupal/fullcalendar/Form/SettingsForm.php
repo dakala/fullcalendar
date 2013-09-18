@@ -7,12 +7,12 @@
 
 namespace Drupal\fullcalendar\Form;
 
-use Drupal\system\SystemConfigFormBase;
+use Drupal\Core\Form\ConfigFormBase;
 
 /**
  * @todo.
  */
-class SettingsForm extends SystemConfigFormBase {
+class SettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
@@ -25,20 +25,20 @@ class SettingsForm extends SystemConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $config = $this->configFactory->get('fullcalendar.settings');
+    $config = $this->config('fullcalendar.settings');
 
     $form['path'] = array(
       '#type' => 'textfield',
-      '#title' => t('Path to FullCalendar'),
+      '#title' => $this->t('Path to FullCalendar'),
       '#default_value' => $config->get('path'),
-      '#description' => t('Enter the path relative to Drupal root where the FullCalendar plugin directory is located.'),
+      '#description' => $this->t('Enter the path relative to Drupal root where the FullCalendar plugin directory is located.'),
     );
     $form['compression'] = array(
       '#type' => 'radios',
-      '#title' => t('Choose FullCalendar compression level'),
+      '#title' => $this->t('Choose FullCalendar compression level'),
       '#options' => array(
-        'min' => t('Production (Minified)'),
-        'none' => t('Development (Uncompressed code)'),
+        'min' => $this->t('Production (Minified)'),
+        'none' => $this->t('Development (Uncompressed code)'),
       ),
       '#default_value' => $config->get('compression'),
     );
@@ -50,7 +50,7 @@ class SettingsForm extends SystemConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    $this->configFactory->get('fullcalendar.settings')
+    $this->config('fullcalendar.settings')
       ->set('path', rtrim($form_state['values']['path'], '/'))
       ->set('compression', $form_state['values']['compression'])
       ->save();

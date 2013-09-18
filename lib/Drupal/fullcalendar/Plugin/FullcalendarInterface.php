@@ -7,10 +7,14 @@
 
 namespace Drupal\fullcalendar\Plugin;
 
+use Drupal\views\Plugin\views\style\StylePluginBase;
+
 /**
  * @todo.
  */
 interface FullcalendarInterface {
+
+  public function setStyle(StylePluginBase $style);
 
   public function defineOptions();
 
