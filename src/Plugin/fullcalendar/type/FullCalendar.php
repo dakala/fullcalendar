@@ -10,6 +10,7 @@ namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 use Drupal\Core\Datetime\DateHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 
@@ -185,8 +186,6 @@ class FullCalendar extends FullcalendarBase {
    * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    $form['#pre_render'][] = 'views_ui_pre_render_add_fieldset_markup';
-
     $form['display'] = array(
       '#type' => 'details',
       '#title' => t('Display settings'),
@@ -453,7 +452,7 @@ class FullCalendar extends FullcalendarBase {
       '#options' => $field_options,
       '#default_value' => $this->style->options['fields']['title_field'],
       '#description' => t('Choose the field with the custom title.'),
-      '#process' => array('form_process_select'),
+      '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
       '#states' => array(
         'visible' => array(
           ':input[name="style_options[fields][title]"]' => array('checked' => TRUE),
@@ -474,7 +473,7 @@ class FullCalendar extends FullcalendarBase {
       '#options' => $field_options,
       '#default_value' => $this->style->options['fields']['url_field'],
       '#description' => t('Choose the field with the custom link.'),
-      '#process' => array('form_process_select'),
+      '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
       '#states' => array(
         'visible' => array(
           ':input[name="style_options[fields][url]"]' => array('checked' => TRUE),
@@ -497,7 +496,7 @@ class FullCalendar extends FullcalendarBase {
       '#description' => t('Select one or more date fields.'),
       '#multiple' => TRUE,
       '#size' => count($date_fields),
-      '#process' => array('form_process_select'),
+      '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
       '#states' => array(
         'visible' => array(
           ':input[name="style_options[fields][date]"]' => array('checked' => TRUE),
@@ -544,6 +543,7 @@ class FullCalendar extends FullcalendarBase {
       $this->style->view->fullcalendar_disallow_editable = TRUE;
     }
 
+    $language_interface = \Drupal::languageManager()->getLanguage(LanguageInterface::TYPE_INTERFACE);
     $options = array(
       'buttonText' => array(
         'day' => t('Day'),
@@ -556,7 +556,7 @@ class FullCalendar extends FullcalendarBase {
       'monthNamesShort' => array_values(DateHelper::monthNamesAbbr(TRUE)),
       'dayNames' => DateHelper::weekDays(TRUE),
       'dayNamesShort' => DateHelper::weekDaysAbbr(TRUE),
-      'isRTL' => (bool) \Drupal::service('language_manager')->getLanguage(Language::TYPE_INTERFACE)->direction,
+      'isRTL' => $language_interface ? (bool) $language_interface->getDirection() : FALSE,
     );
     $advanced = !empty($settings['advanced']);
     foreach ($settings as $key => $value) {

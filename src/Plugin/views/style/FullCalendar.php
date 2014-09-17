@@ -292,11 +292,13 @@ class FullCalendar extends StylePluginBase {
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
+          /** @var \Drupal\field\Plugin\views\field\Field $field */
+          $field_definition = $field->getFieldDefinition();
           $date_fields[$field_name] = array(
             'value' => $field->getItems($row),
             'field_alias' => $field->field_alias,
-            'field_name' => $field->field_info['field_name'],
-            'field_info' => $field->field_info,
+            'field_name' => $field_definition->getName(),
+            'field_info' => $field_definition,
           );
         }
       }
@@ -325,7 +327,7 @@ class FullCalendar extends StylePluginBase {
           continue;
         }
         foreach ($field['value'] as $index => $item) {
-          $start = $item['raw']['value'];
+          $start = $item['raw']->value;
           $end = $start;
           $all_day = FALSE;
 
@@ -342,27 +344,23 @@ class FullCalendar extends StylePluginBase {
             $time_class = 'fc-event-now';
           }
 
-          $uri = $entity->url();
-          $event[] = array(
+          $url = $entity->urlInfo();
+          $url->setOption('attributes', array(
+            'data-all-day' => $all_day,
+            'data-start' => $start,
+            'data-end' => $end,
+            'data-editable' => (int) TRUE,//$entity->editable,
+            'data-field' => $field['field_name'],
+            'data-index' => $index,
+            'data-eid' => $entity->id(),
+            'data-entity-type' => $entity->getEntityTypeId(),
+            'data-cn' => $class . ' ' . $time_class,
+            'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
+            'class' => array('fullcalendar-event-details'),
+          ));
+          $event[] = $url->toRenderArray() + array(
             '#type' => 'link',
-            '#title' => $item['raw']['value'],
-            '#href' => $uri['path'],
-            '#options' => array(
-              'html' => TRUE,
-              'attributes' => array(
-                'data-all-day' => $all_day,
-                'data-start' => $start,
-                'data-end' => $end,
-                'data-editable' => (int) TRUE,//$entity->editable,
-                'data-field' => $field['field_name'],
-                'data-index' => $index,
-                'data-eid' => $entity->id(),
-                'data-entity-type' => $entity->getEntityTypeId(),
-                'data-cn' => $class . ' ' . $time_class,
-                'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-                'class' => array('fullcalendar-event-details'),
-              ),
-            ),
+            '#title' => $item['raw']->value,
           );
         }
       }

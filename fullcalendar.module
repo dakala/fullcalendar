@@ -113,7 +113,7 @@ function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
  * Since we force the query to be distinct, reflect that in the UI.
  */
 function fullcalendar_form_views_ui_edit_display_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $style = $form_state['view']->get('executable')->display_handler->getOption('style');
+  $style = $form_state->get('view')->get('executable')->display_handler->getOption('style');
   if ($style['type'] != 'fullcalendar' || empty($form['options']['query']['options']['distinct'])) {
     return;
   }
@@ -156,7 +156,11 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
     return TRUE;
   }
 
-  return isset($field->field_info) && $field->field_info['type'] == 'datetime';
+  if ($field instanceof \Drupal\field\Plugin\views\field\Field) {
+    $definition = $field->getFieldDefinition();
+    return $definition->getType() == 'datetime';
+  }
+  return FALSE;
 }
 
 /**
