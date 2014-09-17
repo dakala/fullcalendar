@@ -3,7 +3,7 @@
  * Integrates Views data with the FullCalendar plugin.
  */
 
-(function ($) {
+(function ($, Drupal) {
 
   "use strict";
 
@@ -24,4 +24,4 @@
     }
   };
 
-}(jQuery));
+})(jQuery, Drupal);

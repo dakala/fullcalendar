@@ -3,7 +3,7 @@
  * Provides FullCalendar defaults and functions.
  */
 
-(function ($) {
+(function ($, Drupal, drupalSettings) {
 
   "use strict";
 
@@ -23,10 +23,10 @@
 
     // Allow other modules to overwrite options.
     var $plugins = Drupal.fullcalendar.plugins;
-    for (var i = 0; i < Drupal.settings.fullcalendar[dom_id].weights.length; i++) {
-      var $plugin = Drupal.settings.fullcalendar[dom_id].weights[i];
+    for (var i = 0; i < drupalSettings.fullcalendar[dom_id].weights.length; i++) {
+      var $plugin = drupalSettings.fullcalendar[dom_id].weights[i];
       if ($plugins.hasOwnProperty($plugin) && $.isFunction($plugins[$plugin].options)) {
-        $.extend(this.$options, $plugins[$plugin].options(this, Drupal.settings.fullcalendar[this.dom_id]));
+        $.extend(this.$options, $plugins[$plugin].options(this, drupalSettings.fullcalendar[this.dom_id]));
       }
     }
 
@@ -76,4 +76,4 @@
     callback(events);
   };
 
-}(jQuery));
+})(jQuery, Drupal, drupalSettings);

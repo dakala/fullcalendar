@@ -3,7 +3,7 @@
  * Processes the FullCalendar options and passes them to the integration.
  */
 
-(function ($) {
+(function ($, Drupal, drupalSettings) {
 
   "use strict";
 
@@ -68,7 +68,7 @@
           // @todo Remove once http://drupal.org/node/1915752 is resolved.
           var index = parseInt(event.index, 10) + 1;
           $.post(
-            Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/' + event.entity_type + '/' + event.eid + '/' + event.field + '/' + index,
+            drupalSettings.basePath + 'fullcalendar/ajax/update/drop/' + event.entity_type + '/' + event.eid + '/' + event.field + '/' + index,
             'day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
             fullcalendar.update
           );
@@ -76,7 +76,7 @@
         },
         eventResize: function (event, dayDelta, minuteDelta, revertFunc) {
           $.post(
-            Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/' + event.entity_type + '/' + event.eid + '/' + event.field + '/' + event.index,
+            drupalSettings.basePath + 'fullcalendar/ajax/update/drop/' + event.entity_type + '/' + event.eid + '/' + event.field + '/' + event.index,
             'day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
             fullcalendar.update
           );
@@ -96,4 +96,4 @@
     }
   };
 
-}(jQuery));
+})(jQuery, Drupal, drupalSettings);
