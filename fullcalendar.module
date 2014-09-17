@@ -29,53 +29,6 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_library_info().
- */
-function fullcalendar_library_info() {
-  $path = \Drupal::config('fullcalendar.settings')->get('path');
-  $libraries['fullcalendar'] = array(
-    'title' => 'FullCalendar',
-    'website' => 'http://arshaw.com/fullcalendar',
-    'version' => fullcalendar_get_version(),
-    'js' => array(
-      fullcalendar_get_js_path() => array(),
-      $path . '/gcal.js' => array(),
-    ),
-    'css' => array(
-      $path . '/fullcalendar.css' => array('media' => 'screen'),
-      $path . '/fullcalendar.print.css' => array('media' => 'print'),
-    ),
-    'dependencies' => array(
-      array('system', 'jquery'),
-      array('system', 'jquery.ui.draggable'),
-      array('system', 'jquery.ui.droppable'),
-      array('system', 'jquery.ui.resizable'),
-    ),
-  );
-
-  $path = drupal_get_path('module', 'fullcalendar');
-  $libraries['fullcalendar-module'] = array(
-    'title' => 'FullCalendar module',
-    'version' => \Drupal::VERSION,
-    'js' => array(
-      $path . '/js/fullcalendar.library.js' => array('group' => JS_LIBRARY),
-      $path . '/js/fullcalendar.views.js' => array(),
-    ),
-    'css' => array(
-      $path . '/css/fullcalendar.theme.css',
-    ),
-    'dependencies' => array(
-      array('system', 'drupal'),
-      array('system', 'drupalSettings'),
-      array('system', 'jquery.once'),
-      array('system', 'jquery.effects.highlight'),
-      array('fullcalendar', 'fullcalendar'),
-    ),
-  );
-  return $libraries;
-}
-
-/**
  * Implements hook_permission().
  *
  * @return array

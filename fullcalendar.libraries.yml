@@ -1,0 +1,34 @@
+fullcalendar:
+  remote: http://fullcalendar.io
+  version: 1.5.0
+  license:
+    name: MIT
+    url: https://github.com/arshaw/fullcalendar/blob/v1.5.x/MIT-LICENSE.txt
+    gpl-compatible: true
+  js:
+    libraries/fullcalendar/fullcalendar.min.js: { minified: true }
+    libraries/fullcalendar/gcal.js: { }
+  css:
+    theme:
+      libraries/fullcalendar/fullcalendar.css: { media: screen }
+      libraries/fullcalendar/fullcalendar.print.css: { media: print }
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.draggable
+    - core/jquery.ui.droppable
+
+drupal.fullcalendar:
+  version: VERSION
+  js:
+    js/fullcalendar.library.js: { }
+    js/fullcalendar.views.js: { }
+  css:
+    theme:
+      css/fullcalendar.theme.css: { }
+  dependencies:
+    - fullcalendar/fullcalendar
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/jquery.once
+    - core/jquery.ui.effects.highlight

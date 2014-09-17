@@ -229,7 +229,7 @@ class FullCalendar extends StylePluginBase {
    * @todo.
    */
   protected function prepareAttached() {
-    $attached['library'][] = array('fullcalendar', 'fullcalendar-module');
+    $attached['library'][] = 'fullcalendar/drupal.fullcalendar';
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
       foreach (array('css', 'js') as $type) {
