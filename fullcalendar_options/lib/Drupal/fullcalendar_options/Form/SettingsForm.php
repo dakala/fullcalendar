@@ -8,9 +8,9 @@
 namespace Drupal\fullcalendar_options\Form;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
-use Drupal\Core\Config\Context\ContextInterface;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,9 +27,12 @@ class SettingsForm extends ConfigFormBase {
 
   /**
    * Constructs a SettingsForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Component\Plugin\PluginManagerInterface $manager
    */
-  public function __construct(ConfigFactory $config_factory, ContextInterface $context, PluginManagerInterface $manager) {
-    parent::__construct($config_factory, $context);
+  public function __construct(ConfigFactoryInterface $config_factory, PluginManagerInterface $manager) {
+    parent::__construct($config_factory);
 
     $definition = $manager->getDefinition('fullcalendar_options');
     $this->options = call_user_func(array($definition['class'], 'optionsList'));
@@ -41,7 +44,6 @@ class SettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('config.context.free'),
       $container->get('plugin.manager.fullcalendar')
     );
   }
@@ -56,7 +58,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar_options.settings');
     $form['fullcalendar_options'] = array(
       '#type' => 'details',
@@ -76,7 +78,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar_options.settings');
     foreach ($this->options as $key => $info) {
       $config->set($key, $form_state['values'][$key]);

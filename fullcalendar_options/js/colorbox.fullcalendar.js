@@ -21,7 +21,7 @@ Drupal.fullcalendar.plugins.colorbox = {
               href: url,
               width: settings.colorboxWidth,
               height: settings.colorboxHeight,
-              iframe: settings.colorboxIFrame === 1 ? true : false
+              iframe: settings.colorboxIFrame === 1
             });
           }
         }

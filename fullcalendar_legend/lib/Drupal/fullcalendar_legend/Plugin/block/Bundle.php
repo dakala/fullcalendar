@@ -9,7 +9,6 @@ namespace Drupal\fullcalendar_legend\Plugin\Block;
 
 use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
-use Drupal\fullcalendar_legend\Plugin\Block\FullcalendarLegendBase;
 
 /**
  * @todo.
@@ -23,9 +22,7 @@ use Drupal\fullcalendar_legend\Plugin\Block\FullcalendarLegendBase;
 class Bundle extends FullcalendarLegendBase {
 
   /**
-   * @param \Drupal\field\Plugin\Core\Entity\Field[] $fields
-   *
-   * @return array
+   * {@inheritdoc}
    */
   protected function buildLegend(array $fields) {
     $types = array();

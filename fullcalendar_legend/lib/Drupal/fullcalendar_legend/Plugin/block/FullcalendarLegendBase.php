@@ -7,7 +7,7 @@
 
 namespace Drupal\fullcalendar_legend\Plugin\Block;
 
-use Drupal\block\BlockBase;
+use Drupal\Core\Block\BlockBase;
 
 /**
  * Provides a generic FullCalendar Legend block.
@@ -15,7 +15,7 @@ use Drupal\block\BlockBase;
 abstract class FullcalendarLegendBase extends BlockBase {
 
   /**
-   * Implements \Drupal\block\BlockBase::build().
+   * {@inheritdoc}
    */
   public function build() {
     if (!$view = views_get_page_view()) {
@@ -39,7 +39,7 @@ abstract class FullcalendarLegendBase extends BlockBase {
   }
 
   /**
-   * @param \Drupal\field\Plugin\Core\Entity\Field[] $fields
+   * @param \Drupal\Core\Field\FieldDefinitionInterface[] $fields
    *
    * @return array
    */

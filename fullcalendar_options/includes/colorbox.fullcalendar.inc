@@ -3,7 +3,7 @@
 /**
  * @file
  * Provides extra FullCalendar configuration options for Colorbox.
- */
+ */use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_fullcalendar_options_info().
@@ -41,7 +41,7 @@ function colorbox_fullcalendar_options_definition() {
 /**
  * Implements hook_fullcalendar_options_form().
  */
-function colorbox_fullcalendar_options_form(&$form, &$form_state, &$view) {
+function colorbox_fullcalendar_options_form(&$form, FormStateInterface $form_state, &$view) {
   $form['colorbox']['colorbox'] = array(
     '#type' => 'checkbox',
     '#title' => t('Open events with Colorbox'),

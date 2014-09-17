@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\fullcalendar\Plugin\fullcalendar\type\Fullcalendar.
+ * Contains \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar.
  */
 
 namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 
-use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Datetime\DateHelper;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
 use Drupal\fullcalendar\Annotation\FullcalendarOption;
-use Drupal\datetime\DateHelper;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 
 /**
@@ -23,7 +23,7 @@ use Drupal\fullcalendar\Plugin\FullcalendarBase;
  *   weight = "-20"
  * )
  */
-class Fullcalendar extends FullcalendarBase {
+class FullCalendar extends FullcalendarBase {
 
   /**
    * @todo.
@@ -78,7 +78,7 @@ class Fullcalendar extends FullcalendarBase {
   );
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::defineOptions().
+   * {@inheritdoc}
    */
   public function defineOptions() {
     $time = '12';
@@ -156,7 +156,7 @@ class Fullcalendar extends FullcalendarBase {
   }
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::process().
+   * {@inheritdoc}
    */
   public function process(&$settings) {
     static $fc_dom_id = 1;
@@ -181,7 +181,10 @@ class Fullcalendar extends FullcalendarBase {
     );
   }
 
-  public function buildOptionsForm(&$form, &$form_state) {
+  /**
+   * {@inheritdoc}
+   */
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $form['#pre_render'][] = 'views_ui_pre_render_add_fieldset_markup';
 
     $form['display'] = array(
@@ -407,7 +410,7 @@ class Fullcalendar extends FullcalendarBase {
       '#data_type' => 'int',
       '#fieldset' => 'style',
     );
-    if (module_implements('fullcalendar_droppable')) {
+    if (\Drupal::moduleHandler()->getImplementations('fullcalendar_droppable')) {
       $form['droppable'] = array(
         '#type' => 'checkbox',
         '#title' => t('Allow external events to be added via drag and drop'),
@@ -522,7 +525,7 @@ class Fullcalendar extends FullcalendarBase {
   /**
    * @todo.
    */
-  public function submitOptionsForm(&$form, &$form_state) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     $options = &$form_state['values']['style_options'];
 
     // These field options have empty defaults, make sure they stay that way.
@@ -533,9 +536,10 @@ class Fullcalendar extends FullcalendarBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function preView(&$settings) {
-    global $language;
-
     if (!empty($settings['editable'])) {
       $this->style->view->fullcalendar_disallow_editable = TRUE;
     }

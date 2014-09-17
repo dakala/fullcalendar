@@ -7,6 +7,7 @@
 
 namespace Drupal\fullcalendar_options\Plugin\fullcalendar\type;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 
@@ -22,7 +23,7 @@ use Drupal\fullcalendar\Plugin\FullcalendarBase;
 class FullcalendarOptions extends FullcalendarBase {
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::defineOptions().
+   * {@inheritdoc}
    */
   public function defineOptions() {
     $options = array();
@@ -42,9 +43,9 @@ class FullcalendarOptions extends FullcalendarBase {
   }
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::buildOptionsForm().
+   * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, &$form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $options = $this->optionsListParsed();
     // There were no options added, remove the parent fieldset.
     if (!empty($options)) {

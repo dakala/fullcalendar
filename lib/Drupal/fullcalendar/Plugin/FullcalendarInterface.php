@@ -7,6 +7,7 @@
 
 namespace Drupal\fullcalendar\Plugin;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 
 /**
@@ -18,9 +19,9 @@ interface FullcalendarInterface {
 
   public function defineOptions();
 
-  public function buildOptionsForm(&$form, &$form_state);
+  public function buildOptionsForm(&$form, FormStateInterface $form_state);
 
-  public function submitOptionsForm(&$form, &$form_state);
+  public function submitOptionsForm(&$form, FormStateInterface $form_state);
 
   public function process(&$settings);
 

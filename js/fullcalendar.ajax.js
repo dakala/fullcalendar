@@ -15,7 +15,7 @@ Drupal.fullcalendar.fullcalendar.prototype.dateChange = function (fields) {
       min: $.fullCalendar.formatDate(view.visStart, 'yyyy-M-d').split('-'),
       max: $.fullCalendar.formatDate(view.visEnd, 'yyyy-M-d').split('-')
     };
-    $cal = this.$calendar;
+    var $cal = this.$calendar;
     for (var i in fields) {
       $cal.find('.views-widget-filter-' + i).hide();
       $.each(['min','max'], function (_, type) {

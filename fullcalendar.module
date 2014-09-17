@@ -5,6 +5,8 @@
  * Provides a views style plugin for FullCalendar
  */
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * The minimum supported version of the FullCalendar plugin.
  */
@@ -131,7 +133,7 @@ function fullcalendar_fullcalendar_classes($entity) {
  *
  * Since we force the query to be distinct, reflect that in the UI.
  */
-function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state, $form_id) {
+function fullcalendar_form_views_ui_edit_display_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $style = $form_state['view']->get('executable')->display_handler->getOption('style');
   if ($style['type'] != 'fullcalendar' || empty($form['options']['query']['options']['distinct'])) {
     return;

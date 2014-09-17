@@ -5,6 +5,8 @@
  * Theme functions for FullCalendar Legend.
  */
 
+use Drupal\Component\Utility\String;
+
 /**
  * Build the legend as a render array.
  */
@@ -27,7 +29,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
       ),
     );
     // Sanitize the label.
-    $type['label'] = check_plain($type['label']);
+    $type['label'] = String::checkPlain($type['label']);
     if (isset($type['uri'])) {
       $element[$type_name]['type'] = array(
         '#type' => 'link',
@@ -66,10 +68,13 @@ function theme_fullcalendar_legend($variables) {
  */
 function _fullcalendar_legend_get_classes($type) {
   $values['type'] = $type['bundle'];
-  $entity = entity_create($type['entity_type'], $values);
+  $entity = \Drupal::entityManager()
+    ->getStorage($type['entity_type'])
+    ->create($values);
 
-  $classes = module_invoke_all('fullcalendar_classes', $entity);
-  drupal_alter('fullcalendar_classes', $classes, $entity);
+  $module_handler = \Drupal::moduleHandler();
+  $classes = $module_handler->invokeAll('fullcalendar_classes', [$entity]);
+  $module_handler->alter('fullcalendar_classes', $classes, $entity);
 
   return $classes;
 }

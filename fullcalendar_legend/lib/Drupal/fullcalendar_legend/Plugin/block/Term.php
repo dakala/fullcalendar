@@ -9,11 +9,10 @@ namespace Drupal\fullcalendar_legend\Plugin\Block;
 
 use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\field\FieldInfo;
-use Drupal\fullcalendar_legend\Plugin\Block\FullcalendarLegendBase;
-use Drupal\taxonomy\TermStorageControllerInterface;
+use Drupal\taxonomy\TermStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInterface {
 
   /**
-   * @var \Drupal\taxonomy\TermStorageControllerInterface
+   * @var \Drupal\taxonomy\TermStorageInterface
    */
   protected $termStorage;
 
@@ -37,33 +36,31 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
    */
   protected $entityQuery;
 
-  /**
-   * @var \Drupal\field\FieldInfo
-   */
-  protected $fieldInfo;
+  protected $entityManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TermStorageControllerInterface $term_storage, QueryFactory $entity_query, FieldInfo $field_info) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TermStorageInterface $term_storage, QueryFactory $entity_query, EntityManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->termStorage = $term_storage;
     $this->entityQuery = $entity_query;
-    $this->fieldInfo = $field_info;
+    $this->entityManager = $entity_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $entity_manager = $container->get('entity.manager');
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.entity')->getStorageController('taxonomy_term'),
+      $entity_manager->getStorageController('taxonomy_term'),
       $container->get('entity.query'),
-      $container->get('field.info')
+      $entity_manager
     );
   }
 
@@ -72,15 +69,16 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
    */
   protected function buildLegend(array $fields) {
     $types = array();
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
     foreach ($fields as $field_name => $field) {
       // Then by entity type.
       foreach ($field->getBundles() as $entity_type => $bundles) {
         foreach ($bundles as $bundle) {
-          foreach ($this->fieldInfo->getBundleInstances($entity_type, $bundle) as $taxonomy_field_name => $taxonomy_field) {
-            if ($taxonomy_field->getFieldType() != 'taxonomy_term_reference') {
+          foreach ($this->entityManager->getFieldDefinitions($entity_type, $bundle) as $taxonomy_field_name => $taxonomy_field) {
+            if ($taxonomy_field->getType() != 'taxonomy_term_reference') {
               continue;
             }
-            foreach ($taxonomy_field->getFieldSetting('allowed_values') as $vocab) {
+            foreach ($taxonomy_field->getSetting('allowed_values') as $vocab) {
               $term_ids = $this->entityQuery->get('taxonomy_term')
                 ->condition('vid', $vocab['vocabulary'])
                 ->execute();

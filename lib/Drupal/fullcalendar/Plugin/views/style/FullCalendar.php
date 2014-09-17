@@ -10,6 +10,7 @@ namespace Drupal\fullcalendar\Plugin\views\style;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\views\Annotation\ViewsStyle;
 use Drupal\Core\Annotation\Translation;
@@ -72,8 +73,14 @@ class FullCalendar extends StylePluginBase {
 
   /**
    * Constructs a new Fullcalendar object.
+   *
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   * @param \Drupal\Component\Plugin\PluginManagerInterface $fullcalendar_manager
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->pluginBag = new FullcalendarPluginBag($fullcalendar_manager, $this);
@@ -83,7 +90,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
@@ -107,7 +114,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, &$form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
     foreach ($this->pluginBag as $plugin) {
       $plugin->buildOptionsForm($form, $form_state);
@@ -117,7 +124,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  public function validateOptionsForm(&$form, &$form_state) {
+  public function validateOptionsForm(&$form, FormStateInterface $form_state) {
     parent::validateOptionsForm($form, $form_state);
 
     // Cast all submitted values to their proper type.
@@ -171,7 +178,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, &$form_state) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     parent::submitOptionsForm($form, $form_state);
     foreach ($this->pluginBag as $plugin) {
       $plugin->submitOptionsForm($form, $form_state);
@@ -304,6 +311,7 @@ class FullCalendar extends StylePluginBase {
         return $events;
       }
 
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $row->_entity;
       $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', array($entity));
       $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
@@ -334,7 +342,7 @@ class FullCalendar extends StylePluginBase {
             $time_class = 'fc-event-now';
           }
 
-          $uri = $entity->uri();
+          $uri = $entity->url();
           $event[] = array(
             '#type' => 'link',
             '#title' => $item['raw']['value'],

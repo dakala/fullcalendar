@@ -7,6 +7,7 @@
 
 namespace Drupal\fullcalendar\Plugin\views\field;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\Component\Annotation\PluginID;
 
@@ -18,21 +19,21 @@ use Drupal\Component\Annotation\PluginID;
 class GoogleCalendar extends FieldPluginBase {
 
   /**
-   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::allow_advanced_render().
+   * {@inheritdoc}
    */
   public function allow_advanced_render() {
     return FALSE;
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::query().
+   * {@inheritdoc}
    */
   public function query() {
     $this->query->add_field($this->view->storage->get('base_table'), $this->view->storage->get('base_field'));
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::defineOptions().
+   * {@inheritdoc}
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
@@ -44,9 +45,9 @@ class GoogleCalendar extends FieldPluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\field\FieldPluginBase::buildOptionsForm().
+   * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, &$form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => t('Label'),

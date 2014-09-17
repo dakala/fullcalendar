@@ -8,6 +8,7 @@
 namespace Drupal\fullcalendar\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * @todo.
@@ -24,7 +25,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar.settings');
 
     $form['path'] = array(
@@ -49,7 +50,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('fullcalendar.settings')
       ->set('path', rtrim($form_state['values']['path'], '/'))
       ->set('compression', $form_state['values']['compression'])

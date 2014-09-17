@@ -34,7 +34,7 @@ Drupal.fullcalendar.fullcalendar = function (dom_id) {
     $(this).parent().slideUp();
     return false;
   });
-}
+};
 
 Drupal.fullcalendar.fullcalendar.prototype.update = function (result) {
   var fcStatus = $(result.dom_id).find('.fullcalendar-status');

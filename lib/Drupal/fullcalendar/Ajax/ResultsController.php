@@ -9,7 +9,6 @@ namespace Drupal\fullcalendar\Ajax;
 
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\fullcalendar\Ajax\ResultsCommand;
 use Drupal\views\ViewStorageInterface;
 
 /**

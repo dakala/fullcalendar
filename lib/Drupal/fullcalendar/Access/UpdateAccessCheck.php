@@ -18,14 +18,14 @@ use Drupal\Core\Entity\EntityInterface;
 class UpdateAccessCheck implements AccessCheckInterface {
 
   /**
-   * Implements \Drupal\Core\Access\AccessCheckInterface::applies().
+   * {@inheritdoc}
    */
   public function applies(Route $route) {
     return array_key_exists('_access_fullcalendar_update', $route->getRequirements());
   }
 
   /**
-   * Implements \Drupal\Core\Access\AccessCheckInterface::access().
+   * {@inheritdoc}
    */
   public function access(Route $route, Request $request) {
     $entity_type = $request->attributes->get('entity_type');

@@ -8,9 +8,8 @@
 namespace Drupal\fullcalendar\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\fullcalendar\Plugin\FullcalendarInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
 
 /**
  * @todo.
@@ -32,19 +31,19 @@ abstract class FullcalendarBase extends PluginBase implements FullcalendarInterf
   }
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::submitOptionsForm().
+   * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, &$form_state) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
   }
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::process().
+   * {@inheritdoc}
    */
   public function process(&$settings) {
   }
 
   /**
-   * Implements \Drupal\fullcalendar\Plugin\FullcalendarInterface::preView().
+   * {@inheritdoc}
    */
   public function preView(&$settings) {
   }
