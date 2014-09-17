@@ -5,6 +5,7 @@
  * Provides a views style plugin for FullCalendar
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -31,7 +32,7 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  * Implements hook_library_info().
  */
 function fullcalendar_library_info() {
-  $path = config('fullcalendar.settings')->get('path');
+  $path = \Drupal::config('fullcalendar.settings')->get('path');
   $libraries['fullcalendar'] = array(
     'title' => 'FullCalendar',
     'website' => 'http://arshaw.com/fullcalendar',
@@ -114,7 +115,7 @@ function fullcalendar_menu() {
 /**
  * Implements hook_fullcalendar_classes().
  */
-function fullcalendar_fullcalendar_classes($entity) {
+function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
   $classes = array(
     'fc-event-default',
     $entity->bundle(),
@@ -157,8 +158,8 @@ function fullcalendar_form_views_ui_edit_display_form_alter(&$form, FormStateInt
  *
  * Use our access callback as the editable setting.
  */
-function fullcalendar_fullcalendar_editable($entity, $view) {
-  return drupal_container()->get('access_check.fullcalendar.update')->check($entity);
+function fullcalendar_fullcalendar_editable(EntityInterface $entity, $view) {
+  return \Drupal::service('access_check.fullcalendar.update')->check($entity);
 }
 
 /**
@@ -215,6 +216,6 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  */
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
-  $config = config('fullcalendar.settings');
+  $config = \Drupal::config('fullcalendar.settings');
   return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
 }
