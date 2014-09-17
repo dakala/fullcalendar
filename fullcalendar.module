@@ -91,28 +91,6 @@ function fullcalendar_permission() {
 }
 
 /**
- * Implements hook_menu().
- *
- * @return array
- *   An array of menu items.
- */
-function fullcalendar_menu() {
-  $items = array();
-
-  $items['admin/config/user-interface/fullcalendar'] = array(
-    'title' => 'FullCalendar',
-    'description' => 'Adjust FullCalendar settings.',
-    'route_name' => 'fullcalendar_settings',
-  );
-  $items['admin/config/user-interface/fullcalendar/default'] = array(
-    'title' => 'FullCalendar',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-
-  return $items;
-}
-
-/**
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
