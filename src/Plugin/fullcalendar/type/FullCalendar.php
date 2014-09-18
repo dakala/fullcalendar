@@ -8,11 +8,13 @@
 namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 
 use Drupal\Core\Datetime\DateHelper;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Language\Language;
-use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @todo.
@@ -24,7 +26,43 @@ use Drupal\fullcalendar\Plugin\FullcalendarBase;
  *   weight = "-20"
  * )
  */
-class FullCalendar extends FullcalendarBase {
+class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, LanguageManagerInterface $language_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+    $this->languageManager = $language_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler'),
+      $container->get('language_manager')
+    );
+  }
 
   /**
    * @todo.
@@ -409,7 +447,7 @@ class FullCalendar extends FullcalendarBase {
       '#data_type' => 'int',
       '#fieldset' => 'style',
     );
-    if (\Drupal::moduleHandler()->getImplementations('fullcalendar_droppable')) {
+    if ($this->moduleHandler->getImplementations('fullcalendar_droppable')) {
       $form['droppable'] = array(
         '#type' => 'checkbox',
         '#title' => t('Allow external events to be added via drag and drop'),
@@ -543,7 +581,6 @@ class FullCalendar extends FullcalendarBase {
       $this->style->view->fullcalendar_disallow_editable = TRUE;
     }
 
-    $language_interface = \Drupal::languageManager()->getLanguage(LanguageInterface::TYPE_INTERFACE);
     $options = array(
       'buttonText' => array(
         'day' => t('Day'),
@@ -556,7 +593,7 @@ class FullCalendar extends FullcalendarBase {
       'monthNamesShort' => array_values(DateHelper::monthNamesAbbr(TRUE)),
       'dayNames' => DateHelper::weekDays(TRUE),
       'dayNamesShort' => DateHelper::weekDaysAbbr(TRUE),
-      'isRTL' => $language_interface ? (bool) $language_interface->getDirection() : FALSE,
+      'isRTL' => (bool) $this->languageManager->getCurrentLanguage()->getDirection(),
     );
     $advanced = !empty($settings['advanced']);
     foreach ($settings as $key => $value) {

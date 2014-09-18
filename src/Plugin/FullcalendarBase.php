@@ -7,7 +7,7 @@
 
 namespace Drupal\fullcalendar\Plugin;
 
-use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 

@@ -7,13 +7,14 @@
 
 namespace Drupal\fullcalendar\Plugin;
 
+use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 
 /**
  * @todo.
  */
-interface FullcalendarInterface {
+interface FullcalendarInterface extends PluginInspectionInterface {
 
   public function setStyle(StylePluginBase $style);
 
