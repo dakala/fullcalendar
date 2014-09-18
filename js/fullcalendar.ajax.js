@@ -44,7 +44,7 @@
     var $submit_button = $submit.find('.form-submit');
     this.$submit = new Drupal.ajax('main', $submit_button[0], {
       event: 'fullcalendar_submit',
-      url: drupalSettings.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + ajaxView.view_args,
+      url: drupalSettings.path.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + ajaxView.view_args,
       fullcalendar: this,
       submit: {dom_id: domId}
     });
