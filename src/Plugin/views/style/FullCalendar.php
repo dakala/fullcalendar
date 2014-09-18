@@ -65,7 +65,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * @todo.
    *
-   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginBag
+   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginBag|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
    */
   public function getPlugins() {
     return $this->pluginBag;
@@ -105,7 +105,7 @@ class FullCalendar extends StylePluginBase {
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    foreach ($this->pluginBag as $plugin) {
+    foreach ($this->getPlugins() as $plugin) {
       $options += $plugin->defineOptions();
     }
     return $options;
@@ -116,7 +116,7 @@ class FullCalendar extends StylePluginBase {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
-    foreach ($this->pluginBag as $plugin) {
+    foreach ($this->getPlugins() as $plugin) {
       $plugin->buildOptionsForm($form, $form_state);
     }
   }
@@ -180,7 +180,7 @@ class FullCalendar extends StylePluginBase {
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     parent::submitOptionsForm($form, $form_state);
-    foreach ($this->pluginBag as $plugin) {
+    foreach ($this->getPlugins() as $plugin) {
       $plugin->submitOptionsForm($form, $form_state);
     }
   }
