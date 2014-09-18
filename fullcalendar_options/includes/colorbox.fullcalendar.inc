@@ -3,7 +3,9 @@
 /**
  * @file
  * Provides extra FullCalendar configuration options for Colorbox.
- */use Drupal\Core\Form\FormStateInterface;
+ */
+
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_fullcalendar_options_info().
