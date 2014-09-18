@@ -7,11 +7,15 @@ fullcalendar.settings:
     _permission: 'administer site configuration'
 
 fullcalendar.update:
-  path: '/fullcalendar/ajax/update/drop/{entity_type}/{entity_id}/{field}/{index}'
+  path: '/fullcalendar/ajax/update/drop/{entity_type}/{entity}/{field}/{index}'
   defaults:
     _controller: '\Drupal\fullcalendar\Ajax\Update::drop'
   requirements:
     _access_fullcalendar_update: 'TRUE'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
 
 fullcalendar.results:
   path: '/fullcalendar/ajax/results/{view}/{display_id}'

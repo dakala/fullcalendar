@@ -7,45 +7,47 @@
 
 namespace Drupal\fullcalendar\Ajax;
 
+use Drupal\Component\Utility\String;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @todo.
  */
-class Update {
-
-  protected $entity;
-  protected $langcode;
-  protected $delta;
-  protected $format = DATETIME_DATETIME_STORAGE_FORMAT;
+class Update extends ControllerBase {
 
   /**
    * @todo.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param string $field
+   * @param int $index
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
-  protected function prepare($entity_type, $entity_id, $field, Request $request) {
-    $this->entity = entity_load($entity_type, $entity_id);
-    $this->langcode = field_language($this->entity, $field);
-
-    $day_delta = check_plain($request->request->get('day_delta'));
-    $minute_delta = check_plain($request->request->get('minute_delta'));
-    $this->delta = " $day_delta days $minute_delta minutes";
-  }
-
-  /**
-   * @todo.
-   */
-  public function drop($entity_type, $entity_id, $field, $index, Request $request) {
+  public function drop(EntityInterface $entity, $field, $index, Request $request) {
     // @todo Remove once http://drupal.org/node/1915752 is resolved.
     $index--;
 
-    $this->prepare($entity_type, $entity_id, $field, $request);
-    $item = &$this->entity->{$field}[$this->langcode][$index];
-    $item['value'] = date($this->format, strtotime($item['value'] . $this->delta));
+    if ($request->request->has('day_delta') && $request->request->has('minute_delta')) {
+      $day_delta = String::checkPlain($request->request->get('day_delta'));
+      $minute_delta = String::checkPlain($request->request->get('minute_delta'));
+      $delta = " $day_delta days $minute_delta minutes";
 
-    // Save the new start/end values.
-    $this->entity->save();
-    $message = t('The new event time has been saved.') .  ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']';
+      $field_item = $entity->{$field}->get($index);
+      $value = $field_item->value;
+      $field_item->set('value', date(DATETIME_DATETIME_STORAGE_FORMAT, strtotime($value . $delta)));
+
+      // Save the new start/end values.
+      $entity->save();
+      $message = t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']';
+    }
+    else {
+      $message = $this->t('The event has not been updated.');
+    }
     return new JsonResponse(array(
       'msg' => $message,
       'dom_id' => $request->request->get('dom_id'),
