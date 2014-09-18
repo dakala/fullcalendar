@@ -43,7 +43,7 @@ class Update extends ControllerBase {
 
       // Save the new start/end values.
       $entity->save();
-      $message = t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']';
+      $message = $this->t('The new event time has been saved.') . ' [' . l($this->t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']';
     }
     else {
       $message = $this->t('The event has not been updated.');

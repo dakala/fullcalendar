@@ -226,33 +226,33 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $form['display'] = array(
       '#type' => 'details',
-      '#title' => t('Display settings'),
+      '#title' => $this->t('Display settings'),
       '#collapsible' => TRUE,
     );
     $form['header'] = array(
       '#type' => 'details',
-      '#title' => t('Header settings'),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank'))),
+      '#title' => $this->t('Header settings'),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
     $form['times'] = array(
       '#type' => 'details',
-      '#title' => t('Time/date settings'),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank'))),
+      '#title' => $this->t('Time/date settings'),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
     $form['style'] = array(
       '#type' => 'details',
-      '#title' => t('Style settings'),
+      '#title' => $this->t('Style settings'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
 
     $form['defaultView'] = array(
       '#type' => 'select',
-      '#title' => t('Initial display'),
+      '#title' => $this->t('Initial display'),
       '#options' => array(
         'month' => 'Month',
         'agendaWeek' => 'Week (Agenda)',
@@ -260,7 +260,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
         'agendaDay' => 'Day (Agenda)',
         'basicDay' => 'Day (Basic)',
       ),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/views/Available_Views', array('attributes' => array('target' => '_blank'))),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/views/Available_Views', array('attributes' => array('target' => '_blank'))),
       '#default_value' => $this->style->options['defaultView'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
@@ -268,7 +268,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['firstDay'] = array(
       '#type' => 'select',
-      '#title' => t('Week starts on'),
+      '#title' => $this->t('Week starts on'),
       '#options' => DateHelper::weekDays(TRUE),
       '#default_value' => $this->style->options['firstDay'],
       '#prefix' => '<div class="views-left-30">',
@@ -277,21 +277,21 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['weekMode'] = array(
       '#type' => 'select',
-      '#title' => t('Week mode'),
+      '#title' => $this->t('Week mode'),
       '#options' => array(
         'fixed' => 'Fixed',
         'liquid' => 'Liquid',
         'variable' => 'Variable',
       ),
       '#default_value' => $this->style->options['weekMode'],
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank'))),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank'))),
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
       '#fieldset' => 'display',
     );
     $form['left'] = array(
       '#type' => 'textfield',
-      '#title' => t('Left'),
+      '#title' => $this->t('Left'),
       '#default_value' => $this->style->options['left'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
@@ -300,7 +300,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['center'] = array(
       '#type' => 'textfield',
-      '#title' => t('Center'),
+      '#title' => $this->t('Center'),
       '#default_value' => $this->style->options['center'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
@@ -309,7 +309,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['right'] = array(
       '#type' => 'textfield',
-      '#title' => t('Right'),
+      '#title' => $this->t('Right'),
       '#default_value' => $this->style->options['right'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
@@ -318,15 +318,15 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['times']['default_date'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom initial date'),
-      '#description' => t('If unchecked, the calendar will load the current date.'),
+      '#title' => $this->t('Use a custom initial date'),
+      '#description' => $this->t('If unchecked, the calendar will load the current date.'),
       '#default_value' => $this->style->options['times']['default_date'],
       '#data_type' => 'bool',
       '#fieldset' => 'times',
     );
     $form['times']['date'] = array(
       '#type' => 'date',
-      '#title' => t('Custom initial date'),
+      '#title' => $this->t('Custom initial date'),
       '#title_display' => 'invisible',
       '#default_value' => $this->style->options['times']['date'],
       '#states' => array(
@@ -338,7 +338,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['timeformat'] = array(
       '#type' => 'textfield',
-      '#title' => t('Time format'),
+      '#title' => $this->t('Time format'),
       '#default_value' => $this->style->options['timeformat'],
       '#size' => '30',
       '#fieldset' => 'times',
@@ -350,15 +350,15 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['advanced'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable advanced time and date format settings'),
+      '#title' => $this->t('Enable advanced time and date format settings'),
       '#default_value' => $this->style->options['advanced'],
       '#data_type' => 'bool',
       '#fieldset' => 'times',
     );
     $form['axisFormat'] = array(
       '#type' => 'textfield',
-      '#title' => t('Axis format'),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/agenda/axisFormat', array('attributes' => array('target' => '_blank'))),
+      '#title' => $this->t('Axis format'),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/agenda/axisFormat', array('attributes' => array('target' => '_blank'))),
       '#default_value' => $this->style->options['axisFormat'],
       '#size' => '30',
       '#fieldset' => 'times',
@@ -375,7 +375,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
         $key = $type . 'format' . $range;
         $form[$key] = array(
           '#type' => 'textfield',
-          '#title' => t($range),
+          '#title' => $this->t($range),
           '#default_value' => $this->style->options[$key],
           '#prefix' => '<div class="views-left-30">',
           '#suffix' => '</div>',
@@ -387,8 +387,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
 
     $form['time'] = array(
       '#type' => 'details',
-      '#title' => t('Time format'),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/text/timeFormat', array('attributes' => array('target' => '_blank'))),
+      '#title' => $this->t('Time format'),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/text/timeFormat', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#fieldset' => 'times',
@@ -400,8 +400,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['title'] = array(
       '#type' => 'details',
-      '#title' => t('Title format'),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/text/titleFormat', array('attributes' => array('target' => '_blank'))),
+      '#title' => $this->t('Title format'),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/text/titleFormat', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#fieldset' => 'times',
@@ -413,8 +413,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['column'] = array(
       '#type' => 'details',
-      '#title' => t('Column format'),
-      '#description' => l(t('More info'), 'http://arshaw.com/fullcalendar/docs/text/columnFormat', array('attributes' => array('target' => '_blank'))),
+      '#title' => $this->t('Column format'),
+      '#description' => l($this->t('More info'), 'http://arshaw.com/fullcalendar/docs/text/columnFormat', array('attributes' => array('target' => '_blank'))),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#fieldset' => 'times',
@@ -426,21 +426,21 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['theme'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use jQuery UI Theme'),
+      '#title' => $this->t('Use jQuery UI Theme'),
       '#default_value' => $this->style->options['theme'],
       '#data_type' => 'bool',
       '#fieldset' => 'style',
     );
     $form['sameWindow'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Open events in same window'),
+      '#title' => $this->t('Open events in same window'),
       '#default_value' => $this->style->options['sameWindow'],
       '#data_type' => 'bool',
       '#fieldset' => 'style',
     );
     $form['contentHeight'] = array(
       '#type' => 'textfield',
-      '#title' => t('Calendar height'),
+      '#title' => $this->t('Calendar height'),
       '#size' => 4,
       '#default_value' => $this->style->options['contentHeight'],
       '#field_suffix' => 'px',
@@ -450,7 +450,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     if ($this->moduleHandler->getImplementations('fullcalendar_droppable')) {
       $form['droppable'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Allow external events to be added via drag and drop'),
+        '#title' => $this->t('Allow external events to be added via drag and drop'),
         '#default_value' => $this->style->options['droppable'],
         '#data_type' => 'bool',
         '#fieldset' => 'style',
@@ -458,11 +458,11 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     }
     $form['editable'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Prevent editing events via drag-and-drop'),
+      '#title' => $this->t('Prevent editing events via drag-and-drop'),
       '#default_value' => $this->style->options['editable'],
       '#data_type' => 'bool',
       '#fieldset' => 'style',
-      '#description' => t('Modules can set custom access rules, but this will override those.'),
+      '#description' => $this->t('Modules can set custom access rules, but this will override those.'),
     );
 
     // Get the regular fields.
@@ -472,24 +472,24 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
 
     $form['fields'] = array(
       '#type' => 'details',
-      '#title' => t('Customize fields'),
-      '#description' => t('Add fields to the view in order to customize fields below.'),
+      '#title' => $this->t('Customize fields'),
+      '#description' => $this->t('Add fields to the view in order to customize fields below.'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
     $form['fields']['title'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom title'),
+      '#title' => $this->t('Use a custom title'),
       '#default_value' => $this->style->options['fields']['title'],
       '#data_type' => 'bool',
       '#fieldset' => 'fields',
     );
     $form['fields']['title_field'] = array(
       '#type' => 'select',
-      '#title' => t('Title field'),
+      '#title' => $this->t('Title field'),
       '#options' => $field_options,
       '#default_value' => $this->style->options['fields']['title_field'],
-      '#description' => t('Choose the field with the custom title.'),
+      '#description' => $this->t('Choose the field with the custom title.'),
       '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
       '#states' => array(
         'visible' => array(
@@ -500,17 +500,17 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['fields']['url'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom redirect URL'),
+      '#title' => $this->t('Use a custom redirect URL'),
       '#default_value' => $this->style->options['fields']['url'],
       '#data_type' => 'bool',
       '#fieldset' => 'fields',
     );
     $form['fields']['url_field'] = array(
       '#type' => 'select',
-      '#title' => t('URL field'),
+      '#title' => $this->t('URL field'),
       '#options' => $field_options,
       '#default_value' => $this->style->options['fields']['url_field'],
-      '#description' => t('Choose the field with the custom link.'),
+      '#description' => $this->t('Choose the field with the custom link.'),
       '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
       '#states' => array(
         'visible' => array(
@@ -521,17 +521,17 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
     $form['fields']['date'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use a custom date field'),
+      '#title' => $this->t('Use a custom date field'),
       '#default_value' => $this->style->options['fields']['date'],
       '#data_type' => 'bool',
       '#fieldset' => 'fields',
     );
     $form['fields']['date_field'] = array(
       '#type' => 'select',
-      '#title' => t('Date fields'),
+      '#title' => $this->t('Date fields'),
       '#options' => $date_fields,
       '#default_value' => $this->style->options['fields']['date_field'],
-      '#description' => t('Select one or more date fields.'),
+      '#description' => $this->t('Select one or more date fields.'),
       '#multiple' => TRUE,
       '#size' => count($date_fields),
       '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
@@ -545,7 +545,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
 
     // Disable form elements when not needed.
     if (empty($field_options)) {
-      $form['fields']['#description'] = t('All the options are hidden, you need to add fields first.');
+      $form['fields']['#description'] = $this->t('All the options are hidden, you need to add fields first.');
       $form['fields']['title']['#type'] = 'hidden';
       $form['fields']['url']['#type'] = 'hidden';
       $form['fields']['date']['#type'] = 'hidden';
@@ -583,12 +583,12 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
 
     $options = array(
       'buttonText' => array(
-        'day' => t('Day'),
-        'week' => t('Week'),
-        'month' => t('Month'),
-        'today' => t('Today'),
+        'day' => $this->t('Day'),
+        'week' => $this->t('Week'),
+        'month' => $this->t('Month'),
+        'today' => $this->t('Today'),
       ),
-      'allDayText' => t('All day'),
+      'allDayText' => $this->t('All day'),
       'monthNames' => array_values(DateHelper::monthNames(TRUE)),
       'monthNamesShort' => array_values(DateHelper::monthNamesAbbr(TRUE)),
       'dayNames' => DateHelper::weekDays(TRUE),

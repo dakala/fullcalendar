@@ -51,7 +51,7 @@ class FullcalendarOptions extends FullcalendarBase {
     if (!empty($options)) {
       $form['fullcalendar_options'] = array(
         '#type' => 'details',
-        '#title' => t('Extra options'),
+        '#title' => $this->t('Extra options'),
         '#collapsed' => TRUE,
       );
       // Add the default value to each option.
@@ -67,13 +67,13 @@ class FullcalendarOptions extends FullcalendarBase {
   /**
    * @todo.
    */
-  public static function optionsList() {
+  public function optionsList() {
     $form = array();
 
     $form['firstHour'] = array(
       '#type' => 'textfield',
-      '#title' => t('First hour'),
-      '#description' => t('Determines the first hour that will be visible in the scroll pane.'),
+      '#title' => $this->t('First hour'),
+      '#description' => $this->t('Determines the first hour that will be visible in the scroll pane.'),
       '#size' => 2,
       '#maxlength' => 2,
       '#default_value' => 6,
@@ -81,8 +81,8 @@ class FullcalendarOptions extends FullcalendarBase {
     );
     $form['minTime'] = array(
       '#type' => 'textfield',
-      '#title' => t('Minimum time'),
-      '#description' => t('Determines the first hour/time that will be displayed, even when the scrollbars have been scrolled all the way up.'),
+      '#title' => $this->t('Minimum time'),
+      '#description' => $this->t('Determines the first hour/time that will be displayed, even when the scrollbars have been scrolled all the way up.'),
       '#size' => 2,
       '#maxlength' => 2,
       '#default_value' => 0,
@@ -90,8 +90,8 @@ class FullcalendarOptions extends FullcalendarBase {
     );
     $form['maxTime'] = array(
       '#type' => 'textfield',
-      '#title' => t('Maximum time'),
-      '#description' => t('Determines the last hour/time (exclusively) that will be displayed, even when the scrollbars have been scrolled all the way down.'),
+      '#title' => $this->t('Maximum time'),
+      '#description' => $this->t('Determines the last hour/time (exclusively) that will be displayed, even when the scrollbars have been scrolled all the way down.'),
       '#size' => 2,
       '#maxlength' => 2,
       '#default_value' => 24,
@@ -99,8 +99,8 @@ class FullcalendarOptions extends FullcalendarBase {
     );
     $form['slotMinutes'] = array(
       '#type' => 'textfield',
-      '#title' => t('Slot minutes'),
-      '#description' => t('The frequency for displaying time slots, in minutes.'),
+      '#title' => $this->t('Slot minutes'),
+      '#description' => $this->t('The frequency for displaying time slots, in minutes.'),
       '#size' => 2,
       '#maxlength' => 2,
       '#default_value' => 30,
@@ -108,8 +108,8 @@ class FullcalendarOptions extends FullcalendarBase {
     );
     $form['defaultEventMinutes'] = array(
       '#type' => 'textfield',
-      '#title' => t('Default event minutes'),
-      '#description' => t('Determines the length (in minutes) an event appears to be when it has an unspecified end date.'),
+      '#title' => $this->t('Default event minutes'),
+      '#description' => $this->t('Determines the length (in minutes) an event appears to be when it has an unspecified end date.'),
       '#size' => 4,
       '#maxlength' => 4,
       '#default_value' => 120,
@@ -117,43 +117,43 @@ class FullcalendarOptions extends FullcalendarBase {
     );
     $form['allDaySlot'] = array(
       '#type' => 'checkbox',
-      '#title' => t('All day slot'),
-      '#description' => t('Determines if the "all-day" slot is displayed at the top of the calendar.'),
+      '#title' => $this->t('All day slot'),
+      '#description' => $this->t('Determines if the "all-day" slot is displayed at the top of the calendar.'),
       '#default_value' => TRUE,
       '#data_type' => 'bool',
     );
     $form['weekends'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Weekends'),
-      '#description' => t('Whether to include Saturday/Sunday columns in any of the calendar views.'),
+      '#title' => $this->t('Weekends'),
+      '#description' => $this->t('Whether to include Saturday/Sunday columns in any of the calendar views.'),
       '#default_value' => TRUE,
       '#data_type' => 'bool',
     );
     $form['lazyFetching'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Lazy fetching'),
-      '#description' => t('Determines when event fetching should occur.'),
+      '#title' => $this->t('Lazy fetching'),
+      '#description' => $this->t('Determines when event fetching should occur.'),
       '#default_value' => TRUE,
       '#data_type' => 'bool',
     );
     $form['disableDragging'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Disable dragging'),
-      '#description' => t('Disables all event dragging, even when events are editable.'),
+      '#title' => $this->t('Disable dragging'),
+      '#description' => $this->t('Disables all event dragging, even when events are editable.'),
       '#default_value' => FALSE,
       '#data_type' => 'bool',
     );
     $form['disableResizing'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Disable resizing'),
-      '#description' => t('Disables all event resizing, even when events are editable.'),
+      '#title' => $this->t('Disable resizing'),
+      '#description' => $this->t('Disables all event resizing, even when events are editable.'),
       '#default_value' => FALSE,
       '#data_type' => 'bool',
     );
     $form['dragRevertDuration'] = array(
       '#type' => 'textfield',
-      '#title' => t('Drag revert duration'),
-      '#description' => t('Time (in ms) it takes for an event to revert to its original position after an unsuccessful drag.'),
+      '#title' => $this->t('Drag revert duration'),
+      '#description' => $this->t('Time (in ms) it takes for an event to revert to its original position after an unsuccessful drag.'),
       '#size' => 6,
       '#maxlength' => 6,
       '#default_value' => 500,
@@ -161,8 +161,8 @@ class FullcalendarOptions extends FullcalendarBase {
     );
     $form['dayClick'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Day click'),
-      '#description' => t('Switch the display when a day is clicked'),
+      '#title' => $this->t('Day click'),
+      '#description' => $this->t('Switch the display when a day is clicked'),
       '#default_value' => FALSE,
       '#data_type' => 'bool',
     );
@@ -173,7 +173,7 @@ class FullcalendarOptions extends FullcalendarBase {
    * @todo.
    */
   protected function optionsListParsed() {
-    $form = static::optionsList();
+    $form = $this->optionsList();
     // By default, restrict the form to options allowed by the admin settings.
     $form = array_intersect_key($form, array_filter(config('fullcalendar_options.settings')->get()));
 
@@ -181,15 +181,15 @@ class FullcalendarOptions extends FullcalendarBase {
       // Add in dependency form elements.
       $form['dayClickView'] = array(
         '#type' => 'select',
-        '#title' => t('Display'),
-        '#description' => t('The display to switch to when a day is clicked.'),
+        '#title' => $this->t('Display'),
+        '#description' => $this->t('The display to switch to when a day is clicked.'),
         '#default_value' => 'agendaWeek',
         '#options' => array(
-          'month' => t('Month'),
-          'agendaWeek' => t('Week (Agenda)'),
-          'basicWeek' => t('Week (Basic)'),
-          'agendaDay' => t('Day (Agenda)'),
-          'basicDay' => t('Day (Basic)'),
+          'month' => $this->t('Month'),
+          'agendaWeek' => $this->t('Week (Agenda)'),
+          'basicWeek' => $this->t('Week (Basic)'),
+          'agendaDay' => $this->t('Day (Agenda)'),
+          'basicDay' => $this->t('Day (Basic)'),
         ),
         '#states' => array(
           'visible' => array(

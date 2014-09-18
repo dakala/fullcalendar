@@ -34,8 +34,8 @@ class SettingsForm extends ConfigFormBase {
   public function __construct(ConfigFactoryInterface $config_factory, PluginManagerInterface $manager) {
     parent::__construct($config_factory);
 
-    $definition = $manager->getDefinition('fullcalendar_options');
-    $this->options = call_user_func(array($definition['class'], 'optionsList'));
+    $instance = $manager->createInstance('fullcalendar_options');
+    $this->options = $instance->optionsList();
   }
 
   /**

@@ -205,7 +205,7 @@ class FullCalendar extends StylePluginBase {
    */
   public function validate() {
     if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
-      drupal_set_message(t('Display "@display" requires at least one date field.', array('@display' => $this->displayHandler->display['display_title'])), 'error');
+      drupal_set_message($this->t('Display "@display" requires at least one date field.', array('@display' => $this->displayHandler->display['display_title'])), 'error');
     }
     return parent::validate();
   }

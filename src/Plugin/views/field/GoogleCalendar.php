@@ -50,24 +50,24 @@ class GoogleCalendar extends FieldPluginBase {
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $form['label'] = array(
       '#type' => 'textfield',
-      '#title' => t('Label'),
+      '#title' => $this->t('Label'),
       '#default_value' => isset($this->options['label']) ? $this->options['label'] : '',
-      '#description' => t('The label for this field that will be displayed to end users if the style requires it.'),
+      '#description' => $this->t('The label for this field that will be displayed to end users if the style requires it.'),
     );
     $form['gcal'] = array(
       '#type' => 'textfield',
-      '#title' => t('Feed URL'),
+      '#title' => $this->t('Feed URL'),
       '#maxlength' => 1024,
       '#default_value' => $this->options['gcal'],
     );
     $form['class'] = array(
       '#type' => 'textfield',
-      '#title' => t('CSS class'),
+      '#title' => $this->t('CSS class'),
       '#default_value' => $this->options['class'],
     );
     $form['timezone'] = array(
       '#type' => 'select',
-      '#title' => t('Time zone'),
+      '#title' => $this->t('Time zone'),
       '#default_value' => $this->options['timezone'],
       '#options' => system_time_zones(),
       '#attributes' => array('class' => array('timezone-detect')),
