@@ -21,10 +21,10 @@ class UpdateAccessCheck implements AccessInterface {
    * {@inheritdoc}
    */
   public function access(EntityInterface $entity, AccountInterface $account) {
-    return AccessResult::allowedIf($entity && $this->checkAccess($entity, $account))->cachePerRole();
+    return AccessResult::allowedIf($entity && $this->check($entity, $account))->cachePerRole();
   }
 
-  public function checkAccess(EntityInterface $entity, AccountInterface $account) {
+  public function check(EntityInterface $entity, AccountInterface $account) {
     return $account->hasPermission('administer content')
         || $account->hasPermission('update any fullcalendar event')
         || $account->hasPermission('edit any ' . $entity->bundle() . ' content')
