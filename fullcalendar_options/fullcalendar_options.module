@@ -5,18 +5,18 @@
  * Processes various FullCalendar configuration extenders.
  */
 
-/**
- * Implements hook_menu().
- */
-function fullcalendar_options_menu() {
-  $items = array();
-
-  $items['admin/config/user-interface/fullcalendar/options'] = array(
-    'title' => 'Options',
-    'description' => 'Enable or disable extra FullCalendar options.',
-    'route_name' => 'fullcalendar_options_settings',
-    'type' => MENU_LOCAL_TASK,
-  );
-
-  return $items;
-}
+///**
+// * Implements hook_menu().
+// */
+//function fullcalendar_options_menu() {
+//  $items = array();
+//
+//  $items['admin/config/user-interface/fullcalendar/options'] = array(
+//    'title' => 'Options',
+//    'description' => 'Enable or disable extra FullCalendar options.',
+//    'route_name' => 'fullcalendar_options_settings',
+//    'type' => MENU_LOCAL_TASK,
+//  );
+//
+//  return $items;
+//}

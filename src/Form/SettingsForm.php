@@ -25,6 +25,13 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['fullcalendar.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar.settings');
 
@@ -52,8 +59,8 @@ class SettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('fullcalendar.settings')
-      ->set('path', rtrim($form_state['values']['path'], '/'))
-      ->set('compression', $form_state['values']['compression'])
+      ->set('path', rtrim($form_state->getValue('path'), '/'))
+      ->set('compression', $form_state->getValue('compression'))
       ->save();
 
     parent::submitForm($form, $form_state);

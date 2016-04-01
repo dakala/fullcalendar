@@ -52,7 +52,7 @@ class FullcalendarOptions extends FullcalendarBase {
       $form['fullcalendar_options'] = array(
         '#type' => 'details',
         '#title' => $this->t('Extra options'),
-        '#collapsed' => TRUE,
+        '#open' => TRUE,
       );
       // Add the default value to each option.
       foreach ($options as $key => $info) {
@@ -175,7 +175,7 @@ class FullcalendarOptions extends FullcalendarBase {
   protected function optionsListParsed() {
     $form = $this->optionsList();
     // By default, restrict the form to options allowed by the admin settings.
-    $form = array_intersect_key($form, array_filter(config('fullcalendar_options.settings')->get()));
+    $form = array_intersect_key($form, array_filter(\Drupal::config('fullcalendar_options.settings')->get()));
 
     if (isset($form['dayClick'])) {
       // Add in dependency form elements.

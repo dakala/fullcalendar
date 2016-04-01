@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * The minimum supported version of the FullCalendar plugin.
@@ -109,10 +110,15 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
     return TRUE;
   }
 
-  if ($field instanceof \Drupal\field\Plugin\views\field\Field) {
-    $definition = $field->getFieldDefinition();
-    return $definition->getType() == 'datetime';
+  // @todo: Any other way of accessing field storage config from a view field?
+  // @todo: This won't work with 'created' or 'changed' fields.
+  $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
+  $field_definition = $field_storage_definitions[$field->definition['field_name']];
+
+  if ($field_definition instanceof FieldStorageConfig) {
+    return $field_definition->getType() == 'datetime';
   }
+
   return FALSE;
 }
 

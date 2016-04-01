@@ -58,12 +58,20 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['fullcalendar_options.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar_options.settings');
     $form['fullcalendar_options'] = array(
       '#type' => 'details',
       '#title' => $this->t('Options'),
       '#description' => $this->t('Each setting can be exposed for all views.'),
+      '#open' => TRUE,
     );
     foreach ($this->options as $key => $info) {
       $form['fullcalendar_options'][$key] = array(
@@ -81,7 +89,7 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar_options.settings');
     foreach ($this->options as $key => $info) {
-      $config->set($key, $form_state['values'][$key]);
+      $config->set($key, $form_state->getValue($key));
     }
     $config->save();
 

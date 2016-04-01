@@ -14,7 +14,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\views\Annotation\ViewsStyle;
 use Drupal\Core\Annotation\Translation;
-use Drupal\fullcalendar\Plugin\FullcalendarPluginBag;
+use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -51,9 +51,10 @@ class FullCalendar extends StylePluginBase {
   /**
    * Stores the FullCalendar plugins used by this style plugin.
    *
-   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginBag
+   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection
    */
   protected $pluginBag;
+
 
   /**
    * {@inheritdoc}
@@ -65,7 +66,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * @todo.
    *
-   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginBag|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
+   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
    */
   public function getPlugins() {
     return $this->pluginBag;
@@ -83,8 +84,14 @@ class FullCalendar extends StylePluginBase {
   public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->pluginBag = new FullcalendarPluginBag($fullcalendar_manager, $this);
+    $this->pluginBag = new FullcalendarPluginCollection($fullcalendar_manager, $this);
     $this->moduleHandler = $module_handler;
+
+
+//    foreach ($this->getPlugins() as $plugin) {
+//      kint($plugin);
+//    }
+
   }
 
   /**
@@ -121,18 +128,18 @@ class FullCalendar extends StylePluginBase {
     }
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function validateOptionsForm(&$form, FormStateInterface $form_state) {
-    parent::validateOptionsForm($form, $form_state);
-
-    // Cast all submitted values to their proper type.
-    // @todo Remove once https://drupal.org/node/1653026 is in.
-    if (!empty($form_state['values']['style_options']) && is_array($form_state['values']['style_options'])) {
-      $this->castNestedValues($form_state['values']['style_options'], $form);
-    }
-  }
+//  /**
+//   * {@inheritdoc}
+//   */
+//  public function validateOptionsForm(&$form, FormStateInterface $form_state) {
+//    parent::validateOptionsForm($form, $form_state);
+//
+//    // Cast all submitted values to their proper type.
+//    // @todo Remove once https://drupal.org/node/1653026 is in.
+//    if (!empty($form_state['values']['style_options']) && is_array($form_state['values']['style_options'])) {
+//      $this->castNestedValues($form_state['values']['style_options'], $form);
+//    }
+//  }
 
   /**
    * Casts form values to a given type, if defined.
@@ -147,33 +154,33 @@ class FullCalendar extends StylePluginBase {
    *   (optional) An array of parent keys when recursing through the nested
    *   array. Defaults to an empty array.
    */
-  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = array()) {
-    foreach ($values as $key => &$value) {
-      // We are leaving a recursive loop, remove the last parent key.
-      if (empty($current_key)) {
-        array_pop($parents);
-      }
-
-      // In case we recurse into an array, or need to specify the key for
-      // drupal_array_get_nested_value(), add the current key to $parents.
-      $parents[] = $key;
-
-      if (is_array($value)) {
-        // Enter another recursive loop.
-        $this->castNestedValues($value, $form, $key, $parents);
-      }
-      else {
-        // Get the form definition for this key.
-        $form_value = NestedArray::getValue($form, $parents);
-        // Check to see if #data_type is specified, if so, cast the value.
-        if (isset($form_value['#data_type'])) {
-          settype($value, $form_value['#data_type']);
-        }
-        // Remove the current key from $parents to move on to the next key.
-        array_pop($parents);
-      }
-    }
-  }
+//  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = array()) {
+//    foreach ($values as $key => &$value) {
+//      // We are leaving a recursive loop, remove the last parent key.
+//      if (empty($current_key)) {
+//        array_pop($parents);
+//      }
+//
+//      // In case we recurse into an array, or need to specify the key for
+//      // drupal_array_get_nested_value(), add the current key to $parents.
+//      $parents[] = $key;
+//
+//      if (is_array($value)) {
+//        // Enter another recursive loop.
+//        $this->castNestedValues($value, $form, $key, $parents);
+//      }
+//      else {
+//        // Get the form definition for this key.
+//        $form_value = NestedArray::getValue($form, $parents);
+//        // Check to see if #data_type is specified, if so, cast the value.
+//        if (isset($form_value['#data_type'])) {
+//          settype($value, $form_value['#data_type']);
+//        }
+//        // Remove the current key from $parents to move on to the next key.
+//        array_pop($parents);
+//      }
+//    }
+//  }
 
   /**
    * {@inheritdoc}
@@ -234,21 +241,18 @@ class FullCalendar extends StylePluginBase {
       $definition = $plugin->getPluginDefinition();
       foreach (array('css', 'js') as $type) {
         if ($definition[$type]) {
-          $attached[$type][] = drupal_get_path('module', $definition['module']) . "/$type/$plugin_id.fullcalendar.$type";
+          $attached['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
         }
       }
     }
     if ($this->displayHandler->getOption('use_ajax')) {
-      $attached['js'][] = drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.ajax.js';
+      $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
-    $attached['js'][] = array(
-      'type' => 'setting',
-      'data' => array(
-        'fullcalendar' => array(
-          '.view-dom-id-' . $this->view->dom_id => $this->prepareSettings(),
-        ),
-      ),
-    );
+
+    $attached['drupalSettings'] = [
+      'fullcalendar' => ['.view-dom-id-' . $this->view->dom_id => $this->prepareSettings()],
+    ];
+
     return $attached;
   }
 
@@ -292,8 +296,14 @@ class FullCalendar extends StylePluginBase {
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
-          /** @var \Drupal\field\Plugin\views\field\Field $field */
-          $field_definition = $field->getFieldDefinition();
+
+//          /** @var \Drupal\views\Plugin\views\field\Field $field */
+//          $field->getFieldDefinition() is protected
+//          $field_definition = $field->getFieldDefinition();
+
+          $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
+          $field_definition = $field_storage_definitions[$field->definition['field_name']];
+
           $date_fields[$field_name] = array(
             'value' => $field->getItems($row),
             'field_alias' => $field->field_alias,

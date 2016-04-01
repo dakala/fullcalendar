@@ -32,3 +32,13 @@ drupal.fullcalendar:
     - core/jquery
     - core/jquery.once
     - core/jquery.ui.effects.highlight
+drupal.fullcalendar.js:
+  js:
+    js/fullcalendar.fullcalendar.js: { }
+  dependencies:
+    - fullcalendar/drupal.fullcalendar
+drupal.fullcalendar.ajax:
+  js:
+    js/fullcalendar.ajax.js: { }
+  dependencies:
+    - fullcalendar/drupal.fullcalendar

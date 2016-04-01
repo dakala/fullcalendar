@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\fullcalendar\Plugin\FullcalendarPluginBag.
+ * Contains \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection.
  */
 
 namespace Drupal\fullcalendar\Plugin;
 
-use Drupal\Component\Plugin\PluginBag;
+use Drupal\Core\Plugin\DefaultLazyPluginCollection;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 
 /**
  * @todo.
  */
-class FullcalendarPluginBag extends PluginBag {
+class FullcalendarPluginCollection extends DefaultLazyPluginCollection {
 
   /**
    * The manager used to instantiate the plugins.
@@ -31,7 +31,7 @@ class FullcalendarPluginBag extends PluginBag {
   protected $style;
 
   /**
-   * Constructs a FullcalendarPluginBag object.
+   * Constructs a FullcalendarPluginCollection object.
    *
    * @param \Drupal\Component\Plugin\PluginManagerInterface $manager
    *   The manager to be used for instantiating plugins.
@@ -45,6 +45,8 @@ class FullcalendarPluginBag extends PluginBag {
     // Store all display IDs to access them easy and fast.
     $instance_ids = array_keys($this->manager->getDefinitions());
     $this->instanceIDs = array_combine($instance_ids, $instance_ids);
+
+    parent::__construct($manager, $this->instanceIDs);
   }
 
   /**

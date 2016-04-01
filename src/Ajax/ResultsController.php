@@ -9,7 +9,7 @@ namespace Drupal\fullcalendar\Ajax;
 
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\views\ViewStorageInterface;
+use Drupal\views\ViewEntityInterface;
 
 /**
  * @todo.
@@ -19,9 +19,9 @@ class ResultsController {
   /**
    * @todo.
    */
-  public function getResults(ViewStorageInterface $view, $display_id, Request $request) {
+  public function getResults(ViewEntityInterface $view, $display_id, Request $request) {
     // Get the view and check access.
-    $view = $view->get('executable');
+    $view = $view->getExecutable();
     if (!$view || !$view->access($display_id)) {
       return;
     }
