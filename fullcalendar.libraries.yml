@@ -1,17 +1,19 @@
 fullcalendar:
   remote: http://fullcalendar.io
-  version: 1.5.0
+  version: 2.7.3
   license:
     name: MIT
-    url: https://github.com/arshaw/fullcalendar/blob/v1.5.x/MIT-LICENSE.txt
+    url: https://github.com/fullcalendar/fullcalendar/blob/master/LICENSE.txt
     gpl-compatible: true
   js:
-    libraries/fullcalendar/fullcalendar.min.js: { minified: true }
-    libraries/fullcalendar/gcal.js: { }
+    /libraries/fullcalendar/lib/moment.min.js: {}
+    /libraries/fullcalendar/fullcalendar.min.js: {}
+#    /libraries/fullcalendar/fullcalendar.min.js: { minified: true }
+#    /libraries/fullcalendar/gcal.js: { }
   css:
     theme:
-      libraries/fullcalendar/fullcalendar.css: { media: screen }
-      libraries/fullcalendar/fullcalendar.print.css: { media: print }
+      /libraries/fullcalendar/fullcalendar.css: { media: screen }
+      /libraries/fullcalendar/fullcalendar.print.css: { media: print }
   dependencies:
     - core/jquery
     - core/jquery.ui.draggable
