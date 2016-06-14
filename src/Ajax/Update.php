@@ -7,7 +7,7 @@
 
 namespace Drupal\fullcalendar\Ajax;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,8 +33,8 @@ class Update extends ControllerBase {
     $index--;
 
     if ($request->request->has('day_delta') && $request->request->has('minute_delta')) {
-      $day_delta = String::checkPlain($request->request->get('day_delta'));
-      $minute_delta = String::checkPlain($request->request->get('minute_delta'));
+      $day_delta = SafeMarkup::checkPlain($request->request->get('day_delta'));
+      $minute_delta = SafeMarkup::checkPlain($request->request->get('minute_delta'));
       $delta = " $day_delta days $minute_delta minutes";
 
       $field_item = $entity->{$field}->get($index);
