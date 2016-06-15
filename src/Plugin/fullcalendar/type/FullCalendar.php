@@ -384,11 +384,14 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
           '#type' => 'textfield',
           '#title' => $this->t($range),
           '#default_value' => $this->style->options[$key],
-          '#prefix' => '<div class="views-left-30">',
-          '#suffix' => '</div>',
           '#size' => '30',
           '#fieldset' => $type,
         );
+
+        if ($range != 'Day') {
+          $form[$key]['#prefix'] = '<div class="views-left-30">';
+          $form[$key]['#suffix'] = '</div>';
+        }
       }
     }
 
