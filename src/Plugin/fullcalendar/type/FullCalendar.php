@@ -320,8 +320,6 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#type' => 'textfield',
       '#title' => $this->t('Right'),
       '#default_value' => $this->style->options['right'],
-      '#prefix' => '<div class="views-left-30">',
-      '#suffix' => '</div>',
       '#size' => '30',
       '#fieldset' => 'header',
     );
