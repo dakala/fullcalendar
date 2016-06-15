@@ -229,6 +229,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     $form['display'] = array(
       '#type' => 'details',
       '#title' => $this->t('Display settings'),
+      '#collapsible' => TRUE,
       '#open' => TRUE,
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
@@ -238,7 +239,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#title' => $this->t('Header settings'),
       '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank')))),
       '#collapsible' => TRUE,
-      '#open' => TRUE,
+      '#open' => FALSE,
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
     );
@@ -247,7 +248,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#title' => $this->t('Time/date settings'),
       '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank')))),
       '#collapsible' => TRUE,
-      '#open' => TRUE,
+      '#open' => FALSE,
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
     );
@@ -255,7 +256,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#type' => 'details',
       '#title' => $this->t('Style settings'),
       '#collapsible' => TRUE,
-      '#open' => TRUE,
+      '#open' => FALSE,
     );
 
     $form['display']['defaultView'] = array(
@@ -295,8 +296,6 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       ),
       '#default_value' => $this->style->options['weekMode'],
       '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank')))),
-      '#prefix' => '<div class="views-left-30">',
-      '#suffix' => '</div>',
       '#fieldset' => 'display',
     );
     $form['left'] = array(
@@ -492,7 +491,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#title' => $this->t('Customize fields'),
       '#description' => $this->t('Add fields to the view in order to customize fields below.'),
       '#collapsible' => TRUE,
-      '#open' => TRUE,
+      '#open' => FALSE,
     );
     $form['fields']['title'] = array(
       '#type' => 'checkbox',
