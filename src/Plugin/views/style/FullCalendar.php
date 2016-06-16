@@ -213,6 +213,7 @@ class FullCalendar extends StylePluginBase {
     if (empty($this->view->fullcalendar_ajax)) {
       $this->options['#attached'] = $this->prepareAttached();
     }
+
     return array(
       '#theme' => $this->themeFunctions(),
       '#view' => $this->view,
@@ -225,24 +226,24 @@ class FullCalendar extends StylePluginBase {
    * Load libraries.
    */
   protected function prepareAttached() {
-    $attached['library'][] = 'fullcalendar/drupal.fullcalendar';
+    $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar';
 
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
       foreach (array('css', 'js') as $type) {
         if ($definition[$type]) {
-          $attached['library'][] = 'fullcalendar/fullcalendar.' . $type;
+          $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
         }
       }
     }
 
     if ($this->displayHandler->getOption('use_ajax')) {
-      $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
+      $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
-    $attached['drupalSettings']['fullcalendar'] = ['.view-dom-id-' . $this->view->dom_id => $this->prepareSettings()];
+    $attached['attach']['drupalSettings']['fullcalendar'] = ['.view-dom-id-' . $this->view->dom_id => $this->prepareSettings()];
 
-    return $attached;
+    return $attached['attach'];
   }
 
   /**
@@ -368,5 +369,4 @@ class FullCalendar extends StylePluginBase {
     }
     return $events;
   }
-
 }
