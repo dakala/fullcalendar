@@ -7,9 +7,9 @@ fullcalendar:
     gpl-compatible: true
   js:
     /libraries/fullcalendar/lib/moment.min.js: {}
-    /libraries/fullcalendar/fullcalendar.min.js: {}
-#    /libraries/fullcalendar/fullcalendar.min.js: { minified: true }
-#    /libraries/fullcalendar/gcal.js: { }
+    /libraries/fullcalendar/fullcalendar.min.js: { minified: true }
+    /libraries/fullcalendar/gcal.js: {}
+    /libraries/fullcalendar/lib/jquery-ui.custom.min.js: { minified: true }
   css:
     theme:
       /libraries/fullcalendar/fullcalendar.css: { media: screen }
@@ -17,7 +17,7 @@ fullcalendar:
   dependencies:
     - core/jquery
     - core/jquery.ui.draggable
-    - core/jquery.ui.droppable
+#    - core/jquery.ui.droppable
 
 drupal.fullcalendar:
   version: VERSION
@@ -33,12 +33,14 @@ drupal.fullcalendar:
     - core/drupalSettings
     - core/jquery
     - core/jquery.once
-    - core/jquery.ui.effects.highlight
+#    - core/jquery.ui.effects.highlight
+
 drupal.fullcalendar.js:
   js:
     js/fullcalendar.fullcalendar.js: { }
   dependencies:
     - fullcalendar/drupal.fullcalendar
+
 drupal.fullcalendar.ajax:
   js:
     js/fullcalendar.ajax.js: { }
