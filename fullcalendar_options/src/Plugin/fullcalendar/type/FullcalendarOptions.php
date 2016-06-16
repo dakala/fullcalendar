@@ -3,7 +3,6 @@
 namespace Drupal\fullcalendar_options\Plugin\fullcalendar\type;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\fullcalendar\Annotation\FullcalendarOption;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 
 /**
