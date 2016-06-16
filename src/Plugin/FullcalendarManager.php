@@ -46,7 +46,9 @@ class FullcalendarManager extends DefaultPluginManager {
    */
   public function createInstance($plugin_id, array $configuration = array(), $style = NULL) {
     $plugin = parent::createInstance($plugin_id, $configuration);
-    $plugin->setStyle($style);
+    if($style) {
+      $plugin->setStyle($style);
+    }
     return $plugin;
   }
 
