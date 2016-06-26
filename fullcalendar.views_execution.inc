@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Views\ViewExecutable;
 
 /**
  * Implements hook_views_plugins_alter().
@@ -76,10 +77,11 @@ function fullcalendar_views_pre_view($view, $display_id, $args) {
     if (!empty($field->options['relationship'])) {
       $options['relationship'] = $field->options['relationship'];
     }
-    $option_id = $view->addItem($display_id, 'filter', 'field_data_' . $field->field, $field->field . '_value', $options);
+    /* @var \Drupal\Views\ViewExecutable $view */
+    $option_id = $view->addHandler($display_id, 'filter', 'field_data_' . $field->field, $field->field . '_value', $options);
     $settings['fullcalendar_fields'][$option_id] = Html::getClass($option_id);
     $settings['fullcalendar_fields_count']++;
-    $view->setItemOption($display_id, 'filter', $option_id, 'expose', array('identifier' => $option_id, 'operator' => $option_id . '_op'));
+    $view->setHandlerOption($display_id, 'filter', $option_id, 'expose', array('identifier' => $option_id, 'operator' => $option_id . '_op'));
 
   }
 
