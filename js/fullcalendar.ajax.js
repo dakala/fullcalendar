@@ -57,18 +57,18 @@
     $(this.$submit.element).trigger('fullcalendar_submit');
   };
 
-  Drupal.ajax.prototype.commands.fullcalendar_results_response = function (ajax, response, status) {
-    ajax.element_settings.fullcalendar.refetch = true;
-    ajax.element_settings.fullcalendar.$calendar
-      .find('.fullcalendar-content')
-        .html(response.data)
-      .end()
-      .find('.fullcalendar')
-        .fullCalendar('refetchEvents')
-        .find('.fc-button')
-          .removeClass(ajax.element_settings.fullcalendar.tm + '-state-disabled')
-        .end()
-      .end();
-  };
+  // Drupal.ajax.prototype.commands.fullcalendar_results_response = function (ajax, response, status) {
+  //   ajax.element_settings.fullcalendar.refetch = true;
+  //   ajax.element_settings.fullcalendar.$calendar
+  //     .find('.fullcalendar-content')
+  //       .html(response.data)
+  //     .end()
+  //     .find('.fullcalendar')
+  //       .fullCalendar('refetchEvents')
+  //       .find('.fc-button')
+  //         .removeClass(ajax.element_settings.fullcalendar.tm + '-state-disabled')
+  //       .end()
+  //     .end();
+  // };
 
 })(jQuery, Drupal, drupalSettings);
