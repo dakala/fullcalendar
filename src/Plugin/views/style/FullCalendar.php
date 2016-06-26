@@ -47,7 +47,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * Stores the FullCalendar plugins used by this style plugin.
    *
-   * @var \use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
+   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
    */
   protected $pluginBag;
 
@@ -61,7 +61,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * @todo.
    *
-   * @return \use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
+   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
    */
   public function getPlugins() {
     return $this->pluginBag;
@@ -100,6 +100,7 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   protected function defineOptions() {
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     $options = parent::defineOptions();
     foreach ($this->getPlugins() as $plugin) {
       $options += $plugin->defineOptions();
@@ -111,6 +112,7 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     parent::buildOptionsForm($form, $form_state);
     foreach ($this->getPlugins() as $plugin) {
       $plugin->buildOptionsForm($form, $form_state);
@@ -125,8 +127,8 @@ class FullCalendar extends StylePluginBase {
 
     // Cast all submitted values to their proper type.
     // @todo Remove once https://drupal.org/node/1653026 is in.
-    if (!empty($form_state['values']['style_options']) && is_array($form_state['values']['style_options'])) {
-      $this->castNestedValues($form_state['values']['style_options'], $form);
+    if ($form_state->getValue('style_options')) {
+      $this->castNestedValues($form_state->getValue('style_options'), $form);
     }
   }
 
@@ -175,6 +177,7 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     parent::submitOptionsForm($form, $form_state);
     foreach ($this->getPlugins() as $plugin) {
       $plugin->submitOptionsForm($form, $form_state);
@@ -226,6 +229,7 @@ class FullCalendar extends StylePluginBase {
    * Load libraries.
    */
   protected function prepareAttached() {
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar';
 
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
@@ -250,6 +254,7 @@ class FullCalendar extends StylePluginBase {
    * @todo.
    */
   protected function prepareSettings() {
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     $settings = array();
     $weights = array();
     $delta = 0;
@@ -277,6 +282,7 @@ class FullCalendar extends StylePluginBase {
    * @todo.
    */
   protected function prepareEvents() {
+    /* @var \Drupal\views\Plugin\views\field\Field $field */
     $events = array();
     foreach ($this->view->result as $delta => $row) {
       // Collect all fields for the customize options.
