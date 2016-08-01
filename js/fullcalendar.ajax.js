@@ -34,7 +34,7 @@
   };
 
   Drupal.fullcalendar.fullcalendar.prototype.submitInit = function (settings) {
-    var domId = this.dom_id.replace('.view-dom-id-', '');
+    var domId = this.dom_id.replace('.js-view-dom-id-', '');
     var ajaxView = drupalSettings.views.ajaxViews['views_dom_id:' + domId];
     this.tm = settings.theme ? 'ui' : 'fc';
     var $submit = this.$calendar.find('.views-exposed-form .views-submit-button');

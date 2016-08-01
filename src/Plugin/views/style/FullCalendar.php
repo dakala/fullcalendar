@@ -245,7 +245,7 @@ class FullCalendar extends StylePluginBase {
       $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
-    $attached['attach']['drupalSettings']['fullcalendar'] = ['.view-dom-id-' . $this->view->dom_id => $this->prepareSettings()];
+    $attached['attach']['drupalSettings']['fullcalendar'] = ['.js-view-dom-id-' . $this->view->dom_id => $this->prepareSettings()];
 
     return $attached['attach'];
   }
@@ -373,6 +373,7 @@ class FullCalendar extends StylePluginBase {
         );
       }
     }
+
     return $events;
   }
 }
