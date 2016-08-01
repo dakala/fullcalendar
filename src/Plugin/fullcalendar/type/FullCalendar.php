@@ -610,7 +610,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       'monthNamesShort' => array_values(DateHelper::monthNamesAbbr(TRUE)),
       'dayNames' => DateHelper::weekDays(TRUE),
       'dayNamesShort' => DateHelper::weekDaysAbbr(TRUE),
-      'isRTL' => (bool) $this->languageManager->getCurrentLanguage()->getDirection(),
+      'isRTL' => $this->languageManager->getCurrentLanguage()->getDirection() == 'rtl',
     );
     $advanced = !empty($settings['advanced']);
     foreach ($settings as $key => $value) {
