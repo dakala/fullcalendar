@@ -12,6 +12,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * @todo.
@@ -285,6 +286,11 @@ class FullCalendar extends StylePluginBase {
     /* @var \Drupal\views\Plugin\views\field\Field $field */
     $events = array();
     foreach ($this->view->result as $delta => $row) {
+
+      $display_id = sprintf("%s.%s.default", $row->_entity->getEntityType()->id(), $row->_entity->bundle());
+      $field_display = EntityViewDisplay::load($display_id);
+      $components = $field_display->getComponents();
+
       // Collect all fields for the customize options.
       $fields = array();
       // Collect only date fields.
@@ -292,6 +298,7 @@ class FullCalendar extends StylePluginBase {
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
+          $fc_setting = $components[$field_name]['third_party_settings']['fullcalendar']['fc_date_field_setting'];
           $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
           $field_definition = $field_storage_definitions[$field->definition['field_name']];
           $date_fields[$field_name] = array(
@@ -299,6 +306,7 @@ class FullCalendar extends StylePluginBase {
             'field_alias' => $field->field_alias,
             'field_name' => $field_definition->getName(),
             'field_info' => $field_definition,
+            'field_marker' => ($fc_setting) ? $fc_setting : '',
           );
         }
       }
@@ -321,49 +329,68 @@ class FullCalendar extends StylePluginBase {
       $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
 
       $event = array();
-      foreach ($date_fields as $field) {
+      // start/end
+
+      $all_day = FALSE;
+      $start = $end = '';
+      foreach ($date_fields as $field_name => $field) {
         // Filter fields without value.
         if (empty($field['value'])) {
           continue;
         }
+
         foreach ($field['value'] as $index => $item) {
-          $start = $item['raw']->value;
-          $end = $start;
-          $all_day = FALSE;
-
-          // Add a class if the event was in the past or is in the future, based
-          // on the end time. We can't do this in hook_fullcalendar_classes()
-          // because the date hasn't been processed yet.
-          if (($all_day && strtotime($start) < strtotime('today')) || (!$all_day && strtotime($end) < REQUEST_TIME)) {
-            $time_class = 'fc-event-past';
-          }
-          elseif (strtotime($start) > REQUEST_TIME) {
-            $time_class = 'fc-event-future';
-          }
-          else {
-            $time_class = 'fc-event-now';
+          if ($date_fields[$field_name]['field_marker'] == 'start') {
+            $start .= $item['raw']->value;
           }
 
-          $url = $entity->urlInfo();
-          $url->setOption('attributes', array(
-            'data-all-day' => $all_day,
-            'data-start' => $start,
-            'data-end' => $end,
-            'data-editable' => (int) TRUE,//$entity->editable,
-            'data-field' => $field['field_name'],
-            'data-index' => $index,
-            'data-eid' => $entity->id(),
-            'data-entity-type' => $entity->getEntityTypeId(),
-            'data-cn' => $class . ' ' . $time_class,
-            'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-            'class' => array('fullcalendar-event-details'),
-          ));
-          $event[] = $url->toRenderArray() + array(
-              '#type' => 'link',
-              '#title' => $item['raw']->value,
-            );
+          if ($date_fields[$field_name]['field_marker'] == 'end') {
+            $end .= $item['raw']->value;
+          }
         }
       }
+
+      if(empty($end)) {
+        $end .= $start;
+      }
+
+      // @todo: settings
+      // allDay
+      // displayEventEnd =  true;
+      // displayEventTime = true;
+
+      // Add a class if the event was in the past or is in the future, based
+      // on the end time. We can't do this in hook_fullcalendar_classes()
+      // because the date hasn't been processed yet.
+      if (($all_day && strtotime($start) < strtotime('today')) || (!$all_day && strtotime($end) < REQUEST_TIME)) {
+        $time_class = 'fc-event-past';
+      }
+      elseif (strtotime($start) > REQUEST_TIME) {
+        $time_class = 'fc-event-future';
+      }
+      else {
+        $time_class = 'fc-event-now';
+      }
+
+      $url = $entity->urlInfo();
+      $url->setOption('attributes', array(
+        'data-all-day' => $all_day,
+        'data-start' => $start,
+        'data-end' => $end,
+        'data-editable' => (int) TRUE,//$entity->editable,
+        'data-field' => $field['field_name'],
+        'data-index' => $delta,
+        'data-eid' => $entity->id(),
+        'data-entity-type' => $entity->getEntityTypeId(),
+        'data-cn' => $class . ' ' . $time_class,
+        'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
+        'class' => array('fullcalendar-event-details'),
+      ));
+
+      $event[] = $url->toRenderArray() + array(
+          '#type' => 'link',
+          '#title' => $entity->label(),
+        );
 
       if (!empty($event)) {
         $events[$delta] = array(

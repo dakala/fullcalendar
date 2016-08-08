@@ -7,12 +7,28 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Field\FormatterInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * The minimum supported version of the FullCalendar plugin.
  */
 define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.5.0');
+
+/**
+ * Implements hook_help().
+ */
+function fullcalendar_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.fullcalendar':
+      $output = '';
+      $output .= '<h3>' . t('Fullcalendar') . '</h3>';
+      $output .= '<p>' . t('The Fullcalendar module is an integration of the <a href="!fullcalendar-uri">Adam Shaw\'s FullCalendar jQuery plugin</a> with Drupal.', array('!fullcalendar-uri' => Url::fromUri('https://github.com/arshaw/fullcalendar'))) . '</p>';
+      return $output;
+  }
+}
 
 /**
  * Implements hook_theme().
@@ -53,6 +69,7 @@ function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
     $entity->bundle(),
   );
 
+  // @todo: ???
   // Add a class for the date field being used.
   if (isset($entity->fullcalendar_date_field)) {
     $classes[] = "fc-event-field-$entity->fullcalendar_date_field";
@@ -159,4 +176,37 @@ function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
   $config = \Drupal::config('fullcalendar.settings');
   return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
+}
+
+/**
+ * Add Fullcalendar settings to datetime field formatters.
+ *
+ * @param \Drupal\Core\Field\FormatterInterface $plugin
+ *   The instantiated field formatter plugin.
+ * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+ *   The field definition.
+ * @param $view_mode
+ *   The entity view mode.
+ * @param array $form
+ *   The configuration form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ *
+ * @return array
+ *   Returns the form array to be built.
+ *
+ * @see \Drupal\field_ui\DisplayOverView.
+ */
+function fullcalendar_field_formatter_third_party_settings_form(FormatterInterface $plugin, FieldDefinitionInterface $field_definition, $view_mode, $form, FormStateInterface $form_state) {
+  $element = array();
+  $plugin_type_info = $plugin->getPluginDefinition();
+  if (in_array('datetime', $plugin_type_info['field_types'])) {
+    $element['fc_date_field_setting'] = [
+      '#type' => 'select',
+      '#options' => ['' => t('- None -'), 'start' => 'Start date', 'end' => 'End date'],
+      '#title' => t('Fullcalendar setting'),
+      '#default_value' => $plugin->getThirdPartySetting('fullcalendar', 'fc_date_field_setting'),
+    ];
+  }
+  return $element;
 }
