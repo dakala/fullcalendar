@@ -73,47 +73,47 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
    */
   protected static $formats = array(
     '12' => array(
-      'time' => 'h:mm{ - h:mm}',
-      'axis' => 'h(:mm)t',
+      'time' => 'h:mm',
+      'slotLabel' => 'h(:mm)a',
     ),
     '24' => array(
-      'time' => 'HH:mm{ - HH:mm}',
-      'axis' => 'HH(:mm)',
+      'time' => 'HH:mm',
+      'slotLabel' => 'HH(:mm)',
     ),
     'mdy' => array(
       'title' => array(
-        'month' => 'MMMM yyyy',
-        'week' => 'MMM d[ yyyy]{ - [ MMM] d yyyy}',
-        'day' => 'dddd, MMM d, yyyy',
+        'month' => 'MMMM YYYY',
+        'week' => 'MMM D YYYY',
+        'day' => 'MMMM D YYYY',
       ),
       'column' => array(
         'month' => 'ddd',
-        'week' => 'ddd M/d',
-        'day' => 'dddd M/d',
+        'week' => 'ddd M/D',
+        'day' => 'dddd',
       ),
     ),
     'dmy' => array(
       'title' => array(
-        'month' => 'MMMM yyyy',
-        'week' => 'd [ MMM][ yyyy]{ - d MMM yyyy}',
-        'day' => 'dddd, d MMM, yyyy',
+        'month' => 'MMMM YYYY',
+        'week' => 'D MMM YYYY',
+        'day' => 'D MMMM YYYY',
       ),
       'column' => array(
         'month' => 'ddd',
-        'week' => 'ddd d/M',
-        'day' => 'dddd d/M',
+        'week' => 'ddd D/M',
+        'day' => 'dddd',
       ),
     ),
     'ymd' => array(
       'title' => array(
-        'month' => 'yyyy MMMM',
-        'week' => 'yyyy MMM d{ - [ yyyy][ MMM] d}',
-        'day' => 'yyyy MMM d, dddd ',
+        'month' => 'YYYY MMMM',
+        'week' => 'YYYY MMM D',
+        'day' => 'YYYY MMMM D',
       ),
       'column' => array(
         'month' => 'ddd',
-        'week' => 'ddd M/d',
-        'day' => 'dddd M/d',
+        'week' => 'ddd M/D',
+        'day' => 'dddd',
       ),
     ),
   );
@@ -137,7 +137,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       'advanced' => array(
         'default' => FALSE,
       ),
-      'axisFormat' => array('default' => $time_format['axis']),
+      'slotLabelFormat' => array('default' => $time_format['slotLabel']),
       'timeformatMonth' => array('default' => $time_format['time']),
       'titleformatMonth' => array('default' => $date_format['title']['month']),
       'columnformatMonth' => array('default' => $date_format['column']['month']),
@@ -362,11 +362,11 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#data_type' => 'bool',
       '#fieldset' => 'times',
     );
-    $form['axisFormat'] = array(
+    $form['slotLabelFormat'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('Axis format'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/agenda/axisFormat', array('attributes' => array('target' => '_blank')))),
-      '#default_value' => $this->style->options['axisFormat'],
+      '#title' => $this->t('Slot label format'),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/agenda/slotLabelFormat', array('attributes' => array('target' => '_blank')))),
+      '#default_value' => $this->style->options['slotLabelFormat'],
       '#size' => '30',
       '#fieldset' => 'times',
       '#states' => array(
