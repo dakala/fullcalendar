@@ -201,11 +201,11 @@ function fullcalendar_field_formatter_third_party_settings_form(FormatterInterfa
   $element = array();
   $plugin_type_info = $plugin->getPluginDefinition();
   if (in_array('datetime', $plugin_type_info['field_types'])) {
-    $element['fc_date_field_setting'] = [
+    $element['fc_date_field'] = [
       '#type' => 'select',
       '#options' => ['' => t('- None -'), 'start' => 'Start date', 'end' => 'End date'],
       '#title' => t('Fullcalendar setting'),
-      '#default_value' => $plugin->getThirdPartySetting('fullcalendar', 'fc_date_field_setting'),
+      '#default_value' => $plugin->getThirdPartySetting('fullcalendar', 'fc_date_field'),
     ];
   }
   return $element;

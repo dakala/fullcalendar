@@ -298,7 +298,7 @@ class FullCalendar extends StylePluginBase {
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
-          $fc_setting = $components[$field_name]['third_party_settings']['fullcalendar']['fc_date_field_setting'];
+          $fc_setting = $components[$field_name]['third_party_settings']['fullcalendar']['fc_date_field'];
           $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
           $field_definition = $field_storage_definitions[$field->definition['field_name']];
           $date_fields[$field_name] = array(
