@@ -49,7 +49,7 @@ function template_preprocess_fullcalendar(&$variables) {
  * Render the FullCalendar.
  */
 function theme_fullcalendar($variables) {
-  return drupal_render($variables['element']);
+  return \Drupal::service('renderer')->render($variables['element']);
 }
 
 /**
@@ -86,5 +86,5 @@ function template_preprocess_fullcalendar_event(&$variables) {
  * Render the event.
  */
 function theme_fullcalendar_event($variables) {
-  return drupal_render($variables['element']);
+  return \Drupal::service('renderer')->render($variables['element']);
 }
