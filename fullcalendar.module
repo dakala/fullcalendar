@@ -133,7 +133,7 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
   $field_definition = $field_storage_definitions[$field->definition['field_name']];
 
   if ($field_definition instanceof FieldStorageConfig) {
-    return $field_definition->getType() == 'datetime';
+    return in_array($field_definition->getType(), ['datetime', 'daterange']);
   }
 
   return FALSE;
