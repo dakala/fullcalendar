@@ -330,7 +330,8 @@ class FullCalendar extends StylePluginBase {
 
         foreach ($field['value'] as $index => $item) {
           $start = $item['raw']->value;
-          $end = $start;
+          $end = $item['raw']->end_value;
+
           $all_day = FALSE;
 
           // Add a class if the event was in the past or is in the future, based
@@ -362,10 +363,9 @@ class FullCalendar extends StylePluginBase {
           ));
 
           $event[] = $url->toRenderArray() + array(
-              '#type' => 'link',
-              '#title' => $item['raw']->value,
-            );
-
+            '#type' => 'link',
+            '#title' => $item['raw']->value,
+          );
         }
       }
 
