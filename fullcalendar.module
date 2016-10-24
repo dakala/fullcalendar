@@ -177,36 +177,3 @@ function fullcalendar_get_js_path() {
   $config = \Drupal::config('fullcalendar.settings');
   return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
 }
-
-/**
- * Add Fullcalendar settings to datetime field formatters.
- *
- * @param \Drupal\Core\Field\FormatterInterface $plugin
- *   The instantiated field formatter plugin.
- * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
- *   The field definition.
- * @param $view_mode
- *   The entity view mode.
- * @param array $form
- *   The configuration form array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   The form state.
- *
- * @return array
- *   Returns the form array to be built.
- *
- * @see \Drupal\field_ui\DisplayOverView.
- */
-function fullcalendar_field_formatter_third_party_settings_form(FormatterInterface $plugin, FieldDefinitionInterface $field_definition, $view_mode, $form, FormStateInterface $form_state) {
-  $element = array();
-  $plugin_type_info = $plugin->getPluginDefinition();
-  if (in_array('datetime', $plugin_type_info['field_types'])) {
-    $element['fc_date_field'] = [
-      '#type' => 'select',
-      '#options' => ['' => t('- None -'), 'start' => 'Start date', 'end' => 'End date'],
-      '#title' => t('Fullcalendar setting'),
-      '#default_value' => $plugin->getThirdPartySetting('fullcalendar', 'fc_date_field'),
-    ];
-  }
-  return $element;
-}
