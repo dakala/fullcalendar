@@ -9,7 +9,7 @@ fullcalendar:
     /libraries/fullcalendar/lib/moment.min.js: {}
     /libraries/fullcalendar/fullcalendar.js: {}
     /libraries/fullcalendar/gcal.js: {}
-    /libraries/fullcalendar/lib/jquery-ui.custom.min.js: { minified: true }
+    /libraries/fullcalendar/lib/jquery-ui.min.js: { minified: true }
   css:
     theme:
       /libraries/fullcalendar/fullcalendar.css: { media: screen }
