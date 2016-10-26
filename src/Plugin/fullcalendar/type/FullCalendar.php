@@ -659,6 +659,13 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       // Unset all values that have been migrated.
       unset($settings[$key]);
     }
+
+    // Add display values
+    foreach ($settings['display'] as $key => $value) {
+      $options[$key] = $value;
+    }
+    unset($settings['display']);
+
     $settings['fullcalendar'] = $options;
 
     // First, use the default date if set.
