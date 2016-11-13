@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Access\UpdateAccessCheck.
- */
-
 namespace Drupal\fullcalendar\Access;
 
 use Drupal\Core\Access\AccessResult;

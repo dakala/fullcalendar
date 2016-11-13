@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Plugin\FullcalendarManager.
- */
-
 namespace Drupal\fullcalendar\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;

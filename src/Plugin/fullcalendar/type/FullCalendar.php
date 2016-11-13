@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar.
- */
-
 namespace Drupal\fullcalendar\Plugin\fullcalendar\type;
 
 use Drupal\Core\Datetime\DateHelper;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Ajax\ResultsController.
- */
-
 namespace Drupal\fullcalendar\Ajax;
 
 use Symfony\Component\HttpFoundation\Request;

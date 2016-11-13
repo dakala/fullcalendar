@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Ajax\Update.
- */
-
 namespace Drupal\fullcalendar\Ajax;
 
 use Drupal\Component\Utility\SafeMarkup;

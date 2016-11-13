@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Form\SettingsForm.
- */
-
 namespace Drupal\fullcalendar\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

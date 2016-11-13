@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Plugin\FullcalendarBase.
- */
-
 namespace Drupal\fullcalendar\Plugin;
 
 use Drupal\Core\Plugin\PluginBase;

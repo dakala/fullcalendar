@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Ajax\ResultsCommand.
- */
-
 namespace Drupal\fullcalendar\Ajax;
 
 use Drupal\Core\Ajax\CommandInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Plugin\FullcalendarInterface.
- */
-
 namespace Drupal\fullcalendar\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\fullcalendar\Plugin\views\field\FullCalendar.
- */
-
 namespace Drupal\fullcalendar\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
