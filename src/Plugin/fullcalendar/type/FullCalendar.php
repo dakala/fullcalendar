@@ -122,9 +122,6 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     $time_format = static::$formats[$time];
     $date_format = static::$formats[$date];
     $options = array(
-      'defaultView' => array('default' => 'month'),
-      'firstDay' => array('default' => '0'),
-      'weekMode' => array('default' => 'fixed'),
       'left' => array('default' => 'today prev,next'),
       'center' => array('default' => 'title'),
       'right' => array('default' => 'month agendaWeek agendaDay'),
@@ -158,6 +155,13 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     );
 
     // Nest these explicitly so that they can be more easily found later.
+    $options['display'] = array(
+      'contains' => array(
+        'defaultView' => array('default' => 'month'),
+        'firstDay' => array('default' => '0'),
+        'weekMode' => array('default' => 'fixed'),
+      ),
+    );
     $options['times'] = array(
       'contains' => array(
         'default_date' => array(
