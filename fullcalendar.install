@@ -22,7 +22,7 @@ function fullcalendar_requirements($phase) {
         'title' => t('FullCalendar plugin'),
         'value' => t('At least @a', array('@a' => FULLCALENDAR_MIN_PLUGIN_VERSION)),
         'severity' => REQUIREMENT_ERROR,
-        'description' => t('You need to download the !fullcalendar and extract the entire contents of the archive into the %path folder of your server.', array('!fullcalendar' => $pluginLink, '%path' => 'sites/all/libraries')),
+        'description' => t('You need to download the !fullcalendar and extract the entire contents of the archive into the %path folder of your server.', array('!fullcalendar' => $pluginLink, '%path' => '/libraries')),
       );
     }
     else {
