@@ -5,7 +5,7 @@
  * Theme functions for FullCalendar Legend.
  */
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Html;
 
 /**
  * Build the legend as a render array.
@@ -29,7 +29,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
       ),
     );
     // Sanitize the label.
-    $type['label'] = String::checkPlain($type['label']);
+    $type['label'] = Html::escape($type['label']);
     if (isset($type['uri'])) {
       $element[$type_name]['type'] = array(
         '#type' => 'link',
