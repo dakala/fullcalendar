@@ -7,12 +7,9 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\views\Annotation\ViewsStyle;
-use Drupal\Core\Annotation\Translation;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * @todo.
@@ -46,9 +43,16 @@ class FullCalendar extends StylePluginBase {
   protected $moduleHandler;
 
   /**
+   * Entity Field Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $fieldManager;
+
+  /**
    * Stores the FullCalendar plugins used by this style plugin.
    *
-   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
+   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection
    */
   protected $pluginBag;
 
@@ -62,7 +66,7 @@ class FullCalendar extends StylePluginBase {
   /**
    * @todo.
    *
-   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
+   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
    */
   public function getPlugins() {
     return $this->pluginBag;
@@ -75,13 +79,18 @@ class FullCalendar extends StylePluginBase {
    * @param string $plugin_id
    * @param mixed $plugin_definition
    * @param \Drupal\Component\Plugin\PluginManagerInterface $fullcalendar_manager
+   *   FullCalendar Manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
+   *   Entity Field Manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler, $field_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->pluginBag = new FullcalendarPluginCollection($fullcalendar_manager, $this);
     $this->moduleHandler = $module_handler;
+    $this->fieldManager = $field_manager;
   }
 
   /**
@@ -93,7 +102,8 @@ class FullCalendar extends StylePluginBase {
       $plugin_id,
       $plugin_definition,
       $container->get('plugin.manager.fullcalendar'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('entity_field.manager')
     );
   }
 
@@ -101,11 +111,13 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   protected function defineOptions() {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     $options = parent::defineOptions();
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
       $options += $plugin->defineOptions();
     }
+
     return $options;
   }
 
@@ -113,8 +125,9 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     parent::buildOptionsForm($form, $form_state);
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
       $plugin->buildOptionsForm($form, $form_state);
     }
@@ -164,10 +177,12 @@ class FullCalendar extends StylePluginBase {
       else {
         // Get the form definition for this key.
         $form_value = NestedArray::getValue($form, $parents);
+
         // Check to see if #data_type is specified, if so, cast the value.
         if (isset($form_value['#data_type'])) {
           settype($value, $form_value['#data_type']);
         }
+
         // Remove the current key from $parents to move on to the next key.
         array_pop($parents);
       }
@@ -178,8 +193,9 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     parent::submitOptionsForm($form, $form_state);
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
       $plugin->submitOptionsForm($form, $form_state);
     }
@@ -191,12 +207,16 @@ class FullCalendar extends StylePluginBase {
   public function parseFields($include_gcal = TRUE) {
     $this->view->initHandlers();
     $labels = $this->displayHandler->getFieldLabels();
-    $date_fields = array();
+
+    $date_fields = [];
+
+    /** @var \Drupal\views\Plugin\views\field\EntityField $field */
     foreach ($this->view->field as $id => $field) {
       if (fullcalendar_field_is_date($field, $include_gcal)) {
         $date_fields[$id] = $labels[$id];
       }
     }
+
     return $date_fields;
   }
 
@@ -214,14 +234,14 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function render() {
-    if (empty($this->view->fullcalendar_ajax)) {
+    if (empty($this->view->display_handler->getOption('use_ajax'))) {
       $this->options['#attached'] = $this->prepareAttached();
     }
 
     return array(
-      '#theme' => $this->themeFunctions(),
-      '#view' => $this->view,
-      '#rows' => $this->prepareEvents(),
+      '#theme'   => $this->themeFunctions(),
+      '#view'    => $this->view,
+      '#rows'    => $this->prepareEvents(),
       '#options' => $this->options,
     );
   }
@@ -235,6 +255,7 @@ class FullCalendar extends StylePluginBase {
 
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
+
       foreach (array('css', 'js') as $type) {
         if ($definition[$type]) {
           $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
@@ -246,7 +267,9 @@ class FullCalendar extends StylePluginBase {
       $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
-    $attached['attach']['drupalSettings']['fullcalendar'] = ['.js-view-dom-id-' . $this->view->dom_id => $this->prepareSettings()];
+    $attached['attach']['drupalSettings']['fullcalendar'] = [
+      '.js-view-dom-id-' . $this->view->dom_id => $this->prepareSettings(),
+    ];
 
     return $attached['attach'];
   }
@@ -255,13 +278,16 @@ class FullCalendar extends StylePluginBase {
    * @todo.
    */
   protected function prepareSettings() {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    $settings = array();
-    $weights = array();
+    $settings = [];
+    $weights = [];
+
     $delta = 0;
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
       $plugin->process($settings);
+
       if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
         $weights[$definition['weight']] = $plugin_id;
       }
@@ -269,13 +295,17 @@ class FullCalendar extends StylePluginBase {
         while (isset($weights[$delta])) {
           $delta++;
         }
+
         $weights[$delta] = $plugin_id;
       }
     }
+
     ksort($weights);
+
     $settings['weights'] = array_values($weights);
     // @todo.
     $settings['fullcalendar']['disableResizing'] = TRUE;
+
     return $settings;
   }
 
@@ -284,23 +314,27 @@ class FullCalendar extends StylePluginBase {
    */
   protected function prepareEvents() {
     /* @var \Drupal\views\Plugin\views\field\Field $field */
-    $events = array();
+    $events = [];
+
     foreach ($this->view->result as $delta => $row) {
       // Collect all fields for the customize options.
-      $fields = array();
+      $fields = [];
       // Collect only date fields.
-      $date_fields = array();
+      $date_fields = [];
+
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
+
         if (fullcalendar_field_is_date($field)) {
-          $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
+          $field_storage_definitions = $this->fieldManager->getFieldStorageDefinitions($field->definition['entity_type']);
           $field_definition = $field_storage_definitions[$field->definition['field_name']];
-          $date_fields[$field_name] = array(
-            'value' => $field->getItems($row),
+
+          $date_fields[$field_name] = [
+            'value'       => $field->getItems($row),
             'field_alias' => $field->field_alias,
-            'field_name' => $field_definition->getName(),
-            'field_info' => $field_definition,
-          );
+            'field_name'  => $field_definition->getName(),
+            'field_info'  => $field_definition,
+          ];
         }
       }
 
@@ -316,16 +350,27 @@ class FullCalendar extends StylePluginBase {
 
       /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $row->_entity;
-      $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', array($entity));
+      $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
       $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
-      $classes = array_map(['\Drupal\Component\Utility\Html', 'getClass'], $classes);
+      $classes = array_map([
+        '\Drupal\Component\Utility\Html',
+        'getClass'
+      ], $classes);
       $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
 
-      $event = array();
+      $event = [];
       foreach ($date_fields as $field) {
         // Filter fields without value.
         if (empty($field['value'])) {
           continue;
+        }
+
+        /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_definition */
+        $field_definition = $field['field_info'];
+
+        // "DateRecur" support.
+        if ($field_definition->getType() == 'date_recur') {
+
         }
 
         foreach ($field['value'] as $index => $item) {
@@ -347,34 +392,36 @@ class FullCalendar extends StylePluginBase {
             $time_class = 'fc-event-now';
           }
 
-          $url = $entity->urlInfo();
-          $url->setOption('attributes', array(
-            'data-all-day' => $all_day,
-            'data-start' => $start,
-            'data-end' => $end,
-            'data-editable' => (int) TRUE, //$entity->editable,
-            'data-field' => $field['field_name'],
-            'data-index' => $index,
-            'data-eid' => $entity->id(),
+          $url = $entity->toUrl('canonical');
+          $url->setOption('attributes', [
+            'data-all-day'     => $all_day,
+            'data-start'       => $start,
+            'data-end'         => $end,
+            'data-editable'    => (int) TRUE, //$entity->editable,
+            'data-field'       => $field['field_name'],
+            'data-index'       => $index,
+            'data-eid'         => $entity->id(),
             'data-entity-type' => $entity->getEntityTypeId(),
-            'data-cn' => $class . ' ' . $time_class,
-            'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-            'class' => array('fullcalendar-event-details'),
-          ));
+            'data-cn'          => $class . ' ' . $time_class,
+            'title'            => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
+            'class'            => [
+              'fullcalendar-event-details',
+            ],
+          ]);
 
-          $event[] = $url->toRenderArray() + array(
-            '#type' => 'link',
-            '#title' => $item['raw']->value,
-          );
+          $event[] = $url->toRenderArray() + [
+              '#type'  => 'link',
+              '#title' => $item['raw']->value,
+            ];
         }
       }
 
       if (!empty($event)) {
-        $events[$delta] = array(
-          '#theme' => 'fullcalendar_event',
-          '#event' => $event,
+        $events[$delta] = [
+          '#theme'  => 'fullcalendar_event',
+          '#event'  => $event,
           '#entity' => $entity,
-        );
+        ];
       }
     }
 

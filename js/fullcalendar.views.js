@@ -4,7 +4,6 @@
  */
 
 (function ($, Drupal) {
-
   "use strict";
 
   Drupal.behaviors.fullcalendar = {

@@ -4,7 +4,6 @@
  */
 
 (function ($, Drupal, drupalSettings) {
-
   "use strict";
 
   Drupal.fullcalendar.plugins.fullcalendar = {
@@ -15,7 +14,7 @@
 
       var options = {
         eventClick: function (calEvent, jsEvent, view) {
-          if (settings.sameWindow) {
+          if (settings['sameWindow']) {
             window.open(calEvent.url, '_self');
           }
           else {
@@ -37,8 +36,8 @@
         },
         events: function (start, end, timezone, callback) {
           // Fetch new items from Views if possible.
-          if (settings.ajax && settings.fullcalendar_fields) {
-            fullcalendar.dateChange(settings.fullcalendar_fields);
+          if (settings.ajax && settings['fullcalendar_fields']) {
+            fullcalendar.dateChange(settings['fullcalendar_fields']);
             if (fullcalendar.navigate) {
               if (!fullcalendar.refetch) {
                 fullcalendar.fetchEvents();
@@ -51,11 +50,12 @@
 
           if (!fullcalendar.navigate) {
             // Add events from Google Calendar feeds.
-            for (var entry in settings.gcal) {
-              if (settings.gcal.hasOwnProperty(entry)) {
-                fullcalendar.$calendar.find('.fullcalendar').fullCalendar('addEventSource',
-                  $.fullCalendar.gcalFeed(settings.gcal[entry][0], settings.gcal[entry][1])
-                );
+            for (var entry in settings['gcal']) {
+              if (settings['gcal'].hasOwnProperty(entry)) {
+                fullcalendar.$calendar.find('.fullcalendar')
+                  .fullCalendar('addEventSource',
+                    $.fullCalendar.gcalFeed(settings['gcal'][entry][0], settings['gcal'][entry][1])
+                  );
               }
             }
           }

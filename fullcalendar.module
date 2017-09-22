@@ -8,9 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Field\FormatterInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\views\Plugin\views\field\EntityField;
 
 /**
  * The minimum supported version of the FullCalendar plugin.
@@ -37,10 +35,10 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
   return array(
     'fullcalendar_event' => array(
       'variables' => array(
-        'event' => NULL,
+        'event'  => NULL,
         'entity' => NULL,
       ),
-      'file' => 'fullcalendar.theme.inc',
+      'file'      => 'fullcalendar.theme.inc',
     ),
   );
 }
@@ -54,7 +52,7 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
 function fullcalendar_permission() {
   return array(
     'update any fullcalendar event' => array(
-      'title' => t('Update any FullCalendar event'),
+      'title'       => t('Update any FullCalendar event'),
       'description' => t('Allow user to edit events, ignoring other permissions.'),
     ),
   );
@@ -84,7 +82,8 @@ function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
  * Since we force the query to be distinct, reflect that in the UI.
  */
 function fullcalendar_form_views_ui_edit_display_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $style = $form_state->get('view')->get('executable')->display_handler->getOption('style');
+  $style = $form_state->get('view')
+    ->get('executable')->display_handler->getOption('style');
   if ($style['type'] != 'fullcalendar' || empty($form['options']['query']['options']['distinct'])) {
     return;
   }
@@ -114,7 +113,7 @@ function fullcalendar_fullcalendar_editable(EntityInterface $entity, $view) {
 /**
  * Determines if a given field is a date field.
  *
- * @param object $field
+ * @param \Drupal\views\Plugin\views\field\EntityField $field
  *   A Views field handler object.
  * @param bool $include_gcal
  *   Boolean indicating whether or not to count gcal fields as a date field.
@@ -123,17 +122,37 @@ function fullcalendar_fullcalendar_editable(EntityInterface $entity, $view) {
  *   Boolean, TRUE if the field is a date field, FALSE otherwise.
  */
 function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
+  if (!$field instanceof EntityField) {
+    return FALSE;
+  }
+
   if ($include_gcal && $field->field == 'gcal') {
     return TRUE;
   }
 
-  // @todo: Any other way of accessing field storage config from a view field?
-  // @todo: This won't work with 'created' or 'changed' fields.
-  $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
-  $field_definition = $field_storage_definitions[$field->definition['field_name']];
+  $entity_type = $field->getEntityType();
 
-  if ($field_definition instanceof FieldStorageConfig) {
-    return in_array($field_definition->getType(), ['datetime', 'daterange']);
+  if (empty($entity_type)) {
+    return FALSE;
+  }
+
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+  $field_manager = \Drupal::getContainer()->get('entity_field.manager');
+
+  /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface[] $field_storages */
+  $field_storages = $field_manager->getFieldStorageDefinitions($entity_type);
+
+  if (isset($field_storages[$field->definition['field_name']])) {
+    /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_storage */
+    $field_storage = $field_storages[$field->definition['field_name']];
+
+    return in_array($field_storage->getType(), [
+      // 'created',
+      // 'changed',
+      'datetime',
+      'daterange',
+      // 'date_recur', // TODO
+    ]);
   }
 
   return FALSE;
@@ -173,7 +192,10 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  * Returns the path to the FullCalendar plugin.
  */
 function fullcalendar_get_js_path() {
-  $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
+  $fullcalendar_file = array(
+    'none' => 'fullcalendar.js',
+    'min'  => 'fullcalendar.min.js'
+  );
   $config = \Drupal::config('fullcalendar.settings');
   return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
 }

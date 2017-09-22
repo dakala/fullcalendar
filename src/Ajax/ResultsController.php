@@ -13,29 +13,36 @@ class ResultsController {
 
   /**
    * @todo.
+   *
+   * @param \Drupal\views\ViewExecutable $view
+   * @param $display_id
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse|void
    */
   public function getResults(ViewExecutable $view, $display_id, Request $request) {
-    // Get the view and check access.
-    $view = $view->getExecutable();
+    $response = new AjaxResponse();
+
     if (!$view || !$view->access($display_id)) {
-      return;
+      return $response;
     }
 
     if (!$view->setDisplay($display_id)) {
-      return;
+      return $response;
     }
 
-    $args = array();
+    $args = [];
     $view->dom_id = $request->request->get('dom_id');
-    $view->fullcalendar_ajax = TRUE;
+    $view->ajax = TRUE;
     $view->preExecute($args);
     $view->initStyle();
     $view->execute($display_id);
     $output = $view->style_plugin->render();
     $view->postExecute();
 
-    $response = new AjaxResponse();
-    $response->addCommand(new ResultsCommand(drupal_render($output)));
+    $rendered = \Drupal::service('renderer')->render($output);
+    $response->addCommand(new ResultsCommand($rendered));
+
     return $response;
   }
 

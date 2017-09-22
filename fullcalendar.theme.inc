@@ -10,39 +10,39 @@
  */
 function template_preprocess_fullcalendar(&$variables) {
   // If we're using ajax, we're done.
-  if (!empty($variables['view']->fullcalendar_ajax)) {
+  if (!empty($variables['view']->display_handler->getOption('use_ajax'))) {
     $variables['element'] = $variables['rows'];
     return;
   }
 
-  $variables['element'] = array(
-    '#attached' => $variables['options']['#attached'],
-    'status' => array(
-      '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+  $variables['element'] = [
+    '#attached'    => $variables['options']['#attached'],
+    'status'       => [
+      '#type'       => 'container',
+      '#attributes' => [
+        'class' => [
           'fullcalendar-status',
-        ),
-      ),
-    ),
-    'fullcalendar' => array(
-      '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+        ],
+      ],
+    ],
+    'fullcalendar' => [
+      '#type'       => 'container',
+      '#attributes' => [
+        'class' => [
           'fullcalendar',
-        ),
-      ),
-    ),
-    'content' => array(
-      '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+        ],
+      ],
+    ],
+    'content'      => [
+      '#type'       => 'container',
+      '#attributes' => [
+        'class' => [
           'fullcalendar-content',
-        ),
-      ),
-      'events' => $variables['rows'],
-    ),
-  );
+        ],
+      ],
+      'events'      => $variables['rows'],
+    ],
+  ];
 }
 
 /**
@@ -56,29 +56,30 @@ function theme_fullcalendar($variables) {
  * Build the render array for an individual event.
  */
 function template_preprocess_fullcalendar_event(&$variables) {
-  $variables['element'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => array(
+  $variables['element'] = [
+    '#type'       => 'container',
+    '#attributes' => [
+      'class' => [
         'fullcalendar-event',
-      ),
-    ),
-    'title' => array(
+      ],
+    ],
+    'title'       => [
       '#prefix' => '<h3 class="title">',
       '#suffix' => '</h3>',
       '#markup' => $variables['entity']->label(),
-    ),
-  );
+    ],
+  ];
+
   foreach ($variables['event'] as $instance) {
-    $variables['element'][] = array(
-      '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+    $variables['element'][] = [
+      '#type'       => 'container',
+      '#attributes' => [
+        'class' => [
           'fullcalendar-instance',
-        ),
-      ),
-      array($instance),
-    );
+        ],
+      ],
+      [$instance],
+    ];
   }
 }
 

@@ -36,7 +36,7 @@ function hook_fullcalendar_classes($entity) {
  */
 function hook_fullcalendar_classes_alter(&$classes, $entity) {
   // Remove all classes set by modules.
-  $classes = array();
+  $classes = [];
 }
 
 /**
