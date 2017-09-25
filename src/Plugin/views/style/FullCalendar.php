@@ -159,7 +159,7 @@ class FullCalendar extends StylePluginBase {
    *   (optional) An array of parent keys when recursing through the nested
    *   array. Defaults to an empty array.
    */
-  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = array()) {
+  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = []) {
     foreach ($values as $key => &$value) {
       // We are leaving a recursive loop, remove the last parent key.
       if (empty($current_key)) {
@@ -225,8 +225,11 @@ class FullCalendar extends StylePluginBase {
    */
   public function validate() {
     if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
-      drupal_set_message($this->t('Display "@display" requires at least one date field.', array('@display' => $this->displayHandler->display['display_title'])), 'error');
+      drupal_set_message($this->t('Display "@display" requires at least one date field.', [
+        '@display' => $this->displayHandler->display['display_title'],
+      ]), 'error');
     }
+
     return parent::validate();
   }
 
@@ -234,16 +237,14 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function render() {
-    if (empty($this->view->display_handler->getOption('use_ajax'))) {
-      $this->options['#attached'] = $this->prepareAttached();
-    }
+    $this->options['#attached'] = $this->prepareAttached();
 
-    return array(
+    return [
       '#theme'   => $this->themeFunctions(),
       '#view'    => $this->view,
       '#rows'    => $this->prepareEvents(),
       '#options' => $this->options,
-    );
+    ];
   }
 
   /**
@@ -256,7 +257,7 @@ class FullCalendar extends StylePluginBase {
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
 
-      foreach (array('css', 'js') as $type) {
+      foreach (['css', 'js'] as $type) {
         if ($definition[$type]) {
           $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
         }
@@ -427,4 +428,5 @@ class FullCalendar extends StylePluginBase {
 
     return $events;
   }
+
 }

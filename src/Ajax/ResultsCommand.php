@@ -27,10 +27,10 @@ class ResultsCommand implements CommandInterface {
    * {@inheritdoc}
    */
   public function render() {
-    return array(
+    return [
       'command' => 'ResultsCommand',
       'data'    => $this->data,
-    );
+    ];
   }
 
 }

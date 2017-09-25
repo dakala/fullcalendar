@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\fullcalendar\Ajax;
+namespace Drupal\fullcalendar\Controller;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @todo.
  */
-class Update extends ControllerBase {
+class UpdateController extends ControllerBase {
 
   /**
    * @todo.

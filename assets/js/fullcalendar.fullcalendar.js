@@ -28,7 +28,7 @@
               try {
                 Drupal.fullcalendar.plugins[$plugin].drop(date, allDay, jsEvent, ui, this, fullcalendar);
               }
-              catch (exception) {
+              catch(exception) {
                 alert(exception);
               }
             }
@@ -37,8 +37,10 @@
         events: function (start, end, timezone, callback) {
           // Fetch new items from Views if possible.
           if (settings.ajax && settings['fullcalendar_fields']) {
-            fullcalendar.dateChange(settings['fullcalendar_fields']);
+            fullcalendar.dateChange(start, end, settings['fullcalendar_fields']);
+
             if (fullcalendar.navigate) {
+              // @see Drupal.AjaxCommands.prototype.ResultsCommand
               if (!fullcalendar.refetch) {
                 fullcalendar.fetchEvents();
               }

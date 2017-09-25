@@ -9,12 +9,6 @@
  * Builds the FullCalendar structure as a render array.
  */
 function template_preprocess_fullcalendar(&$variables) {
-  // If we're using ajax, we're done.
-  if (!empty($variables['view']->display_handler->getOption('use_ajax'))) {
-    $variables['element'] = $variables['rows'];
-    return;
-  }
-
   $variables['element'] = [
     '#attached'    => $variables['options']['#attached'],
     'status'       => [

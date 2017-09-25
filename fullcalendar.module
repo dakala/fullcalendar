@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 use Drupal\views\Plugin\views\field\EntityField;
 
 /**
@@ -23,7 +24,9 @@ function fullcalendar_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.fullcalendar':
       $output = '';
       $output .= '<h3>' . t('Fullcalendar') . '</h3>';
-      $output .= '<p>' . t('The Fullcalendar module is an integration of the <a href="!fullcalendar-uri">Adam Shaw\'s FullCalendar jQuery plugin</a> with Drupal.', array('!fullcalendar-uri' => Url::fromUri('https://github.com/arshaw/fullcalendar'))) . '</p>';
+      $output .= '<p>' . t('The Fullcalendar module is an integration of the <a href="!fullcalendar-uri">Adam Shaw\'s FullCalendar jQuery plugin</a> with Drupal.', [
+          '!fullcalendar-uri' => Url::fromUri('https://github.com/arshaw/fullcalendar'),
+        ]) . '</p>';
       return $output;
   }
 }
@@ -32,15 +35,15 @@ function fullcalendar_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_theme().
  */
 function fullcalendar_theme($existing, $type, $theme, $path) {
-  return array(
-    'fullcalendar_event' => array(
-      'variables' => array(
+  return [
+    'fullcalendar_event' => [
+      'variables' => [
         'event'  => NULL,
         'entity' => NULL,
-      ),
+      ],
       'file'      => 'fullcalendar.theme.inc',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -50,22 +53,22 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  *   An array of valid permissions for the FullCalendar module.
  */
 function fullcalendar_permission() {
-  return array(
-    'update any fullcalendar event' => array(
+  return [
+    'update any fullcalendar event' => [
       'title'       => t('Update any FullCalendar event'),
       'description' => t('Allow user to edit events, ignoring other permissions.'),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
-  $classes = array(
+  $classes = [
     'fc-event-default',
     $entity->bundle(),
-  );
+  ];
 
   // @todo: ???
   // Add a class for the date field being used.
@@ -151,7 +154,7 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
       // 'changed',
       'datetime',
       'daterange',
-      // 'date_recur', // TODO
+      'date_recur',
     ]);
   }
 
@@ -192,10 +195,12 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  * Returns the path to the FullCalendar plugin.
  */
 function fullcalendar_get_js_path() {
-  $fullcalendar_file = array(
+  $fullcalendar_file = [
     'none' => 'fullcalendar.js',
-    'min'  => 'fullcalendar.min.js'
-  );
+    'min'  => 'fullcalendar.min.js',
+  ];
+
   $config = \Drupal::config('fullcalendar.settings');
+
   return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
 }
