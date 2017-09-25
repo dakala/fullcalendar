@@ -28,7 +28,7 @@
               try {
                 Drupal.fullcalendar.plugins[$plugin].drop(date, allDay, jsEvent, ui, this, fullcalendar);
               }
-              catch(exception) {
+              catch (exception) {
                 alert(exception);
               }
             }
@@ -37,6 +37,7 @@
         events: function (start, end, timezone, callback) {
           // Fetch new items from Views if possible.
           if (settings.ajax && settings['fullcalendar_fields']) {
+            // Update exposed field values.
             fullcalendar.dateChange(start, end, settings['fullcalendar_fields']);
 
             if (fullcalendar.navigate) {
@@ -83,6 +84,15 @@
             fullcalendar.update
           );
           return false;
+        },
+        viewRender: function (view, element) {
+          // If Ajax mode is On, and we have exposed filters for the Calendar:
+          // we need to update exposed field values after calendar view has
+          // been changed, then re-fetch events for "all-day" re-calculation.
+          if (settings.ajax && settings['fullcalendar_fields']) {
+            fullcalendar.dateChange(view.start, view.end, settings['fullcalendar_fields']);
+            fullcalendar.fetchEvents();
+          }
         }
       };
 

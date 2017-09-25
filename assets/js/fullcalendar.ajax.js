@@ -2,10 +2,7 @@
   "use strict";
 
   Drupal.fullcalendar.fullcalendar.prototype.dateChange = function (start, end, fields) {
-    var fullcalendar = this.$calendar.find('.fullcalendar');
-    var view = fullcalendar.fullCalendar('getView');
-
-    if (view.start && view.end) {
+    if (start && end) {
       // Update the select values for the start and end dates. First we format
       // the dates into values we can use to directly change the selects.
       var date_parts = {
@@ -29,10 +26,11 @@
     var domId = this.dom_id.replace('.js-view-dom-id-', '');
     var ajaxView = drupalSettings.views['ajaxViews']['views_dom_id:' + domId];
     this.tm = settings.theme ? 'ui' : 'fc';
+    var $exposedForm = this.$calendar.find('.views-exposed-form');
     var $submit = this.$calendar.find('.views-exposed-form .form-actions');
 
-    if (this.$calendar.find('.form-item').length == settings['fullcalendar_fields_count'] + 1) {
-      $submit.hide();
+    if ($exposedForm.find('.form-item').length == settings['fullcalendar_fields_count'] + 1) {
+      $exposedForm.hide();
     }
 
     var $submit_button = $submit.find('.form-submit');
@@ -56,7 +54,7 @@
   };
 
   Drupal.fullcalendar.fullcalendar.prototype.fetchEvents = function () {
-    this.$calendar.find('.fc-button').addClass(this.tm + '-state-disabled');
+    this.$calendar.find('.fc-toolbar button').addClass(this.tm + '-state-disabled');
     $(this.$submit.element).trigger('fullcalendar_submit');
   };
 
@@ -80,6 +78,9 @@
     // calendar.
     ajax.element_settings.fullcalendar.$calendar.find('.fullcalendar-content')
       .html(content)
+      .end()
+      .find('.fc-toolbar button')
+      .removeClass(ajax.element_settings.fullcalendar.tm + '-state-disabled')
       .end()
       .find('.fullcalendar')
       .fullCalendar('refetchEvents');

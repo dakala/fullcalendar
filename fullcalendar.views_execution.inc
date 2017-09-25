@@ -109,7 +109,7 @@ function fullcalendar_views_pre_view(ViewExecutable $view, $display_id, array $a
         'min'  => $dateMin->format('Y-m-d'),
         'max'  => $dateMax->format('Y-m-d'),
       ],
-      'group'     => 0,
+      'group'     => 'fullcalendar',
     ];
 
     if (!empty($field->options['relationship'])) {
@@ -145,6 +145,66 @@ function fullcalendar_views_query_alter($view, $query) {
 
   // Force the query to be distinct.
   $query->distinct = TRUE;
+
+  // Try to add additional condition to the query.
+  foreach ($query->where as $group => &$condition_group) {
+    if ($group !== 'fullcalendar') {
+      continue;
+    }
+
+    // Prepare array for extracted query data.
+    $data = [
+      'field_min' => NULL,
+      'field_max' => NULL,
+      'date_min'  => NULL,
+      'date_max'  => NULL,
+    ];
+
+    foreach ($condition_group['conditions'] as $condition) {
+      // This is an example for the original condition:
+      // DATE_FORMAT(cm_event__field_cm_event_date.field_cm_event_date_value, '%Y-%m-%d\T%H:%i:%s')
+      // BETWEEN
+      // DATE_FORMAT('2017-08-31T22:00:00', '%Y-%m-%d\T%H:%i:%s') AND DATE_FORMAT('2017-09-29T22:00:00', '%Y-%m-%d\T%H:%i:%s')
+
+      // Try to extract field names from the current condition.
+      $parts = explode(' BETWEEN ', $condition['field']);
+      if (count($parts) !== 2) {
+        continue;
+      }
+
+      $data['field_min'] = $parts[0];
+      $data['field_max'] = str_replace('_value,', '_end_value,', $data['field_min']);
+
+      // Try to extract dates from the current condition.
+      $parts = explode(' AND ', $parts[1]);
+      if (count($parts) !== 2) {
+        continue;
+      }
+
+      $data['date_min'] = $parts[0];
+      $data['date_max'] = $parts[1];
+    }
+
+    // If 'date_max' exists, then all required values exist, so we can add our
+    // custom conditions.
+    if (!empty($data['date_max'])) {
+      // Change condition group type to 'OR'.
+      $condition_group['type'] = 'OR';
+
+      $or_conditions = [];
+
+      // If event starts before and ends after the first day of the calendar.
+      // ('event_start' <= 'calendar_start') AND 'event_end' >= 'calendar_start'
+      $or_conditions[] = $data['field_min'] . ' <= ' . $data['date_min'] . ' AND ' . $data['field_max'] . ' >= ' . $data['date_min'];
+
+      // Add additional condition to the group.
+      $condition_group['conditions'][] = [
+        'field'    => '(' . implode(') OR (', $or_conditions) . ')',
+        'value'    => [],
+        'operator' => 'formula',
+      ];
+    }
+  }
 }
 
 /**

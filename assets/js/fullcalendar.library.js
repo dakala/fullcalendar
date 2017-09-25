@@ -31,8 +31,6 @@
       }
     }
 
-    console.log(this.$options);
-
     this.$calendar.find('.fullcalendar').once().fullCalendar(this.$options);
 
     $(this.$calendar)

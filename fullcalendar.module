@@ -150,8 +150,6 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
     $field_storage = $field_storages[$field->definition['field_name']];
 
     return in_array($field_storage->getType(), [
-      // 'created',
-      // 'changed',
       'datetime',
       'daterange',
       'date_recur',
