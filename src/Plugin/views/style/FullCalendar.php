@@ -280,9 +280,18 @@ class FullCalendar extends StylePluginBase {
       $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
+    $settings = $this->prepareSettings();
+
     $attached['attach']['drupalSettings']['fullcalendar'] = [
-      '.js-view-dom-id-' . $this->view->dom_id => $this->prepareSettings(),
+      '.js-view-dom-id-' . $this->view->dom_id => $settings,
     ];
+
+    if ((bool) $settings['fullcalendar']['modalWindow'] === TRUE) {
+      // FIXME all of these libraries are needed?
+      $attached['attach']['library'][] = 'core/drupal.ajax';
+      $attached['attach']['library'][] = 'core/drupal.dialog';
+      $attached['attach']['library'][] = 'core/drupal.dialog.ajax';
+    }
 
     return $attached['attach'];
   }
@@ -291,43 +300,53 @@ class FullCalendar extends StylePluginBase {
    * Prepare JavaScript settings.
    */
   protected function prepareSettings() {
-    $settings = [];
-    $weights = [];
+    $settings = &drupal_static(__METHOD__, []);
 
-    $delta = 0;
+    if (empty($settings)) {
+      $weights = [];
+      $delta = 0;
 
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    foreach ($this->getPlugins() as $plugin_id => $plugin) {
-      $definition = $plugin->getPluginDefinition();
-      $plugin->process($settings);
+      /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
+      foreach ($this->getPlugins() as $plugin_id => $plugin) {
+        $definition = $plugin->getPluginDefinition();
+        $plugin->process($settings);
 
-      if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
-        $weights[$definition['weight']] = $plugin_id;
+        if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
+          $weights[$definition['weight']] = $plugin_id;
+        }
+        else {
+          while (isset($weights[$delta])) {
+            $delta++;
+          }
+
+          $weights[$delta] = $plugin_id;
+        }
+      }
+
+      ksort($weights);
+
+      $settings['weights'] = array_values($weights);
+      // TODO
+      $settings['fullcalendar']['disableResizing'] = TRUE;
+
+      // Force to disable dates in the previous or next month in order to get
+      // the (real) first and last day of the current month after using pager in
+      // 'month' view. So, disabling this results a valid date-range for the
+      // current month, instead of the date-range +/- days from the previous and
+      // next month. It's very important, because we set default date-range in
+      // the same way in fullcalendar_views_pre_view().
+      // @see https://fullcalendar.io/docs/display/showNonCurrentDates/
+      $settings['fullcalendar']['showNonCurrentDates'] = FALSE;
+      $settings['fullcalendar']['fixedWeekCount'] = FALSE;
+
+      // Need to reverse this value.
+      if (empty($settings['fullcalendar']['editable'])) {
+        $settings['fullcalendar']['editable'] = TRUE;
       }
       else {
-        while (isset($weights[$delta])) {
-          $delta++;
-        }
-
-        $weights[$delta] = $plugin_id;
+        $settings['fullcalendar']['editable'] = FALSE;
       }
     }
-
-    ksort($weights);
-
-    $settings['weights'] = array_values($weights);
-    // TODO
-    $settings['fullcalendar']['disableResizing'] = TRUE;
-
-    // Force to disable dates in the previous or next month in order to get
-    // the (real) first and last day of the current month after using pager in
-    // 'month' view. So, disabling this results a valid date-range for the
-    // current month, instead of the date-range +/- days from the previous and
-    // next month. It's very important, because we set default date-range in
-    // the same way in fullcalendar_views_pre_view().
-    // @see https://fullcalendar.io/docs/display/showNonCurrentDates/
-    $settings['fullcalendar']['showNonCurrentDates'] = FALSE;
-    $settings['fullcalendar']['fixedWeekCount'] = FALSE;
 
     return $settings;
   }
@@ -518,12 +537,21 @@ class FullCalendar extends StylePluginBase {
       $time_class = 'fc-event-now';
     }
 
+    $settings = $this->prepareSettings();
+
+    if (!empty($settings['fullcalendar']['editable'])) {
+      $editable = $entity->access('update', NULL, TRUE)->isAllowed();
+    }
+    else {
+      $editable = FALSE;
+    }
+
     $url = $entity->toUrl('canonical');
     $url->setOption('attributes', [
       'data-all-day'     => (int) $all_day,
       'data-start'       => $this->dateFormatter->format($event_start->getTimestamp(), 'custom', DATETIME_DATETIME_STORAGE_FORMAT),
       'data-end'         => $this->dateFormatter->format($event_end->getTimestamp(), 'custom', DATETIME_DATETIME_STORAGE_FORMAT),
-      'data-editable'    => (int) TRUE, //$entity->editable,
+      'data-editable'    => !empty($editable) ? 'true' : 'false', // (int) $editable doesn't work...
       'data-field'       => $field['field_name'],
       'data-index'       => $delta,
       'data-eid'         => $entity->id(),
@@ -538,6 +566,11 @@ class FullCalendar extends StylePluginBase {
     return $url->toRenderArray() + [
       '#type'  => 'link',
       '#title' => $entity->label(),
+      '#cache' => [
+        'contexts' => [
+          'user', // Because of 'data-editable'.
+        ],
+      ],
     ];
   }
 

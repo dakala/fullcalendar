@@ -14,12 +14,25 @@
 
       var options = {
         eventClick: function (calEvent, jsEvent, view) {
+          if (settings['modalWindow']) {
+            var $modalLink = $('<a></a>');
+            $modalLink.addClass('use-ajax');
+            $modalLink.attr('href', calEvent.url);
+            $modalLink.attr('data-dialog-type', 'modal');
+            $modalLink.appendTo($('body'));
+
+            Drupal.attachBehaviors();
+            $modalLink.trigger('click').remove();
+            return false;
+          }
+
           if (settings['sameWindow']) {
             window.open(calEvent.url, '_self');
           }
           else {
             window.open(calEvent.url);
           }
+
           return false;
         },
         drop: function (date, allDay, jsEvent, ui) {

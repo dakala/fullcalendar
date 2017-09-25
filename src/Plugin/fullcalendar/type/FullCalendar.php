@@ -183,6 +183,9 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       'sameWindow'        => [
         'default' => FALSE,
       ],
+      'modalWindow'       => [
+        'default' => FALSE,
+      ],
       'contentHeight'     => [
         'default' => 0,
       ],
@@ -555,6 +558,28 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#default_value' => $this->style->options['sameWindow'],
       '#data_type'     => 'bool',
       '#fieldset'      => 'style',
+      '#states'        => [
+        'visible' => [
+          ':input[name="style_options[modalWindow]"]' => [
+            'checked' => FALSE,
+          ],
+        ],
+      ],
+    ];
+
+    $form['modalWindow'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Open events in modal'),
+      '#default_value' => $this->style->options['modalWindow'],
+      '#data_type'     => 'bool',
+      '#fieldset'      => 'style',
+      '#states'        => [
+        'visible' => [
+          ':input[name="style_options[sameWindow]"]' => [
+            'checked' => FALSE,
+          ],
+        ],
+      ],
     ];
 
     $form['contentHeight'] = [
@@ -710,7 +735,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function preView(&$settings) {
-    if (!empty($settings['editable'])) {
+    if (empty($settings['editable'])) {
       $this->style->view->fullcalendar_disallow_editable = TRUE;
     }
 
@@ -780,7 +805,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       elseif ($key == 'advanced') {
         // Don't add this value ever.
       }
-      elseif ($key == 'sameWindow') {
+      elseif ($key == 'sameWindow' || $key == 'modalWindow') {
         // Keep this at the top level.
         continue;
       }
