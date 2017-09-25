@@ -61,7 +61,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
   }
 
   /**
-   * @todo.
+   * TODO
    *
    * @var array
    */

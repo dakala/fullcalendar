@@ -81,8 +81,8 @@ function fullcalendar_views_pre_view(ViewExecutable $view, $display_id, array $a
     // First, we try to set initial Min and Max date values based on the
     // exposed form values.
     if (isset($exposed_input[$field_value])) {
-      $dateMin->setTimestamp($exposed_input[$field_value]['min']);
-      $dateMax->setTimestamp($exposed_input[$field_value]['max']);
+      $dateMin->setTimestamp(strtotime($exposed_input[$field_value]['min']));
+      $dateMax->setTimestamp(strtotime($exposed_input[$field_value]['max']));
     }
     // If no exposed values set, use user-defined date values.
     elseif (!empty($settings['date']['month']) && !empty($settings['date']['year'])) {

@@ -568,14 +568,17 @@ class FullCalendar extends StylePluginBase {
 
       $exposed_input = $this->view->getExposedInput();
 
+      // Min and Max dates for exposed filter.
       $dateMin = new DateTime();
       $dateMax = new DateTime();
 
-      // Add an exposed filter for the date field.
+      // First, we try to set initial Min and Max date values based on the
+      // exposed form values.
       if (isset($exposed_input[$field_value])) {
         $dateMin->setTimestamp(strtotime($exposed_input[$field_value]['min']));
         $dateMax->setTimestamp(strtotime($exposed_input[$field_value]['max']));
       }
+      // If no exposed values set, use user-defined date values.
       elseif (!empty($settings['date']['month']) && !empty($settings['date']['year'])) {
         $ts = mktime(0, 0, 0, $settings['date']['month'] + 1, 1, $settings['date']['year']);
 
@@ -585,6 +588,7 @@ class FullCalendar extends StylePluginBase {
         $dateMin->modify('first day of this month');
         $dateMax->modify('last day of this month');
       }
+      // Use default 1 month date-range.
       else {
         $dateMin->modify('first day of this month');
         $dateMax->modify('last day of this month');
