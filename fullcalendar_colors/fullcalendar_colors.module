@@ -11,8 +11,12 @@
  * Process FullCalendar Colors after the structure is built.
  */
 function fullcalendar_colors_preprocess_fullcalendar(&$variables) {
-  // @todo D8: Remove weight once http://drupal.org/node/1388546 is fixed.
-  $variables['element']['#attached']['css'][colors_create_css('fullcalendar_colors')] = array('weight' => 1);
+  // TODO D8: Remove weight once http://drupal.org/node/1388546 is fixed.
+  $css = colors_create_css('fullcalendar_colors');
+
+  $variables['element']['#attached']['css'][$css] = [
+    'weight' => 1,
+  ];
 }
 
 /**
@@ -26,12 +30,13 @@ function fullcalendar_colors_colors_rebuild() {
  * Implements hook_colors_build_selector().
  */
 function fullcalendar_colors_colors_build_selector($class) {
-  $selector = array(
+  $selector = [
     ".$class",
     ".$class .fc-event-skin",
     ".$class .fc-event-time",
     ".$class a",
-  );
+  ];
+
   return implode(', ', $selector);
 }
 

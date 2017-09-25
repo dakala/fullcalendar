@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @todo.
+ * TODO
  */
 class SettingsForm extends ConfigFormBase {
 
@@ -62,17 +62,19 @@ class SettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar_options.settings');
-    $form['fullcalendar_options'] = array(
-      '#type' => 'details',
-      '#title' => $this->t('Options'),
+
+    $form['fullcalendar_options'] = [
+      '#type'        => 'details',
+      '#title'       => $this->t('Options'),
       '#description' => $this->t('Each setting can be exposed for all views.'),
-      '#open' => TRUE,
-    );
+      '#open'        => TRUE,
+    ];
+
     foreach ($this->options as $key => $info) {
-      $form['fullcalendar_options'][$key] = array(
-        '#type' => 'checkbox',
-        '#default_value' => $config->get($key),
-      ) + $info;
+      $form['fullcalendar_options'][$key] = [
+          '#type'          => 'checkbox',
+          '#default_value' => $config->get($key),
+        ] + $info;
     }
 
     return parent::buildForm($form, $form_state);
@@ -83,9 +85,11 @@ class SettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar_options.settings');
+
     foreach ($this->options as $key => $info) {
       $config->set($key, $form_state->getValue($key));
     }
+
     $config->save();
 
     parent::submitForm($form, $form_state);

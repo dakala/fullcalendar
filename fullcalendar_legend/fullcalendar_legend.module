@@ -9,12 +9,14 @@
  * Implements hook_theme().
  */
 function fullcalendar_legend_theme($existing, $type, $theme, $path) {
-  return array(
-    'fullcalendar_legend' => array(
-      'variables' => array('types' => NULL),
-      'file' => 'fullcalendar_legend.theme.inc',
-    ),
-  );
+  return [
+    'fullcalendar_legend' => [
+      'variables' => [
+        'types' => NULL,
+      ],
+      'file'      => 'fullcalendar_legend.theme.inc',
+    ],
+  ];
 }
 
 /**
