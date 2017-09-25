@@ -74,14 +74,30 @@ function fullcalendar_views_pre_view(ViewExecutable $view, $display_id, array $a
 
     $field_value = $field_storage->getName() . '_value';
 
-    // Add an exposed filter for the date field.
+    // Min and Max dates for exposed filter.
+    $dateMin = new DateTime();
+    $dateMax = new DateTime();
+
+    // First, we try to set initial Min and Max date values based on the
+    // exposed form values.
     if (isset($exposed_input[$field_value])) {
-      $min = date('Y-m-d', strtotime($exposed_input[$field_value]['min']));
-      $max = date('Y-m-d', strtotime($exposed_input[$field_value]['max']));
+      $dateMin->setTimestamp($exposed_input[$field_value]['min']);
+      $dateMax->setTimestamp($exposed_input[$field_value]['max']);
     }
+    // If no exposed values set, use user-defined date values.
+    elseif (!empty($settings['date']['month']) && !empty($settings['date']['year'])) {
+      $ts = mktime(0, 0, 0, $settings['date']['month'] + 1, 1, $settings['date']['year']);
+
+      $dateMin->setTimestamp($ts);
+      $dateMax->setTimestamp($ts);
+
+      $dateMin->modify('first day of this month');
+      $dateMax->modify('last day of this month');
+    }
+    // Use default 1 month date-range.
     else {
-      $min = date('Y-m-d', mktime(0, 0, 0, $settings['date']['month'] + 1, 1, $settings['date']['year']));
-      $max = date('Y-m-d', mktime(0, 0, 0, $settings['date']['month'] + 2, 1, $settings['date']['year']));
+      $dateMin->modify('first day of this month');
+      $dateMax->modify('last day of this month');
     }
 
     $options = [
@@ -90,8 +106,8 @@ function fullcalendar_views_pre_view(ViewExecutable $view, $display_id, array $a
       'operator'  => 'between',
       'value'     => [
         'type' => 'date',
-        'min'  => $min,
-        'max'  => $max,
+        'min'  => $dateMin->format('Y-m-d'),
+        'max'  => $dateMax->format('Y-m-d'),
       ],
       'group'     => 0,
     ];

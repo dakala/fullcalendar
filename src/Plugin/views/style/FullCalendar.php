@@ -2,8 +2,10 @@
 
 namespace Drupal\fullcalendar\Plugin\views\style;
 
+use DateTime;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
@@ -307,6 +309,16 @@ class FullCalendar extends StylePluginBase {
     // @todo.
     $settings['fullcalendar']['disableResizing'] = TRUE;
 
+    // Force to disable dates in the previous or next month in order to get
+    // the (real) first and last day of the current month after using pager in
+    // 'month' view. So, disabling this results a valid date-range for the
+    // current month, instead of the date-range +/- days from the previous and
+    // next month. It's very important, because we set default date-range in
+    // the same way in fullcalendar_views_pre_view().
+    // @see https://fullcalendar.io/docs/display/showNonCurrentDates/
+    $settings['fullcalendar']['showNonCurrentDates'] = FALSE;
+    $settings['fullcalendar']['fixedWeekCount'] = FALSE;
+
     return $settings;
   }
 
@@ -351,13 +363,17 @@ class FullCalendar extends StylePluginBase {
 
       /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $row->_entity;
+
       $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
       $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
+
       $classes = array_map([
         '\Drupal\Component\Utility\Html',
         'getClass'
       ], $classes);
       $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
+
+      $request_time = \Drupal::time()->getRequestTime();
 
       $event = [];
       foreach ($date_fields as $field) {
@@ -368,6 +384,9 @@ class FullCalendar extends StylePluginBase {
 
         /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_definition */
         $field_definition = $field['field_info'];
+
+        // Get 'min' and 'max' dates appear in the Calendar.
+        $date_range = $this->getExposedDates($field['field_name']);
 
         // "DateRecur" support.
         if ($field_definition->getType() == 'date_recur') {
@@ -383,10 +402,10 @@ class FullCalendar extends StylePluginBase {
           // Add a class if the event was in the past or is in the future, based
           // on the end time. We can't do this in hook_fullcalendar_classes()
           // because the date hasn't been processed yet.
-          if (($all_day && strtotime($start) < strtotime('today')) || (!$all_day && strtotime($end) < REQUEST_TIME)) {
+          if (($all_day && strtotime($start) < strtotime('today')) || (!$all_day && strtotime($end) < $request_time)) {
             $time_class = 'fc-event-past';
           }
-          elseif (strtotime($start) > REQUEST_TIME) {
+          elseif (strtotime($start) > $request_time) {
             $time_class = 'fc-event-future';
           }
           else {
@@ -427,6 +446,64 @@ class FullCalendar extends StylePluginBase {
     }
 
     return $events;
+  }
+
+  /**
+   * Get 'min' and 'max' dates appear in the Calendar.
+   *
+   * @param $field_name
+   *   Field machine name.
+   *
+   * @return array
+   */
+  public function getExposedDates($field_name) {
+    $dates = &drupal_static(__METHOD__, []);
+
+    if (empty($dates[$field_name])) {
+      $entity_type = $this->view->getBaseEntityType();
+      $entity_type_id = $entity_type->id();
+
+      $settings = $this->view->style_plugin->options;
+
+      /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+      $field_manager = \Drupal::getContainer()->get('entity_field.manager');
+      /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface[] $field_storages */
+      $field_storages = $field_manager->getFieldStorageDefinitions($entity_type_id);
+      /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_storage */
+      $field_storage = $field_storages[$field_name];
+      $field_value = $field_storage->getName() . '_value';
+
+      $exposed_input = $this->view->getExposedInput();
+
+      $dateMin = new DateTime();
+      $dateMax = new DateTime();
+
+      // Add an exposed filter for the date field.
+      if (isset($exposed_input[$field_value])) {
+        $dateMin->setTimestamp($exposed_input[$field_value]['min']);
+        $dateMax->setTimestamp($exposed_input[$field_value]['max']);
+      }
+      elseif (!empty($settings['date']['month']) && !empty($settings['date']['year'])) {
+        $ts = mktime(0, 0, 0, $settings['date']['month'] + 1, 1, $settings['date']['year']);
+
+        $dateMin->setTimestamp($ts);
+        $dateMax->setTimestamp($ts);
+
+        $dateMin->modify('first day of this month');
+        $dateMax->modify('last day of this month');
+      }
+      else {
+        $dateMin->modify('first day of this month');
+        $dateMax->modify('last day of this month');
+      }
+
+      $dates[$field_name] = [
+        'min' => $dateMin,
+        'max' => $dateMax,
+      ];
+    }
+
+    return $dates[$field_name];
   }
 
 }

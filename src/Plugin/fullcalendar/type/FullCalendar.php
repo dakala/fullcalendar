@@ -247,10 +247,11 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     }
 
     $options = $this->style->options;
-
     $options['gcal'] = [];
+
+    /* @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field */
     foreach ($this->style->view->field as $field) {
-      if ($field->field == 'gcal') {
+      if (!empty($field->field) && $field->field == 'gcal') {
         $options['gcal'][] = $field->getSettings();
       }
     }
@@ -695,7 +696,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
    * @todo.
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state, &$options = []) {
-    $options = $form_state->getValues('style_options');
+    $options = $form_state->getValue('style_options');
 
     // These field options have empty defaults, make sure they stay that way.
     foreach (['title', 'url', 'date'] as $field) {
