@@ -42,6 +42,11 @@ function fullcalendar_views_pre_view(ViewExecutable $view, $display_id, array $a
     $plugin->preView($settings);
   }
 
+  if (empty($view->display_handler->getOption('use_ajax'))) {
+    $view->style_plugin->options = $settings;
+    return;
+  }
+
   $settings['fullcalendar_fields_count'] = 0;
   $exposed_input = $view->getExposedInput();
 
