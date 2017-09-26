@@ -133,7 +133,7 @@ function fullcalendar_field_is_date($field, $include_gcal = FALSE) {
     return TRUE;
   }
 
-  $entity_type = $field->getEntityType();
+  $entity_type = $field->definition['entity_type'];
 
   if (empty($entity_type)) {
     return FALSE;

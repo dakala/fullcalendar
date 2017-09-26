@@ -8,6 +8,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\fullcalendar\Plugin\FullcalendarBase;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -127,7 +128,9 @@ class FullCalendar extends StylePluginBase {
 
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
-      $options += $plugin->defineOptions();
+      if ($plugin instanceof FullcalendarBase) {
+        $options += $plugin->defineOptions();
+      }
     }
 
     return $options;
@@ -141,7 +144,9 @@ class FullCalendar extends StylePluginBase {
 
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
-      $plugin->buildOptionsForm($form, $form_state);
+      if ($plugin instanceof FullcalendarBase) {
+        $plugin->buildOptionsForm($form, $form_state);
+      }
     }
   }
 
@@ -209,7 +214,9 @@ class FullCalendar extends StylePluginBase {
 
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
-      $plugin->submitOptionsForm($form, $form_state);
+      if ($plugin instanceof FullcalendarBase) {
+        $plugin->submitOptionsForm($form, $form_state);
+      }
     }
   }
 
@@ -286,7 +293,7 @@ class FullCalendar extends StylePluginBase {
       '.js-view-dom-id-' . $this->view->dom_id => $settings,
     ];
 
-    if ((bool) $settings['fullcalendar']['modalWindow'] === TRUE) {
+    if (!empty($settings['fullcalendar']['modalWindow'])) {
       // FIXME all of these libraries are needed?
       $attached['attach']['library'][] = 'core/drupal.ajax';
       $attached['attach']['library'][] = 'core/drupal.dialog';
