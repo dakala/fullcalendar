@@ -25,7 +25,7 @@ class ResultsController extends ControllerBase {
   public function getResults(View $view, $display_id) {
     $response = new AjaxResponse();
 
-    if (!$view || !$view->access($display_id)) {
+    if (!$view || !$view->access('view')) {
       return $response;
     }
 
