@@ -13,10 +13,11 @@
       var $cal = this.$calendar;
 
       for (var i in fields) {
-        $cal.find('.views-widget-filter-' + i).hide();
-
         $.each(['min', 'max'], function (_, type) {
-          $cal.find('#edit-' + fields[i] + '-' + type).val(date_parts[type]);
+          var $input = $cal.find('#edit-' + fields[i] + '-' + type);
+
+          $input.val(date_parts[type]);
+          $input.parent().hide();
         });
       }
     }
@@ -29,8 +30,21 @@
     var $exposedForm = this.$calendar.find('.views-exposed-form');
     var $submit = this.$calendar.find('.views-exposed-form .form-actions');
 
+    // If exposed form only has the date widgets we added to the form in
+    // fullcalendar_views_pre_view(), we can hide the whole exposed form.
     if ($exposedForm.find('.form-item').length == settings['fullcalendar_fields_count'] + 1) {
       $exposedForm.hide();
+    }
+    // Otherwise, hide only the date widgets we added to the form.
+    else {
+      var $cal = this.$calendar;
+
+      for (var i in settings['fullcalendar_fields']) {
+        $.each(['min', 'max'], function (_, type) {
+          var $input = $cal.find('#edit-' + settings['fullcalendar_fields'][i] + '-' + type);
+          $input.parent().hide();
+        });
+      }
     }
 
     var $submit_button = $submit.find('.form-submit');
@@ -50,11 +64,14 @@
     };
 
     this.$submit = new Drupal.ajax(ajaxSettings);
-    $submit_button.click($.proxy(this.fetchEvents, this));
+    // Remove previously-attached click events (we do not want the view to be
+    // replaced), then attach our handler.
+    $submit_button.unbind( "click" ).click($.proxy(this.fetchEvents, this));
   };
 
   Drupal.fullcalendar.fullcalendar.prototype.fetchEvents = function () {
-    this.$calendar.find('.fc-toolbar button').addClass(this.tm + '-state-disabled');
+    this.$calendar.find('.fc-toolbar button')
+      .addClass(this.tm + '-state-disabled');
     $(this.$submit.element).trigger('fullcalendar_submit');
   };
 
