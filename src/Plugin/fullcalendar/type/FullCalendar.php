@@ -773,7 +773,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
         'timeformatDay'
       ])) {
         if ($advanced) {
-          $options['timeFormat'][strtolower(substr($key, 10))] = $value;
+          // @see https://fullcalendar.io/docs/views/View-Specific-Options/
+          $options['views'][strtolower(substr($key, 10))]['timeFormat'] = $value;
         }
       }
       elseif (in_array($key, [
@@ -782,7 +783,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
         'columnformatDay'
       ])) {
         if ($advanced) {
-          $options['columnFormat'][strtolower(substr($key, 12))] = $value;
+          // @see https://fullcalendar.io/docs/views/View-Specific-Options/
+          $options['views'][strtolower(substr($key, 12))]['columnFormat'] = $value;
         }
       }
       elseif (in_array($key, [
@@ -791,7 +793,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
         'titleformatDay'
       ])) {
         if ($advanced) {
-          $options['titleFormat'][strtolower(substr($key, 11))] = $value;
+          // @see https://fullcalendar.io/docs/views/View-Specific-Options/
+          $options['views'][strtolower(substr($key, 11))]['titleFormat'] = $value;
         }
       }
       elseif ($advanced && $key == 'axisFormat') {

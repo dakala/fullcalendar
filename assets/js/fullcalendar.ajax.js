@@ -49,9 +49,12 @@
 
     var $submit_button = $submit.find('.form-submit');
 
+    // Request URL.
     var url = '/';
-    if (Drupal.hasOwnProperty('currentLanguage')) {
-      url += Drupal['currentLanguage'] + '/';
+
+    // Prepend current language to URL.
+    if (drupalSettings.path.pathPrefix) {
+      url += drupalSettings.path.pathPrefix;
     }
 
     var ajaxSettings = {

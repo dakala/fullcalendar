@@ -353,6 +353,10 @@ class FullCalendar extends StylePluginBase {
       else {
         $settings['fullcalendar']['editable'] = FALSE;
       }
+
+      $settings['fullcalendar']['locale'] = \Drupal::languageManager()
+        ->getCurrentLanguage()
+        ->getId();
     }
 
     return $settings;
@@ -553,12 +557,16 @@ class FullCalendar extends StylePluginBase {
       $editable = FALSE;
     }
 
-    $url = $entity->toUrl('canonical');
+    $url = $entity->toUrl('canonical', [
+      'language' => \Drupal::languageManager()->getCurrentLanguage(),
+    ]);
+
     $url->setOption('attributes', [
       'data-all-day'     => (int) $all_day,
       'data-start'       => $this->dateFormatter->format($event_start->getTimestamp(), 'custom', DATETIME_DATETIME_STORAGE_FORMAT),
       'data-end'         => $this->dateFormatter->format($event_end->getTimestamp(), 'custom', DATETIME_DATETIME_STORAGE_FORMAT),
-      'data-editable'    => !empty($editable) ? 'true' : 'false', // (int) $editable doesn't work...
+      'data-editable'    => !empty($editable) ? 'true' : 'false',
+      // (int) $editable doesn't work...
       'data-field'       => $field['field_name'],
       'data-index'       => $delta,
       'data-eid'         => $entity->id(),
