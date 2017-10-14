@@ -9,7 +9,7 @@ fullcalendar.settings:
 fullcalendar.update:
   path: '/fullcalendar/ajax/update/drop/{entity_type}/{entity}/{field}/{index}'
   defaults:
-    _controller: '\Drupal\fullcalendar\Ajax\Update::drop'
+    _controller: '\Drupal\fullcalendar\Controller\UpdateController::drop'
   requirements:
     _access_fullcalendar_update: 'TRUE'
   options:
@@ -20,6 +20,10 @@ fullcalendar.update:
 fullcalendar.results:
   path: '/fullcalendar/ajax/results/{view}/{display_id}'
   defaults:
-    _controller: '\Drupal\fullcalendar\Ajax\ResultsController::getResults'
+    _controller: '\Drupal\fullcalendar\Controller\ResultsController::getResults'
   requirements:
     _permission: 'access content'
+  options:
+    parameters:
+      view:
+        type: entity:view

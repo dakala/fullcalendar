@@ -5,43 +5,46 @@
  * Theme functions for FullCalendar Legend.
  */
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Html;
 
 /**
  * Build the legend as a render array.
  */
 function template_preprocess_fullcalendar_legend(&$variables) {
-  $element = array(
-    '#attached' => array(
-      'css' => array(
+  $element = [
+    '#attached' => [
+      'css' => [
         drupal_get_path('module', 'fullcalendar_legend') . '/css/fullcalendar_legend.theme.css',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
+
   foreach ($variables['types'] as $type_name => $type) {
-    $element[$type_name] = array(
-      '#type' => 'container',
-      '#attributes' => array(
-        'class' => _fullcalendar_legend_get_classes($type),
+    $element[$type_name] = [
+      '#type'       => 'container',
+      '#attributes' => [
+        'class'       => _fullcalendar_legend_get_classes($type),
         'entity_type' => $type['entity_type'],
-        'bundle' => $type['bundle'],
-        'field' => $type['field_name'],
-      ),
-    );
+        'bundle'      => $type['bundle'],
+        'field'       => $type['field_name'],
+      ],
+    ];
+
     // Sanitize the label.
-    $type['label'] = String::checkPlain($type['label']);
+    $type['label'] = Html::escape($type['label']);
+
     if (isset($type['uri'])) {
-      $element[$type_name]['type'] = array(
-        '#type' => 'link',
-        '#href' => $type['uri']['path'],
-        '#options' => isset($type['uri']['options']) ? $type['uri']['options'] : array(),
-        '#title' => $type['label'],
-      );
+      $element[$type_name]['type'] = [
+        '#type'    => 'link',
+        '#href'    => $type['uri']['path'],
+        '#options' => isset($type['uri']['options']) ? $type['uri']['options'] : [],
+        '#title'   => $type['label'],
+      ];
     }
     else {
-      $element[$type_name]['type'] = array(
+      $element[$type_name]['type'] = [
         '#markup' => $type['label'],
-      );
+      ];
     }
   }
 
@@ -52,7 +55,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
  * Render the legend.
  */
 function theme_fullcalendar_legend($variables) {
-  return drupal_render($variables['element']);
+  return \Drupal::service('renderer')->renderRoot($variables['element']);
 }
 
 /**
@@ -68,7 +71,7 @@ function theme_fullcalendar_legend($variables) {
  */
 function _fullcalendar_legend_get_classes($type) {
   $values['type'] = $type['bundle'];
-  $entity = \Drupal::entityManager()
+  $entity = \Drupal::entityTypeManager()
     ->getStorage($type['entity_type'])
     ->create($values);
 
