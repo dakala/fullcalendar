@@ -742,12 +742,17 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       $this->style->view->fullcalendar_disallow_editable = TRUE;
     }
 
+    // TODO provide the ability to alter texts.
     $options = [
-      'buttonText'      => [
-        'day'   => $this->t('Day'),
-        'week'  => $this->t('Week'),
-        'month' => $this->t('Month'),
-        'today' => $this->t('Today'),
+      'buttonText' => [
+        'day'        => $this->t('Day'),
+        'week'       => $this->t('Week'),
+        'month'      => $this->t('Month'),
+        'today'      => $this->t('Today'),
+        'listDay'    => $this->t('List (day)'),
+        'listWeek'   => $this->t('List (week)'),
+        'listMonth'  => $this->t('List (month)'),
+        'listYear'   => $this->t('List (year)'),
       ],
       'allDayText'      => $this->t('All day'),
       'monthNames'      => array_values(DateHelper::monthNames(TRUE)),
