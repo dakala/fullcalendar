@@ -634,12 +634,12 @@ class FullCalendar extends StylePluginBase {
         $dateMax->setTimestamp($ts);
 
         $dateMin->modify('first day of this month');
-        $dateMax->modify('last day of this month');
+        $dateMax->modify('first day of next month');
       }
       // Use default 1 month date-range.
       else {
         $dateMin->modify('first day of this month');
-        $dateMax->modify('last day of this month');
+        $dateMax->modify('first day of next month');
       }
 
       $dates[$field_name] = [

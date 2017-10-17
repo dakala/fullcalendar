@@ -97,12 +97,12 @@ function fullcalendar_views_pre_view(ViewExecutable $view, $display_id, array $a
       $dateMax->setTimestamp($ts);
 
       $dateMin->modify('first day of this month');
-      $dateMax->modify('last day of this month');
+      $dateMax->modify('first day of next month');
     }
     // Use default 1 month date-range.
     else {
       $dateMin->modify('first day of this month');
-      $dateMax->modify('last day of this month');
+      $dateMax->modify('first day of next month');
     }
 
     $options = [
