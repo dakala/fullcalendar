@@ -25,11 +25,15 @@ class ResultsController extends ControllerBase {
   public function getResults(View $view, $display_id) {
     $response = new AjaxResponse();
 
-    if (!$view || !$view->access('view')) {
+    if (!$view) {
       return $response;
     }
 
     $view = $view->getExecutable();
+
+    if (!$view->access($display_id)) {
+      return $response;
+    }
 
     if (!$view->setDisplay($display_id)) {
       return $response;
@@ -40,7 +44,6 @@ class ResultsController extends ControllerBase {
     $args = $request->request->get('view_args', '');
     $args = explode('/', $args);
 
-    $view->setDisplay($display_id);
     $view->setExposedInput($request->request->all());
     $view->preExecute($args);
     $view->execute($display_id);
