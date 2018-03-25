@@ -3,6 +3,7 @@
 namespace Drupal\fullcalendar\Plugin\views\style;
 
 use DateTime;
+use DateTimeZone;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Datetime\DateFormatter;
@@ -392,6 +393,7 @@ class FullCalendar extends StylePluginBase {
             'field_alias' => $field->field_alias,
             'field_name'  => $field_definition->getName(),
             'field_info'  => $field_definition,
+            'timezone_override'  => $field->options['settings']['timezone_override'],
           ];
         }
       }
@@ -465,6 +467,11 @@ class FullCalendar extends StylePluginBase {
           $event_start = new DateTime();
           $event_start->setTimestamp(strtotime($item['raw']->value));
 
+          // Set event timezone override if configured in views.
+          if (!empty($field['timezone_override'])) {
+            $event_start->setTimeZone(new DateTimeZone($field['timezone_override']));
+          }
+
           $event_end = new DateTime();
           // By default, we use the start-time + 1 hour as end-time.
           $event_end->setTimestamp($event_start->getTimestamp() + 3600);
@@ -472,6 +479,11 @@ class FullCalendar extends StylePluginBase {
           // If the field has end_value, override default end-time.
           if (!empty($item['raw']->end_value)) {
             $event_end->setTimestamp(strtotime($item['raw']->end_value));
+
+            // Set event timezone override if configured in views.
+            if (!empty($field['timezone_override'])) {
+              $event_end->setTimeZone(new DateTimeZone($field['timezone_override']));
+            }
           }
 
           $event_start->setTimestamp($event_start->getTimestamp() + $event_start->getOffset());
