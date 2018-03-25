@@ -279,7 +279,7 @@ class FullCalendar extends StylePluginBase {
 
       foreach (['css', 'js'] as $type) {
         if ($definition[$type]) {
-          $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
+          $attached['attach']['library'][] = $definition['provider'] . '/drupal.' . $plugin_id . '.' . $type;
         }
       }
     }
