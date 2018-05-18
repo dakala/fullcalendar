@@ -9,21 +9,21 @@
  * Implements hook_views_data().
  */
 function fullcalendar_views_data() {
-  $data = array();
+  $data = [];
 
-  $data['fullcalendar'] = array(
-    'table' => array(
+  $data['fullcalendar'] = [
+    'table' => [
       'group' => t('FullCalendar'),
-      'join' => array('#global' => array()),
-    ),
-    'gcal' => array(
+      'join' => ['#global' => []],
+    ],
+    'gcal' => [
       'title' => t('Google Calendar'),
       'help' => t('Display events from a Google Calendar.'),
-      'field' => array(
+      'field' => [
         'id' => 'fullcalendar_gcal',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   return $data;
 }

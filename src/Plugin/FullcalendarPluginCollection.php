@@ -52,7 +52,7 @@ class FullcalendarPluginCollection extends DefaultLazyPluginCollection {
       return;
     }
 
-    $this->pluginInstances[$plugin_id] = $this->manager->createInstance($plugin_id, array(), $this->style);
+    $this->pluginInstances[$plugin_id] = $this->manager->createInstance($plugin_id, [], $this->style);
   }
 
   /**

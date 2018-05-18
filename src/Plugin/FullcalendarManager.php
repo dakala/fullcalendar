@@ -14,10 +14,10 @@ class FullcalendarManager extends DefaultPluginManager {
   /**
    * @todo.
    */
-  protected $defaults = array(
+  protected $defaults = [
     'css' => FALSE,
     'js' => FALSE,
-  );
+  ];
 
   /**
    * Constructs a FullcalendarManager object.
@@ -39,9 +39,9 @@ class FullcalendarManager extends DefaultPluginManager {
    *
    * @return \Drupal\fullcalendar\Plugin\FullcalendarInterface
    */
-  public function createInstance($plugin_id, array $configuration = array(), $style = NULL) {
+  public function createInstance($plugin_id, array $configuration = [], $style = NULL) {
     $plugin = parent::createInstance($plugin_id, $configuration);
-    if($style) {
+    if ($style) {
       $plugin->setStyle($style);
     }
     return $plugin;

@@ -11,37 +11,37 @@ use Drupal\Component\Utility\Html;
  * Build the legend as a render array.
  */
 function template_preprocess_fullcalendar_legend(&$variables) {
-  $element = array(
-    '#attached' => array(
-      'css' => array(
+  $element = [
+    '#attached' => [
+      'css' => [
         drupal_get_path('module', 'fullcalendar_legend') . '/css/fullcalendar_legend.theme.css',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
   foreach ($variables['types'] as $type_name => $type) {
-    $element[$type_name] = array(
+    $element[$type_name] = [
       '#type' => 'container',
-      '#attributes' => array(
+      '#attributes' => [
         'class' => _fullcalendar_legend_get_classes($type),
         'entity_type' => $type['entity_type'],
         'bundle' => $type['bundle'],
         'field' => $type['field_name'],
-      ),
-    );
+      ],
+    ];
     // Sanitize the label.
     $type['label'] = Html::escape($type['label']);
     if (isset($type['uri'])) {
-      $element[$type_name]['type'] = array(
+      $element[$type_name]['type'] = [
         '#type' => 'link',
         '#href' => $type['uri']['path'],
-        '#options' => isset($type['uri']['options']) ? $type['uri']['options'] : array(),
+        '#options' => isset($type['uri']['options']) ? $type['uri']['options'] : [],
         '#title' => $type['label'],
-      );
+      ];
     }
     else {
-      $element[$type_name]['type'] = array(
+      $element[$type_name]['type'] = [
         '#markup' => $type['label'],
-      );
+      ];
     }
   }
 
@@ -52,7 +52,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
  * Render the legend.
  */
 function theme_fullcalendar_legend($variables) {
-    return \Drupal::service('renderer')->render($variables['element']);
+  return \Drupal::service('renderer')->render($variables['element']);
 }
 
 /**

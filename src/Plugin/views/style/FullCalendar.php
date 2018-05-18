@@ -146,7 +146,7 @@ class FullCalendar extends StylePluginBase {
    *   (optional) An array of parent keys when recursing through the nested
    *   array. Defaults to an empty array.
    */
-  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = array()) {
+  protected function castNestedValues(array &$values, array $form, $current_key = NULL, array $parents = []) {
     foreach ($values as $key => &$value) {
       // We are leaving a recursive loop, remove the last parent key.
       if (empty($current_key)) {
@@ -191,7 +191,7 @@ class FullCalendar extends StylePluginBase {
   public function parseFields($include_gcal = TRUE) {
     $this->view->initHandlers();
     $labels = $this->displayHandler->getFieldLabels();
-    $date_fields = array();
+    $date_fields = [];
     foreach ($this->view->field as $id => $field) {
       if (fullcalendar_field_is_date($field, $include_gcal)) {
         $date_fields[$id] = $labels[$id];
@@ -205,7 +205,7 @@ class FullCalendar extends StylePluginBase {
    */
   public function validate() {
     if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
-      drupal_set_message($this->t('Display "@display" requires at least one date field.', array('@display' => $this->displayHandler->display['display_title'])), 'error');
+      drupal_set_message($this->t('Display "@display" requires at least one date field.', ['@display' => $this->displayHandler->display['display_title']]), 'error');
     }
     return parent::validate();
   }
@@ -218,12 +218,12 @@ class FullCalendar extends StylePluginBase {
       $this->options['#attached'] = $this->prepareAttached();
     }
 
-    return array(
+    return [
       '#theme' => $this->themeFunctions(),
       '#view' => $this->view,
       '#rows' => $this->prepareEvents(),
       '#options' => $this->options,
-    );
+    ];
   }
 
   /**
@@ -235,7 +235,7 @@ class FullCalendar extends StylePluginBase {
 
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
-      foreach (array('css', 'js') as $type) {
+      foreach (['css', 'js'] as $type) {
         if ($definition[$type]) {
           $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
         }
@@ -256,8 +256,8 @@ class FullCalendar extends StylePluginBase {
    */
   protected function prepareSettings() {
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    $settings = array();
-    $weights = array();
+    $settings = [];
+    $weights = [];
     $delta = 0;
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
@@ -284,23 +284,24 @@ class FullCalendar extends StylePluginBase {
    */
   protected function prepareEvents() {
     /* @var \Drupal\views\Plugin\views\field\Field $field */
-    $events = array();
+    $events = [];
     foreach ($this->view->result as $delta => $row) {
       // Collect all fields for the customize options.
-      $fields = array();
+      $fields = [];
       // Collect only date fields.
-      $date_fields = array();
+      $date_fields = [];
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
         if (fullcalendar_field_is_date($field)) {
-          $field_storage_definitions = \Drupal::entityManager()->getFieldStorageDefinitions($field->definition['entity_type']);
+          $field_storage_definitions = \Drupal::entityManager()
+            ->getFieldStorageDefinitions($field->definition['entity_type']);
           $field_definition = $field_storage_definitions[$field->definition['field_name']];
-          $date_fields[$field_name] = array(
+          $date_fields[$field_name] = [
             'value' => $field->getItems($row),
             'field_alias' => $field->field_alias,
             'field_name' => $field_definition->getName(),
             'field_info' => $field_definition,
-          );
+          ];
         }
       }
 
@@ -316,12 +317,15 @@ class FullCalendar extends StylePluginBase {
 
       /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $row->_entity;
-      $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', array($entity));
+      $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
       $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
-      $classes = array_map(['\Drupal\Component\Utility\Html', 'getClass'], $classes);
+      $classes = array_map([
+        '\Drupal\Component\Utility\Html',
+        'getClass',
+      ], $classes);
       $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
 
-      $event = array();
+      $event = [];
       foreach ($date_fields as $field) {
         // Filter fields without value.
         if (empty($field['value'])) {
@@ -348,7 +352,7 @@ class FullCalendar extends StylePluginBase {
           }
 
           $url = $entity->urlInfo();
-          $url->setOption('attributes', array(
+          $url->setOption('attributes', [
             'data-all-day' => $all_day,
             'data-start' => $start,
             'data-end' => $end,
@@ -359,22 +363,22 @@ class FullCalendar extends StylePluginBase {
             'data-entity-type' => $entity->getEntityTypeId(),
             'data-cn' => $class . ' ' . $time_class,
             'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-            'class' => array('fullcalendar-event-details'),
-          ));
+            'class' => ['fullcalendar-event-details'],
+          ]);
 
-          $event[] = $url->toRenderArray() + array(
-            '#type' => 'link',
-            '#title' => $item['raw']->value,
-          );
+          $event[] = $url->toRenderArray() + [
+              '#type' => 'link',
+              '#title' => $item['raw']->value,
+            ];
         }
       }
 
       if (!empty($event)) {
-        $events[$delta] = array(
+        $events[$delta] = [
           '#theme' => 'fullcalendar_event',
           '#event' => $event,
           '#entity' => $entity,
-        );
+        ];
       }
     }
 

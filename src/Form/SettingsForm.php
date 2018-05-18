@@ -30,21 +30,21 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('fullcalendar.settings');
 
-    $form['path'] = array(
+    $form['path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Path to FullCalendar'),
       '#default_value' => $config->get('path'),
       '#description' => $this->t('Enter the path relative to Drupal root where the FullCalendar plugin directory is located.'),
-    );
-    $form['compression'] = array(
+    ];
+    $form['compression'] = [
       '#type' => 'radios',
       '#title' => $this->t('Choose FullCalendar compression level'),
-      '#options' => array(
+      '#options' => [
         'min' => $this->t('Production (Minified)'),
         'none' => $this->t('Development (Uncompressed code)'),
-      ),
+      ],
       '#default_value' => $config->get('compression'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

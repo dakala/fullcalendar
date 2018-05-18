@@ -25,7 +25,7 @@ class ResultsController {
       return;
     }
 
-    $args = array();
+    $args = [];
     $view->dom_id = $request->request->get('dom_id');
     $view->fullcalendar_ajax = TRUE;
     $view->preExecute($args);

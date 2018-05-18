@@ -66,52 +66,52 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
    *
    * @var array
    */
-  protected static $formats = array(
-    '12' => array(
+  protected static $formats = [
+    '12' => [
       'time' => 'h:mm',
       'slotLabel' => 'h(:mm)a',
-    ),
-    '24' => array(
+    ],
+    '24' => [
       'time' => 'HH:mm',
       'slotLabel' => 'HH(:mm)',
-    ),
-    'mdy' => array(
-      'title' => array(
+    ],
+    'mdy' => [
+      'title' => [
         'month' => 'MMMM YYYY',
         'week' => 'MMM D YYYY',
         'day' => 'MMMM D YYYY',
-      ),
-      'column' => array(
+      ],
+      'column' => [
         'month' => 'ddd',
         'week' => 'ddd M/D',
         'day' => 'dddd',
-      ),
-    ),
-    'dmy' => array(
-      'title' => array(
+      ],
+    ],
+    'dmy' => [
+      'title' => [
         'month' => 'MMMM YYYY',
         'week' => 'D MMM YYYY',
         'day' => 'D MMMM YYYY',
-      ),
-      'column' => array(
+      ],
+      'column' => [
         'month' => 'ddd',
         'week' => 'ddd D/M',
         'day' => 'dddd',
-      ),
-    ),
-    'ymd' => array(
-      'title' => array(
+      ],
+    ],
+    'ymd' => [
+      'title' => [
         'month' => 'YYYY MMMM',
         'week' => 'YYYY MMM D',
         'day' => 'YYYY MMMM D',
-      ),
-      'column' => array(
+      ],
+      'column' => [
         'month' => 'ddd',
         'week' => 'ddd M/D',
         'day' => 'dddd',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   /**
    * {@inheritdoc}
@@ -121,77 +121,77 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     $date = 'mdy';
     $time_format = static::$formats[$time];
     $date_format = static::$formats[$date];
-    $options = array(
-      'left' => array('default' => 'today prev,next'),
-      'center' => array('default' => 'title'),
-      'right' => array('default' => 'month agendaWeek agendaDay'),
-      'timeformat' => array('default' => $time_format['time']),
-      'advanced' => array(
+    $options = [
+      'left' => ['default' => 'today prev,next'],
+      'center' => ['default' => 'title'],
+      'right' => ['default' => 'month agendaWeek agendaDay'],
+      'timeformat' => ['default' => $time_format['time']],
+      'advanced' => [
         'default' => FALSE,
-      ),
-      'slotLabelFormat' => array('default' => $time_format['slotLabel']),
-      'timeformatMonth' => array('default' => $time_format['time']),
-      'titleformatMonth' => array('default' => $date_format['title']['month']),
-      'columnformatMonth' => array('default' => $date_format['column']['month']),
-      'timeformatWeek' => array('default' => $time_format['time']),
-      'titleformatWeek' => array('default' => $date_format['title']['week']),
-      'columnformatWeek' => array('default' => $date_format['column']['week']),
-      'timeformatDay' => array('default' => $time_format['time']),
-      'titleformatDay' => array('default' => $date_format['title']['day']),
-      'columnformatDay' => array('default' => $date_format['column']['day']),
-      'theme' => array(
+      ],
+      'slotLabelFormat' => ['default' => $time_format['slotLabel']],
+      'timeformatMonth' => ['default' => $time_format['time']],
+      'titleformatMonth' => ['default' => $date_format['title']['month']],
+      'columnformatMonth' => ['default' => $date_format['column']['month']],
+      'timeformatWeek' => ['default' => $time_format['time']],
+      'titleformatWeek' => ['default' => $date_format['title']['week']],
+      'columnformatWeek' => ['default' => $date_format['column']['week']],
+      'timeformatDay' => ['default' => $time_format['time']],
+      'titleformatDay' => ['default' => $date_format['title']['day']],
+      'columnformatDay' => ['default' => $date_format['column']['day']],
+      'theme' => [
         'default' => TRUE,
-      ),
-      'sameWindow' => array(
+      ],
+      'sameWindow' => [
         'default' => FALSE,
-      ),
-      'contentHeight' => array('default' => 0),
-      'droppable' => array(
+      ],
+      'contentHeight' => ['default' => 0],
+      'droppable' => [
         'default' => FALSE,
-      ),
-      'editable' => array(
+      ],
+      'editable' => [
         'default' => FALSE,
-      ),
-    );
+      ],
+    ];
 
     // Nest these explicitly so that they can be more easily found later.
-    $options['display'] = array(
-      'contains' => array(
-        'defaultView' => array('default' => 'month'),
-        'firstDay' => array('default' => '0'),
-        'weekMode' => array('default' => 'fixed'),
-      ),
-    );
-    $options['times'] = array(
-      'contains' => array(
-        'default_date' => array(
+    $options['display'] = [
+      'contains' => [
+        'defaultView' => ['default' => 'month'],
+        'firstDay' => ['default' => '0'],
+        'weekMode' => ['default' => 'fixed'],
+      ],
+    ];
+    $options['times'] = [
+      'contains' => [
+        'default_date' => [
           'default' => FALSE,
-        ),
-        'date' => array(
-          'default' => array(
+        ],
+        'date' => [
+          'default' => [
             'year' => '1900',
             'month' => '1',
             'day' => '1',
-          ),
-        ),
-      ),
-    );
-    $options['fields'] = array(
-      'contains' => array(
-        'title_field' => array('default' => 'title'),
-        'url_field' => array('default' => 'title'),
-        'date_field' => array('default' => array()),
-        'title' => array(
+          ],
+        ],
+      ],
+    ];
+    $options['fields'] = [
+      'contains' => [
+        'title_field' => ['default' => 'title'],
+        'url_field' => ['default' => 'title'],
+        'date_field' => ['default' => []],
+        'title' => [
           'default' => FALSE,
-        ),
-        'url' => array(
+        ],
+        'url' => [
           'default' => FALSE,
-        ),
-        'date' => array(
+        ],
+        'date' => [
           'default' => FALSE,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     return $options;
   }
 
@@ -206,7 +206,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
 
     $options = $this->style->options;
 
-    $options['gcal'] = array();
+    $options['gcal'] = [];
     foreach ($this->style->view->field as $field) {
       if ($field->field == 'gcal') {
         $options['gcal'][] = $field->getSettings();
@@ -215,67 +215,67 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
 
     unset($options['fields']);
 
-    $settings += $options + array(
-      'view_name' => $this->style->view->storage->id(),
-      'view_display' => $this->style->view->current_display,
-    );
+    $settings += $options + [
+        'view_name' => $this->style->view->storage->id(),
+        'view_display' => $this->style->view->current_display,
+      ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    $form['display'] = array(
+    $form['display'] = [
       '#type' => 'details',
       '#title' => $this->t('Display settings'),
       '#collapsible' => TRUE,
       '#open' => TRUE,
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
-    );
-    $form['header'] = array(
+    ];
+    $form['header'] = [
       '#type' => 'details',
       '#title' => $this->t('Header settings'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/display/header', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/display/header', ['attributes' => ['target' => '_blank']])),
       '#collapsible' => TRUE,
       '#open' => FALSE,
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
-    );
-    $form['times'] = array(
+    ];
+    $form['times'] = [
       '#type' => 'details',
       '#title' => $this->t('Time/date settings'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/utilities/formatDate', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/utilities/formatDate', ['attributes' => ['target' => '_blank']])),
       '#collapsible' => TRUE,
       '#open' => FALSE,
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
-    );
-    $form['style'] = array(
+    ];
+    $form['style'] = [
       '#type' => 'details',
       '#title' => $this->t('Style settings'),
       '#collapsible' => TRUE,
       '#open' => FALSE,
-    );
+    ];
 
-    $form['display']['defaultView'] = array(
+    $form['display']['defaultView'] = [
       '#type' => 'select',
       '#title' => $this->t('Initial display'),
-      '#options' => array(
+      '#options' => [
         'month' => 'Month',
         'agendaWeek' => 'Week (Agenda)',
         'basicWeek' => 'Week (Basic)',
         'agendaDay' => 'Day (Agenda)',
         'basicDay' => 'Day (Basic)',
-      ),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/views/Available_Views', array('attributes' => array('target' => '_blank')))),
+      ],
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/views/Available_Views', ['attributes' => ['target' => '_blank']])),
       '#default_value' => $this->style->options['display']['defaultView'],
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
       '#fieldset' => 'display',
-    );
+    ];
 
-    $form['display']['firstDay'] = array(
+    $form['display']['firstDay'] = [
       '#type' => 'select',
       '#title' => $this->t('Week starts on'),
       '#options' => DateHelper::weekDays(TRUE),
@@ -283,21 +283,21 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#prefix' => '<div class="views-left-30">',
       '#suffix' => '</div>',
       '#fieldset' => 'display',
-    );
+    ];
 
-    $form['display']['weekMode'] = array(
+    $form['display']['weekMode'] = [
       '#type' => 'select',
       '#title' => $this->t('Week mode'),
-      '#options' => array(
+      '#options' => [
         'fixed' => 'Fixed',
         'liquid' => 'Liquid',
         'variable' => 'Variable',
-      ),
+      ],
       '#default_value' => $this->style->options['display']['weekMode'],
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/display/weekMode', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/display/weekMode', ['attributes' => ['target' => '_blank']])),
       '#fieldset' => 'display',
-    );
-    $form['left'] = array(
+    ];
+    $form['left'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Left'),
       '#default_value' => $this->style->options['left'],
@@ -305,8 +305,8 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#suffix' => '</div>',
       '#size' => '30',
       '#fieldset' => 'header',
-    );
-    $form['center'] = array(
+    ];
+    $form['center'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Center'),
       '#default_value' => $this->style->options['center'],
@@ -314,78 +314,78 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#suffix' => '</div>',
       '#size' => '30',
       '#fieldset' => 'header',
-    );
-    $form['right'] = array(
+    ];
+    $form['right'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Right'),
       '#default_value' => $this->style->options['right'],
       '#size' => '30',
       '#fieldset' => 'header',
-    );
-    $form['times']['default_date'] = array(
+    ];
+    $form['times']['default_date'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use a custom initial date'),
       '#description' => $this->t('If unchecked, the calendar will load the current date.'),
       '#default_value' => $this->style->options['times']['default_date'],
       '#data_type' => 'bool',
       '#fieldset' => 'times',
-    );
-    $form['times']['date'] = array(
+    ];
+    $form['times']['date'] = [
       '#type' => 'date',
       '#title' => $this->t('Custom initial date'),
       '#title_display' => 'invisible',
       '#default_value' => $this->style->options['times']['date'],
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[times][default_date]"]' => array('checked' => TRUE),
-        ),
-      ),
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[times][default_date]"]' => ['checked' => TRUE],
+        ],
+      ],
       '#fieldset' => 'times',
-    );
-    $form['timeformat'] = array(
+    ];
+    $form['timeformat'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Time format'),
       '#default_value' => $this->style->options['timeformat'],
       '#size' => '30',
       '#fieldset' => 'times',
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[advanced]"]' => array('checked' => FALSE),
-        ),
-      ),
-    );
-    $form['advanced'] = array(
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[advanced]"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+    $form['advanced'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable advanced time and date format settings'),
       '#default_value' => $this->style->options['advanced'],
       '#data_type' => 'bool',
       '#fieldset' => 'times',
-    );
-    $form['slotLabelFormat'] = array(
+    ];
+    $form['slotLabelFormat'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Slot label format'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/agenda/slotLabelFormat', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/agenda/slotLabelFormat', ['attributes' => ['target' => '_blank']])),
       '#default_value' => $this->style->options['slotLabelFormat'],
       '#size' => '30',
       '#fieldset' => 'times',
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[advanced]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
 
     // Add the nine time/date formats.
-    foreach (array('time', 'title', 'column') as $type) {
-      foreach (array('Month', 'Week', 'Day') as $range) {
+    foreach (['time', 'title', 'column'] as $type) {
+      foreach (['Month', 'Week', 'Day'] as $range) {
         $key = $type . 'format' . $range;
-        $form[$key] = array(
+        $form[$key] = [
           '#type' => 'textfield',
           '#title' => $this->t($range),
           '#default_value' => $this->style->options[$key],
           '#size' => '30',
           '#fieldset' => $type,
-        );
+        ];
 
         if ($range != 'Day') {
           $form[$key]['#prefix'] = '<div class="views-left-30">';
@@ -394,67 +394,67 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       }
     }
 
-    $form['time'] = array(
+    $form['time'] = [
       '#type' => 'details',
       '#title' => $this->t('Time format'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/text/timeFormat', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/text/timeFormat', ['attributes' => ['target' => '_blank']])),
       '#collapsible' => TRUE,
       '#open' => TRUE,
       '#fieldset' => 'times',
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-    $form['title'] = array(
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[advanced]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['title'] = [
       '#type' => 'details',
       '#title' => $this->t('Title format'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/text/titleFormat', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/text/titleFormat', ['attributes' => ['target' => '_blank']])),
       '#collapsible' => TRUE,
       '#open' => TRUE,
       '#fieldset' => 'times',
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-    $form['column'] = array(
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[advanced]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['column'] = [
       '#type' => 'details',
       '#title' => $this->t('Column format'),
-      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/text/columnFormat', array('attributes' => array('target' => '_blank')))),
+      '#description' => Link::fromTextAndUrl($this->t('More info'), Url::fromUri('http://arshaw.com/fullcalendar/docs/text/columnFormat', ['attributes' => ['target' => '_blank']])),
       '#collapsible' => TRUE,
       '#open' => TRUE,
       '#fieldset' => 'times',
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[advanced]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[advanced]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
 
-    $form['theme'] = array(
+    $form['theme'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use jQuery UI Theme'),
       '#default_value' => $this->style->options['theme'],
       '#data_type' => 'bool',
       '#fieldset' => 'style',
-    );
-    $form['sameWindow'] = array(
+    ];
+    $form['sameWindow'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Open events in same window'),
       '#default_value' => $this->style->options['sameWindow'],
       '#data_type' => 'bool',
       '#fieldset' => 'style',
-    );
-    $form['contentHeight'] = array(
+    ];
+    $form['contentHeight'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Calendar height'),
       '#size' => 4,
@@ -462,87 +462,87 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#field_suffix' => 'px',
       '#data_type' => 'int',
       '#fieldset' => 'style',
-    );
+    ];
     if ($this->moduleHandler->getImplementations('fullcalendar_droppable')) {
-      $form['droppable'] = array(
+      $form['droppable'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Allow external events to be added via drag and drop'),
         '#default_value' => $this->style->options['droppable'],
         '#data_type' => 'bool',
         '#fieldset' => 'style',
-      );
+      ];
     }
-    $form['editable'] = array(
+    $form['editable'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Prevent editing events via drag-and-drop'),
       '#default_value' => $this->style->options['editable'],
       '#data_type' => 'bool',
       '#fieldset' => 'style',
       '#description' => $this->t('Modules can set custom access rules, but this will override those.'),
-    );
+    ];
 
     // Get the regular fields.
     $field_options = $this->style->displayHandler->getFieldLabels();
     // Get the date fields.
     $date_fields = $this->style->parseFields();
 
-    $form['fields'] = array(
+    $form['fields'] = [
       '#type' => 'details',
       '#title' => $this->t('Customize fields'),
       '#description' => $this->t('Add fields to the view in order to customize fields below.'),
       '#collapsible' => TRUE,
       '#open' => FALSE,
-    );
-    $form['fields']['title'] = array(
+    ];
+    $form['fields']['title'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use a custom title'),
       '#default_value' => $this->style->options['fields']['title'],
       '#data_type' => 'bool',
       '#fieldset' => 'fields',
-    );
-    $form['fields']['title_field'] = array(
+    ];
+    $form['fields']['title_field'] = [
       '#type' => 'select',
       '#title' => $this->t('Title field'),
       '#options' => $field_options,
       '#default_value' => $this->style->options['fields']['title_field'],
       '#description' => $this->t('Choose the field with the custom title.'),
-      '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[fields][title]"]' => array('checked' => TRUE),
-        ),
-      ),
+      '#process' => ['\Drupal\Core\Render\Element\Select::processSelect'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[fields][title]"]' => ['checked' => TRUE],
+        ],
+      ],
       '#fieldset' => 'fields',
-    );
-    $form['fields']['url'] = array(
+    ];
+    $form['fields']['url'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use a custom redirect URL'),
       '#default_value' => $this->style->options['fields']['url'],
       '#data_type' => 'bool',
       '#fieldset' => 'fields',
-    );
-    $form['fields']['url_field'] = array(
+    ];
+    $form['fields']['url_field'] = [
       '#type' => 'select',
       '#title' => $this->t('URL field'),
       '#options' => $field_options,
       '#default_value' => $this->style->options['fields']['url_field'],
       '#description' => $this->t('Choose the field with the custom link.'),
-      '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[fields][url]"]' => array('checked' => TRUE),
-        ),
-      ),
+      '#process' => ['\Drupal\Core\Render\Element\Select::processSelect'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[fields][url]"]' => ['checked' => TRUE],
+        ],
+      ],
       '#fieldset' => 'fields',
-    );
-    $form['fields']['date'] = array(
+    ];
+    $form['fields']['date'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use a custom date field'),
       '#default_value' => $this->style->options['fields']['date'],
       '#data_type' => 'bool',
       '#fieldset' => 'fields',
-    );
-    $form['fields']['date_field'] = array(
+    ];
+    $form['fields']['date_field'] = [
       '#type' => 'select',
       '#title' => $this->t('Date fields'),
       '#options' => $date_fields,
@@ -550,14 +550,14 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       '#description' => $this->t('Select one or more date fields.'),
       '#multiple' => TRUE,
       '#size' => count($date_fields),
-      '#process' => array('\Drupal\Core\Render\Element\Select::processSelect'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="style_options[fields][date]"]' => array('checked' => TRUE),
-        ),
-      ),
+      '#process' => ['\Drupal\Core\Render\Element\Select::processSelect'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[fields][date]"]' => ['checked' => TRUE],
+        ],
+      ],
       '#fieldset' => 'fields',
-    );
+    ];
 
     // Disable form elements when not needed.
     if (empty($field_options)) {
@@ -578,11 +578,11 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
   /**
    * @todo.
    */
-  public function submitOptionsForm(&$form, FormStateInterface $form_state, &$options = array()) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state, &$options = []) {
     $options = $form_state->getValues('style_options');
 
     // These field options have empty defaults, make sure they stay that way.
-    foreach (array('title', 'url', 'date') as $field) {
+    foreach (['title', 'url', 'date'] as $field) {
       if (empty($options['fields'][$field])) {
         unset($options['fields'][$field . '_field']);
       }
@@ -597,39 +597,52 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
       $this->style->view->fullcalendar_disallow_editable = TRUE;
     }
 
-    $options = array(
-      'buttonText' => array(
+    $options = [
+      'buttonText' => [
         'day' => $this->t('Day'),
         'week' => $this->t('Week'),
         'month' => $this->t('Month'),
         'today' => $this->t('Today'),
-      ),
+      ],
       'allDayText' => $this->t('All day'),
       'monthNames' => array_values(DateHelper::monthNames(TRUE)),
       'monthNamesShort' => array_values(DateHelper::monthNamesAbbr(TRUE)),
       'dayNames' => DateHelper::weekDays(TRUE),
       'dayNamesShort' => DateHelper::weekDaysAbbr(TRUE),
-      'isRTL' => $this->languageManager->getCurrentLanguage()->getDirection() == 'rtl',
-    );
+      'isRTL' => $this->languageManager->getCurrentLanguage()
+          ->getDirection() == 'rtl',
+    ];
     $advanced = !empty($settings['advanced']);
     foreach ($settings as $key => $value) {
       if (is_array($value)) {
         continue;
       }
-      elseif (in_array($key, array('left', 'center', 'right'))) {
+      elseif (in_array($key, ['left', 'center', 'right'])) {
         $options['header'][$key] = $value;
       }
-      elseif (in_array($key, array('timeformatMonth', 'timeformatWeek', 'timeformatDay'))) {
+      elseif (in_array($key, [
+        'timeformatMonth',
+        'timeformatWeek',
+        'timeformatDay',
+      ])) {
         if ($advanced) {
           $options['timeFormat'][strtolower(substr($key, 10))] = $value;
         }
       }
-      elseif (in_array($key, array('columnformatMonth', 'columnformatWeek', 'columnformatDay'))) {
+      elseif (in_array($key, [
+        'columnformatMonth',
+        'columnformatWeek',
+        'columnformatDay',
+      ])) {
         if ($advanced) {
           $options['columnFormat'][strtolower(substr($key, 12))] = $value;
         }
       }
-      elseif (in_array($key, array('titleformatMonth', 'titleformatWeek', 'titleformatDay'))) {
+      elseif (in_array($key, [
+        'titleformatMonth',
+        'titleformatWeek',
+        'titleformatDay',
+      ])) {
         if ($advanced) {
           $options['titleFormat'][strtolower(substr($key, 11))] = $value;
         }
@@ -686,7 +699,13 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
     if (isset($day) && is_numeric($day) && $day > 0 && $day <= 31) {
       $settings['date']['date'] = $day;
     }
-    if (isset($mode) && in_array($mode, array('month', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay'))) {
+    if (isset($mode) && in_array($mode, [
+        'month',
+        'basicWeek',
+        'basicDay',
+        'agendaWeek',
+        'agendaDay',
+      ])) {
       $settings['date']['defaultView'] = $mode;
     }
 

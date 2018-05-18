@@ -7,7 +7,8 @@ use Drupal\Core\Ajax\CommandInterface;
 /**
  * Provides an AJAX command for showing the save and cancel buttons.
  *
- * This command is implemented in Drupal.ajax.prototype.commands.fullcalendar_results_response.
+ * This command is implemented in
+ * Drupal.ajax.prototype.commands.fullcalendar_results_response.
  */
 class ResultsCommand implements CommandInterface {
 
@@ -25,10 +26,10 @@ class ResultsCommand implements CommandInterface {
    * {@inheritdoc}
    */
   public function render() {
-    return array(
+    return [
       'command' => 'fullcalendar_results_response',
       'data' => $this->data,
-    );
+    ];
   }
 
 }

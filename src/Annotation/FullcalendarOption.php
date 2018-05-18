@@ -12,8 +12,11 @@ use Drupal\Component\Annotation\Plugin;
 class FullcalendarOption extends Plugin {
 
   public $id;
+
   public $js = FALSE;
+
   public $css = FALSE;
+
   public $weight = 0;
 
 }
