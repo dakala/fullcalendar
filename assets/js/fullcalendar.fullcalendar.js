@@ -4,7 +4,6 @@
  */
 
 (function ($, Drupal, drupalSettings) {
-
   "use strict";
 
   Drupal.fullcalendar.plugins.fullcalendar = {
@@ -15,12 +14,25 @@
 
       var options = {
         eventClick: function (calEvent, jsEvent, view) {
-          if (settings.sameWindow) {
+          if (settings['modalWindow']) {
+            var $modalLink = $('<a></a>');
+            $modalLink.addClass('use-ajax');
+            $modalLink.attr('href', calEvent.url);
+            $modalLink.attr('data-dialog-type', 'modal');
+            $modalLink.appendTo($('body'));
+
+            Drupal.attachBehaviors();
+            $modalLink.trigger('click').remove();
+            return false;
+          }
+
+          if (settings['sameWindow']) {
             window.open(calEvent.url, '_self');
           }
           else {
             window.open(calEvent.url);
           }
+
           return false;
         },
         drop: function (date, allDay, jsEvent, ui) {
@@ -37,9 +49,12 @@
         },
         events: function (start, end, timezone, callback) {
           // Fetch new items from Views if possible.
-          if (settings.ajax && settings.fullcalendar_fields) {
-            fullcalendar.dateChange(settings.fullcalendar_fields);
+          if (settings.ajax && settings['fullcalendar_fields']) {
+            // Update exposed field values.
+            fullcalendar.dateChange(start, end, settings['fullcalendar_fields']);
+
             if (fullcalendar.navigate) {
+              // @see Drupal.AjaxCommands.prototype.ResultsCommand
               if (!fullcalendar.refetch) {
                 fullcalendar.fetchEvents();
               }
@@ -51,11 +66,12 @@
 
           if (!fullcalendar.navigate) {
             // Add events from Google Calendar feeds.
-            for (var entry in settings.gcal) {
-              if (settings.gcal.hasOwnProperty(entry)) {
-                fullcalendar.$calendar.find('.fullcalendar').fullCalendar('addEventSource',
-                  $.fullCalendar.gcalFeed(settings.gcal[entry][0], settings.gcal[entry][1])
-                );
+            for (var entry in settings['gcal']) {
+              if (settings['gcal'].hasOwnProperty(entry)) {
+                fullcalendar.$calendar.find('.fullcalendar')
+                  .fullCalendar('addEventSource',
+                    $.fullCalendar.gcalFeed(settings['gcal'][entry][0], settings['gcal'][entry][1])
+                  );
               }
             }
           }
@@ -81,6 +97,15 @@
             fullcalendar.update
           );
           return false;
+        },
+        viewRender: function (view, element) {
+          // If Ajax mode is On, and we have exposed filters for the Calendar:
+          // we need to update exposed field values after calendar view has
+          // been changed, then re-fetch events for "all-day" re-calculation.
+          if (settings.ajax && settings['fullcalendar_fields']) {
+            fullcalendar.dateChange(view.start, view.end, settings['fullcalendar_fields']);
+            fullcalendar.fetchEvents();
+          }
         }
       };
 

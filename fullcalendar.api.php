@@ -68,7 +68,7 @@ function hook_fullcalendar_droppable() {
  *   A Boolean value dictating whether of not the calendar is editable.
  */
 function hook_fullcalendar_editable($entity, $view) {
-  return _fullcalendar_update_access($entity);
+  return TRUE;
 }
 
 /**
@@ -100,7 +100,7 @@ function hook_fullcalendar_editable_alter(&$editable, $entity, $view) {
  */
 function hook_fullcalendar_process_dates_alter(&$date1, &$date2, $context) {
   // Always display dates only on one day.
-  if ($date1->format(DATE_FORMAT_DATE) != $date2->format(DATE_FORMAT_DATE)) {
+  if ($date1->format(DATETIME_DATE_STORAGE_FORMAT) != $date2->format(DATETIME_DATE_STORAGE_FORMAT)) {
     $date2 = $date1;
   }
 }

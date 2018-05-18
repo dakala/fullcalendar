@@ -17,15 +17,15 @@ class UpdateAccessCheck implements AccessInterface {
    */
   public function access(EntityInterface $entity, AccountInterface $account) {
     return AccessResult::allowedIf($entity && $this->check($entity, $account))
-      ->cachePerRole();
+      ->cachePerUser();
   }
 
   public function check(EntityInterface $entity, AccountInterface $account) {
     return $account->hasPermission('administer content')
-      || $account->hasPermission('update any fullcalendar event')
-      || $account->hasPermission('edit any ' . $entity->bundle() . ' content')
-      || ($account->hasPermission('edit own ' . $entity->bundle() . ' content')
-        && $entity->uid == $account->id());
+    || $account->hasPermission('update any fullcalendar event')
+    || $account->hasPermission('edit any ' . $entity->bundle() . ' content')
+    || ($account->hasPermission('edit own ' . $entity->bundle() . ' content')
+      && $entity->uid == $account->id());
   }
 
 }

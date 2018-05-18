@@ -4,7 +4,6 @@
  */
 
 (function ($, Drupal, drupalSettings) {
-
   "use strict";
 
   Drupal.fullcalendar = Drupal.fullcalendar || {};
@@ -23,8 +22,10 @@
 
     // Allow other modules to overwrite options.
     var $plugins = Drupal.fullcalendar.plugins;
-    for (var i = 0; i < drupalSettings.fullcalendar[dom_id].weights.length; i++) {
-      var $plugin = drupalSettings.fullcalendar[dom_id].weights[i];
+
+    for (var i = 0; i < drupalSettings.fullcalendar[dom_id]['weights'].length; i++) {
+      var $plugin = drupalSettings.fullcalendar[dom_id]['weights'][i];
+
       if ($plugins.hasOwnProperty($plugin) && $.isFunction($plugins[$plugin].options)) {
         $.extend(this.$options, $plugins[$plugin].options(this, drupalSettings.fullcalendar[this.dom_id]));
       }
@@ -32,10 +33,11 @@
 
     this.$calendar.find('.fullcalendar').once().fullCalendar(this.$options);
 
-    $(this.$calendar).delegate('.fullcalendar-status-close', 'click', function () {
-      $(this).parent().slideUp();
-      return false;
-    });
+    $(this.$calendar)
+      .delegate('.fullcalendar-status-close', 'click', function () {
+        $(this).parent().slideUp();
+        return false;
+      });
   };
 
   Drupal.fullcalendar.fullcalendar.prototype.update = function (result) {
@@ -56,8 +58,10 @@
   Drupal.fullcalendar.fullcalendar.prototype.parseEvents = function (callback) {
     var events = [];
     var details = this.$calendar.find('.fullcalendar-event-details');
+
     for (var i = 0; i < details.length; i++) {
       var event = $(details[i]);
+
       events.push({
         field: event.data('field'),
         index: event.data('index'),
@@ -73,6 +77,7 @@
         dom_id: this.dom_id
       });
     }
+
     callback(events);
   };
 

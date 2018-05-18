@@ -3,6 +3,7 @@ services:
     class: Drupal\fullcalendar\Access\UpdateAccessCheck
     tags:
       - { name: access_check, applies_to: _access_fullcalendar_update }
+
   plugin.manager.fullcalendar:
     class: Drupal\fullcalendar\Plugin\FullcalendarManager
     parent: default_plugin_manager
