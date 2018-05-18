@@ -26,16 +26,16 @@ abstract class FullcalendarLegendBase extends BlockBase {
       return;
     }
 
-    $fields = array();
+    $fields = [];
     foreach ($view->field as $field) {
       if (fullcalendar_field_is_date($field)) {
         $fields[$field->field_info['field_name']] = $field->field_info;
       }
     }
-    return array(
+    return [
       '#theme' => 'fullcalendar_legend',
       '#types' => $this->buildLegend($fields),
-    );
+    ];
   }
 
   /**

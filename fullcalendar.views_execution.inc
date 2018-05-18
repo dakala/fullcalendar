@@ -12,11 +12,11 @@ use Drupal\Views\ViewExecutable;
  * Implements hook_views_plugins_alter().
  */
 function fullcalendar_views_plugins_alter(&$plugins) {
-  $plugins['display']['fullcalendar'] = array(
-    'title' => t('FullCalendar - Deprecated, use page display instead!'),
-    'help' => t('Stop using this display, use page instead'),
-    'no ui' => TRUE,
-  ) + $plugins['display']['page'];
+  $plugins['display']['fullcalendar'] = [
+      'title' => t('FullCalendar - Deprecated, use page display instead!'),
+      'help' => t('Stop using this display, use page instead'),
+      'no ui' => TRUE,
+    ] + $plugins['display']['page'];
 }
 
 /**
@@ -66,14 +66,14 @@ function fullcalendar_views_pre_view($view, $display_id, $args) {
     }
     $min = date('Y-m-d', strtotime($min . ' -2 weeks'));
     $max = date('Y-m-d', strtotime($max . ' +2 weeks'));
-    $options = array(
+    $options = [
       'exposed' => TRUE,
       'form_type' => 'date_select',
       'operator' => 'between',
       'default_date' => $min,
       'default_to_date' => $max,
       'group' => 0,
-    );
+    ];
     if (!empty($field->options['relationship'])) {
       $options['relationship'] = $field->options['relationship'];
     }
@@ -81,7 +81,10 @@ function fullcalendar_views_pre_view($view, $display_id, $args) {
     $option_id = $view->addHandler($display_id, 'filter', 'field_data_' . $field->field, $field->field . '_value', $options);
     $settings['fullcalendar_fields'][$option_id] = Html::getClass($option_id);
     $settings['fullcalendar_fields_count']++;
-    $view->setHandlerOption($display_id, 'filter', $option_id, 'expose', array('identifier' => $option_id, 'operator' => $option_id . '_op'));
+    $view->setHandlerOption($display_id, 'filter', $option_id, 'expose', [
+      'identifier' => $option_id,
+      'operator' => $option_id . '_op',
+    ]);
 
   }
 
@@ -114,6 +117,6 @@ function fullcalendar_views_query_alter($view, $query) {
 function fullcalendar_views_ajax_data_alter(&$commands, &$view) {
   $style = $view->display_handler->getOption('style');
   if ($style['type'] != 'fullcalendar') {
-    $commands = array();
+    $commands = [];
   }
 }

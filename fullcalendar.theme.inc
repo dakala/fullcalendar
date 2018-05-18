@@ -15,34 +15,34 @@ function template_preprocess_fullcalendar(&$variables) {
     return;
   }
 
-  $variables['element'] = array(
+  $variables['element'] = [
     '#attached' => $variables['options']['#attached'],
-    'status' => array(
+    'status' => [
       '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'fullcalendar-status',
-        ),
-      ),
-    ),
-    'fullcalendar' => array(
+        ],
+      ],
+    ],
+    'fullcalendar' => [
       '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'fullcalendar',
-        ),
-      ),
-    ),
-    'content' => array(
+        ],
+      ],
+    ],
+    'content' => [
       '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'fullcalendar-content',
-        ),
-      ),
+        ],
+      ],
       'events' => $variables['rows'],
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -56,29 +56,29 @@ function theme_fullcalendar($variables) {
  * Build the render array for an individual event.
  */
 function template_preprocess_fullcalendar_event(&$variables) {
-  $variables['element'] = array(
+  $variables['element'] = [
     '#type' => 'container',
-    '#attributes' => array(
-      'class' => array(
+    '#attributes' => [
+      'class' => [
         'fullcalendar-event',
-      ),
-    ),
-    'title' => array(
+      ],
+    ],
+    'title' => [
       '#prefix' => '<h3 class="title">',
       '#suffix' => '</h3>',
       '#markup' => $variables['entity']->label(),
-    ),
-  );
+    ],
+  ];
   foreach ($variables['event'] as $instance) {
-    $variables['element'][] = array(
+    $variables['element'][] = [
       '#type' => 'container',
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'fullcalendar-instance',
-        ),
-      ),
-      array($instance),
-    );
+        ],
+      ],
+      [$instance],
+    ];
   }
 }
 

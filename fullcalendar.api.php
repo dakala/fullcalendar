@@ -21,9 +21,9 @@
  */
 function hook_fullcalendar_classes($entity) {
   // Add the entity type as a class.
-  return array(
+  return [
     $entity->entity_type,
-  );
+  ];
 }
 
 /**
@@ -36,7 +36,7 @@ function hook_fullcalendar_classes($entity) {
  */
 function hook_fullcalendar_classes_alter(&$classes, $entity) {
   // Remove all classes set by modules.
-  $classes = array();
+  $classes = [];
 }
 
 /**

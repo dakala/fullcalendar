@@ -68,7 +68,7 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   protected function buildLegend(array $fields) {
-    $types = array();
+    $types = [];
     /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
     foreach ($fields as $field_name => $field) {
       // Then by entity type.
@@ -83,14 +83,14 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
                 ->condition('vid', $vocab['vocabulary'])
                 ->execute();
               foreach ($this->termStorage->load($term_ids) as $term) {
-                $types[$term->id()] = array(
+                $types[$term->id()] = [
                   'entity_type' => $entity_type,
                   'field_name' => $field_name,
                   'bundle' => $bundle,
                   'label' => $term->label(),
                   'taxonomy_field' => $taxonomy_field_name,
                   'tid' => $term->id(),
-                );
+                ];
               }
             }
           }

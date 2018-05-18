@@ -25,7 +25,7 @@ class Bundle extends FullcalendarLegendBase {
    * {@inheritdoc}
    */
   protected function buildLegend(array $fields) {
-    $types = array();
+    $types = [];
     foreach ($fields as $field_name => $field) {
       foreach ($field['bundles'] as $entity_type => $bundles) {
         $bundle_info = entity_get_bundles($entity_type);

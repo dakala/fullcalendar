@@ -38,15 +38,15 @@ class Update extends ControllerBase {
 
       // Save the new start/end values.
       $entity->save();
-      $message = $this->t('The new event time has been saved.') . ' [' . l($this->t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']';
+      $message = $this->t('The new event time has been saved.') . ' [' . l($this->t('Close'), NULL, ['attributes' => ['class' => ['fullcalendar-status-close']]]) . ']';
     }
     else {
       $message = $this->t('The event has not been updated.');
     }
-    return new JsonResponse(array(
+    return new JsonResponse([
       'msg' => $message,
       'dom_id' => $request->request->get('dom_id'),
-    ));
+    ]);
   }
 
 }
