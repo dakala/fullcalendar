@@ -721,7 +721,7 @@ class FullCalendar extends FullcalendarBase implements ContainerFactoryPluginInt
   }
 
   /**
-   * TODO
+   * {@inheritdoc}
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state, &$options = []) {
     $options = $form_state->getValue('style_options');
