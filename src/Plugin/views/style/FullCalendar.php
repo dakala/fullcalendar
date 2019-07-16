@@ -9,6 +9,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\fullcalendar\Plugin\FullcalendarBase;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
@@ -67,6 +68,13 @@ class FullCalendar extends StylePluginBase {
   protected $dateFormatter;
 
   /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * {@inheritdoc}
    */
   public function evenEmpty() {
@@ -96,14 +104,17 @@ class FullCalendar extends StylePluginBase {
    *   Entity Field Manager.
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    *   The date formatter service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler, $field_manager, DateFormatter $date_formatter) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler, $field_manager, DateFormatter $date_formatter, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->pluginBag = new FullcalendarPluginCollection($fullcalendar_manager, $this);
     $this->moduleHandler = $module_handler;
     $this->fieldManager = $field_manager;
     $this->dateFormatter = $date_formatter;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -117,7 +128,8 @@ class FullCalendar extends StylePluginBase {
       $container->get('plugin.manager.fullcalendar'),
       $container->get('module_handler'),
       $container->get('entity_field.manager'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('messenger')
     );
   }
 
@@ -245,7 +257,7 @@ class FullCalendar extends StylePluginBase {
    */
   public function validate() {
     if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
-      drupal_set_message($this->t('Display "@display" requires at least one date field.', [
+      $this->messenger->addWarning($this->t('Display "@display" requires at least one date field.', [
         '@display' => $this->displayHandler->display['display_title'],
       ]), 'error');
     }
@@ -272,36 +284,39 @@ class FullCalendar extends StylePluginBase {
    */
   protected function prepareAttached() {
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar';
+    $attached['library'][] = 'fullcalendar/drupal.fullcalendar';
 
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
 
+      dump($plugin_id);
+      dump($definition);
+
       foreach (['css', 'js'] as $type) {
         if ($definition[$type]) {
-          $attached['attach']['library'][] = $definition['provider'] . '/drupal.' . $plugin_id . '.' . $type;
+          $attached['library'][] = $definition['provider'] . '/drupal.' . $plugin_id . '.' . $type;
         }
       }
     }
 
     if ($this->displayHandler->getOption('use_ajax')) {
-      $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
+      $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
     $settings = $this->prepareSettings();
 
-    $attached['attach']['drupalSettings']['fullcalendar'] = [
+    $attached['drupalSettings']['fullcalendar'] = [
       '.js-view-dom-id-' . $this->view->dom_id => $settings,
     ];
 
     if (!empty($settings['fullcalendar']['modalWindow'])) {
       // FIXME all of these libraries are needed?
-      $attached['attach']['library'][] = 'core/drupal.ajax';
-      $attached['attach']['library'][] = 'core/drupal.dialog';
-      $attached['attach']['library'][] = 'core/drupal.dialog.ajax';
+      $attached['library'][] = 'core/drupal.ajax';
+      $attached['library'][] = 'core/drupal.dialog';
+      $attached['library'][] = 'core/drupal.dialog.ajax';
     }
 
-    return $attached['attach'];
+    return $attached;
   }
 
   /**
