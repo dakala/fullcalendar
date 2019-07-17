@@ -289,9 +289,6 @@ class FullCalendar extends StylePluginBase {
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
 
-      dump($plugin_id);
-      dump($definition);
-
       foreach (['css', 'js'] as $type) {
         if ($definition[$type]) {
           $attached['library'][] = $definition['provider'] . '/drupal.' . $plugin_id . '.' . $type;
