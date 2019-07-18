@@ -52,33 +52,4 @@
     return false;
   };
 
-  /**
-   * Parse Drupal events from the DOM.
-   */
-  Drupal.fullcalendar.fullcalendar.prototype.parseEvents = function (callback) {
-    var events = [];
-    var details = this.$calendar.find('.fullcalendar-event-details');
-
-    for (var i = 0; i < details.length; i++) {
-      var event = $(details[i]);
-
-      events.push({
-        field: event.data('field'),
-        index: event.data('index'),
-        eid: event.data('eid'),
-        entity_type: event.data('entity-type'),
-        title: event.attr('title'),
-        start: event.data('start'),
-        end: event.data('end'),
-        url: event.attr('href'),
-        allDay: (event.data('all-day') === 1),
-        className: event.data('cn'),
-        editable: (event.data('editable') === 1),
-        dom_id: this.dom_id
-      });
-    }
-
-    callback(events);
-  };
-
 })(jQuery, Drupal, drupalSettings);

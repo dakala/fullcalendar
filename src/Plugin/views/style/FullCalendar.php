@@ -15,6 +15,7 @@ use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * @todo.
@@ -274,7 +275,6 @@ class FullCalendar extends StylePluginBase {
     return [
       '#theme'   => $this->themeFunctions(),
       '#view'    => $this->view,
-      '#rows'    => $this->prepareEvents(),
       '#options' => $this->options,
     ];
   }
@@ -371,6 +371,8 @@ class FullCalendar extends StylePluginBase {
         ->getCurrentLanguage()
         ->getId();
     }
+    
+    $settings['fullcalendar']['_events'] = $this->prepareEvents();
 
     return $settings;
   }
@@ -454,7 +456,7 @@ class FullCalendar extends StylePluginBase {
                 /** @var \DateTime $end */
                 $end = $occurrence['end_value'];
 
-                $event[] = $this->prepareEvent($entity, $field, $index, $start, $end);
+                $event = $this->prepareEvent($entity, $field, $index, $start, $end);
               }
 
               $isRecurring = TRUE;
@@ -501,16 +503,12 @@ class FullCalendar extends StylePluginBase {
           $event_start->setTimestamp($event_start->getTimestamp() + $event_start->getOffset());
           $event_end->setTimestamp($event_end->getTimestamp() + $event_end->getOffset());
 
-          $event[] = $this->prepareEvent($entity, $field, $index, $event_start, $event_end);
+          $event = $this->prepareEvent($entity, $field, $index, $event_start, $event_end);
         }
       }
 
       if (!empty($event)) {
-        $events[$delta] = [
-          '#theme'  => 'fullcalendar_event',
-          '#event'  => $event,
-          '#entity' => $entity,
-        ];
+        $events[$delta] = $event;
       }
     }
 
@@ -532,6 +530,7 @@ class FullCalendar extends StylePluginBase {
    *   End date of the event.
    *
    * @return array
+   * @throws \Exception
    */
   private function prepareEvent($entity, $field, $delta, $event_start, $event_end) {
     $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
@@ -572,8 +571,6 @@ class FullCalendar extends StylePluginBase {
       $time_class = 'fc-event-now';
     }
 
-    $settings = $this->prepareSettings();
-
     if (!empty($settings['fullcalendar']['editable'])) {
       $editable = $entity->access('update', NULL, TRUE)->isAllowed();
     }
@@ -581,34 +578,22 @@ class FullCalendar extends StylePluginBase {
       $editable = FALSE;
     }
 
-    $url = $entity->toUrl('canonical', [
-      'language' => \Drupal::languageManager()->getCurrentLanguage(),
-    ]);
-
-    $url->setOption('attributes', [
-      'data-all-day'     => (int) $all_day,
-      'data-start'       => $this->dateFormatter->format($event_start->getTimestamp(), 'custom', DATETIME_DATETIME_STORAGE_FORMAT),
-      'data-end'         => $this->dateFormatter->format($event_end->getTimestamp(), 'custom', DATETIME_DATETIME_STORAGE_FORMAT),
-      'data-editable'    => !empty($editable) ? 'true' : 'false',
-      // (int) $editable doesn't work...
-      'data-field'       => $field['field_name'],
-      'data-index'       => $delta,
-      'data-eid'         => $entity->id(),
-      'data-entity-type' => $entity->getEntityTypeId(),
-      'data-cn'          => $class . ' ' . $time_class,
-      'title'            => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-      'class'            => [
+    return [
+      'allDay' => (int) $all_day,
+      'start' => $this->dateFormatter->format($event_start->getTimestamp(), 'custom', DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+      'end' => $this->dateFormatter->format($event_end->getTimestamp(), 'custom', DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+      'editable' => !empty($editable) ? 'true' : 'false',
+      'field' => $field['field_name'],
+      'index' => $delta,
+      'eid' => $entity->id(),
+      'entity_type' => $entity->getEntityTypeId(),
+      'className' => $class . ' ' . $time_class,
+      'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
+      'url' => $entity->toUrl('canonical', [
+        'language' => \Drupal::languageManager()->getCurrentLanguage(),
+      ])->toString(),
+      'class' => [
         'fullcalendar-event-details',
-      ],
-    ]);
-
-    return $url->toRenderArray() + [
-      '#type'  => 'link',
-      '#title' => $entity->label(),
-      '#cache' => [
-        'contexts' => [
-          'user', // Because of 'data-editable'.
-        ],
       ],
     ];
   }
@@ -616,10 +601,11 @@ class FullCalendar extends StylePluginBase {
   /**
    * Get 'min' and 'max' dates appear in the Calendar.
    *
-   * @param $field_name
+   * @param string $field_name
    *   Field machine name.
    *
-   * @return array
+   * @return mixed
+   * @throws \Exception
    */
   public function getExposedDates($field_name) {
     $dates = &drupal_static(__METHOD__, []);
