@@ -1,9 +1,4 @@
 fullcalendar:
-  remote: http://fullcalendar.io
-  license:
-    name: MIT
-    url: https://github.com/fullcalendar/fullcalendar/blob/master/LICENSE.txt
-    gpl-compatible: true
   js:
     /libraries/fullcalendar/lib/moment.min.js: {}
     /libraries/fullcalendar/fullcalendar.js: {}
