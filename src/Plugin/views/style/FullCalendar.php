@@ -10,16 +10,13 @@ use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\fullcalendar\Plugin\FullcalendarBase;
-use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Component\Utility\Html;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\fullcalendar\Plugin\FullcalendarBase;
+use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
+use Drupal\views\Plugin\views\style\StylePluginBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @todo.
- *
  * @ViewsStyle(
  *   id = "fullcalendar",
  *   title = @Translation("FullCalendar"),
@@ -371,7 +368,7 @@ class FullCalendar extends StylePluginBase {
         ->getCurrentLanguage()
         ->getId();
     }
-    
+
     $settings['fullcalendar']['_events'] = $this->prepareEvents();
 
     return $settings;
@@ -379,6 +376,11 @@ class FullCalendar extends StylePluginBase {
 
   /**
    * Prepare events for calendar.
+   *
+   * @return array
+   *   Array of events ready for fullcalendar.
+   *
+   * @throws \Exception
    */
   protected function prepareEvents() {
     $events = [];
@@ -536,11 +538,11 @@ class FullCalendar extends StylePluginBase {
     $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
     $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
 
-    $classes = array_map([
-      '\Drupal\Component\Utility\Html',
-      'getClass'
-    ], $classes);
+    $classes = array_map(['\Drupal\Component\Utility\Html', 'getClass'], $classes);
     $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
+
+    $palette = $this->moduleHandler->invokeAll('fullcalendar_palette', [$entity]);
+    $this->moduleHandler->alter('fullcalendar_palette', $palette, $entity);
 
     $request_time = \Drupal::time()->getRequestTime();
     $current_time = new DateTime();
@@ -592,9 +594,9 @@ class FullCalendar extends StylePluginBase {
       'url' => $entity->toUrl('canonical', [
         'language' => \Drupal::languageManager()->getCurrentLanguage(),
       ])->toString(),
-      'class' => [
-        'fullcalendar-event-details',
-      ],
+      'backgroundColor' => !empty($palette['backgroundColor']) ? $palette['backgroundColor'] : '',
+      'borderColor' => !empty($palette['borderColor']) ? $palette['borderColor'] : '',
+      'textColor' => !empty($palette['textColor']) ? $palette['textColor'] : '',
     ];
   }
 
