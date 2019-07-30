@@ -10,12 +10,19 @@
  *
  * Process FullCalendar Colors after the structure is built.
  */
-function fullcalendar_colors_preprocess_fullcalendar(&$variables) {
+function fullcalendar_colors_page_attachments(array &$attachments) {
   // TODO D8: Remove weight once http://drupal.org/node/1388546 is fixed.
+  // TODO: This doesn't work because the style tag is position too high in
+  // the head to have any effect.
   $css = colors_create_css('fullcalendar_colors');
-
-  $variables['element']['#attached']['css'][$css] = [
-    'weight' => 1,
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#type' => 'html_tag',
+      '#tag' => 'style',
+      '#value' => $css,
+      '#weight' => 1000,
+    ],
+    'fullcalendar-inline-css'
   ];
 }
 
@@ -32,9 +39,10 @@ function fullcalendar_colors_colors_rebuild() {
 function fullcalendar_colors_colors_build_selector($class) {
   $selector = [
     ".$class",
-    ".$class .fc-event-skin",
-    ".$class .fc-event-time",
-    ".$class a",
+    ".$class .fc-event-default",
+    ".$class .fc-event-default .fc-event-skin",
+    ".$class .fc-event-default .fc-event-time",
+    ".$class .fc-event-default a",
   ];
 
   return implode(', ', $selector);
@@ -44,5 +52,20 @@ function fullcalendar_colors_colors_build_selector($class) {
  * Implements hook_fullcalendar_classes().
  */
 function fullcalendar_colors_fullcalendar_classes($entity) {
-  return colors_get_colors_classes($entity);
+  return \Drupal::service('module_handler')->invokeAll('colors_classes', [$entity]);
+}
+
+/**
+ * Implements hook_fullcalendar_palette().
+ */
+function fullcalendar_colors_fullcalendar_palette($entity) {
+  $palette = [];
+  $palettes = \Drupal::service('module_handler')->invokeAll('colors_palette', [$entity]);
+  if (!empty($palettes)) {
+    $palettes = reset($palettes);
+    $palette['backgroundColor'] = $palettes['bg'];
+    $palette['borderColor'] = $palettes['borders'];
+    $palette['textColor'] = $palettes['text'];
+  }
+  return $palette;
 }
