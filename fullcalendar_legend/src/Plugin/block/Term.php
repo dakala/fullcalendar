@@ -7,8 +7,6 @@
 
 namespace Drupal\fullcalendar_legend\Plugin\Block;
 
-use Drupal\Component\Annotation\Plugin;
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -16,7 +14,7 @@ use Drupal\taxonomy\TermStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @todo.
+ * TODO
  *
  * @Plugin(
  *   id = "fullcalendar_legend_term",
@@ -36,6 +34,9 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
    */
   protected $entityQuery;
 
+  /**
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
   protected $entityManager;
 
   /**
@@ -68,7 +69,8 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   protected function buildLegend(array $fields) {
-    $types = array();
+    $types = [];
+
     /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
     foreach ($fields as $field_name => $field) {
       // Then by entity type.
@@ -78,25 +80,28 @@ class Term extends FullcalendarLegendBase implements ContainerFactoryPluginInter
             if ($taxonomy_field->getType() != 'taxonomy_term_reference') {
               continue;
             }
+
             foreach ($taxonomy_field->getSetting('allowed_values') as $vocab) {
               $term_ids = $this->entityQuery->get('taxonomy_term')
                 ->condition('vid', $vocab['vocabulary'])
                 ->execute();
+
               foreach ($this->termStorage->load($term_ids) as $term) {
-                $types[$term->id()] = array(
-                  'entity_type' => $entity_type,
-                  'field_name' => $field_name,
-                  'bundle' => $bundle,
-                  'label' => $term->label(),
+                $types[$term->id()] = [
+                  'entity_type'    => $entity_type,
+                  'field_name'     => $field_name,
+                  'bundle'         => $bundle,
+                  'label'          => $term->label(),
                   'taxonomy_field' => $taxonomy_field_name,
-                  'tid' => $term->id(),
-                );
+                  'tid'            => $term->id(),
+                ];
               }
             }
           }
         }
       }
     }
+
     return $types;
   }
 

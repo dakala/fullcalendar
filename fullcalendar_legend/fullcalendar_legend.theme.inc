@@ -18,24 +18,27 @@ function template_preprocess_fullcalendar_legend(&$variables) {
       ],
     ],
   ];
+
   foreach ($variables['types'] as $type_name => $type) {
     $element[$type_name] = [
-      '#type' => 'container',
+      '#type'       => 'container',
       '#attributes' => [
-        'class' => _fullcalendar_legend_get_classes($type),
+        'class'       => _fullcalendar_legend_get_classes($type),
         'entity_type' => $type['entity_type'],
-        'bundle' => $type['bundle'],
-        'field' => $type['field_name'],
+        'bundle'      => $type['bundle'],
+        'field'       => $type['field_name'],
       ],
     ];
+
     // Sanitize the label.
     $type['label'] = Html::escape($type['label']);
+
     if (isset($type['uri'])) {
       $element[$type_name]['type'] = [
-        '#type' => 'link',
-        '#href' => $type['uri']['path'],
+        '#type'    => 'link',
+        '#href'    => $type['uri']['path'],
         '#options' => isset($type['uri']['options']) ? $type['uri']['options'] : [],
-        '#title' => $type['label'],
+        '#title'   => $type['label'],
       ];
     }
     else {
@@ -52,7 +55,7 @@ function template_preprocess_fullcalendar_legend(&$variables) {
  * Render the legend.
  */
 function theme_fullcalendar_legend($variables) {
-  return \Drupal::service('renderer')->render($variables['element']);
+  return \Drupal::service('renderer')->renderRoot($variables['element']);
 }
 
 /**
@@ -68,7 +71,7 @@ function theme_fullcalendar_legend($variables) {
  */
 function _fullcalendar_legend_get_classes($type) {
   $values['type'] = $type['bundle'];
-  $entity = \Drupal::service('entity.manager')
+  $entity = \Drupal::entityTypeManager()
     ->getStorage($type['entity_type'])
     ->create($values);
 

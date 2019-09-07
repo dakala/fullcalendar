@@ -1,0 +1,5 @@
+drupal.fullcalendar_options.js:
+  js:
+    js/fullcalendar_options.fullcalendar.js: { }
+  dependencies:
+    - fullcalendar/drupal.fullcalendar

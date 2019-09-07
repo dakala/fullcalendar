@@ -7,11 +7,8 @@
 
 namespace Drupal\fullcalendar_legend\Plugin\Block;
 
-use Drupal\Component\Annotation\Plugin;
-use Drupal\Core\Annotation\Translation;
-
 /**
- * @todo.
+ * TODO
  *
  * @Plugin(
  *   id = "fullcalendar_legend_bundle",
@@ -25,10 +22,12 @@ class Bundle extends FullcalendarLegendBase {
    * {@inheritdoc}
    */
   protected function buildLegend(array $fields) {
-    $types = array();
+    $types = [];
+
     foreach ($fields as $field_name => $field) {
       foreach ($field['bundles'] as $entity_type => $bundles) {
         $bundle_info = entity_get_bundles($entity_type);
+
         foreach ($bundles as $bundle) {
           if (!isset($types[$bundle])) {
             $types[$bundle]['entity_type'] = $entity_type;
@@ -39,6 +38,7 @@ class Bundle extends FullcalendarLegendBase {
         }
       }
     }
+
     return $types;
   }
 

@@ -2,21 +2,21 @@
 
 namespace Drupal\fullcalendar\Plugin\views\style;
 
+use DateTime;
+use DateTimeZone;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\views\Annotation\ViewsStyle;
-use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\fullcalendar\Plugin\FullcalendarBase;
 use Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
+use Drupal\views\Plugin\views\style\StylePluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
- * @todo.
- *
  * @ViewsStyle(
  *   id = "fullcalendar",
  *   title = @Translation("FullCalendar"),
@@ -46,11 +46,31 @@ class FullCalendar extends StylePluginBase {
   protected $moduleHandler;
 
   /**
+   * Entity Field Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $fieldManager;
+
+  /**
    * Stores the FullCalendar plugins used by this style plugin.
    *
-   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;
+   * @var \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection
    */
   protected $pluginBag;
+
+  /**
+   * @var \Drupal\Core\Datetime\DateFormatter $dateFormatter
+   *   The date formatter service.
+   */
+  protected $dateFormatter;
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
 
   /**
    * {@inheritdoc}
@@ -60,9 +80,9 @@ class FullCalendar extends StylePluginBase {
   }
 
   /**
-   * @todo.
+   * TODO
    *
-   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection;|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
+   * @return \Drupal\fullcalendar\Plugin\FullcalendarPluginCollection|\Drupal\fullcalendar\Plugin\FullcalendarInterface[]
    */
   public function getPlugins() {
     return $this->pluginBag;
@@ -75,13 +95,24 @@ class FullCalendar extends StylePluginBase {
    * @param string $plugin_id
    * @param mixed $plugin_definition
    * @param \Drupal\Component\Plugin\PluginManagerInterface $fullcalendar_manager
+   *   FullCalendar Manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
+   *   Entity Field Manager.
+   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   *   The date formatter service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PluginManagerInterface $fullcalendar_manager, ModuleHandlerInterface $module_handler, $field_manager, DateFormatter $date_formatter, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->pluginBag = new FullcalendarPluginCollection($fullcalendar_manager, $this);
     $this->moduleHandler = $module_handler;
+    $this->fieldManager = $field_manager;
+    $this->dateFormatter = $date_formatter;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -93,7 +124,10 @@ class FullCalendar extends StylePluginBase {
       $plugin_id,
       $plugin_definition,
       $container->get('plugin.manager.fullcalendar'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('entity_field.manager'),
+      $container->get('date.formatter'),
+      $container->get('messenger')
     );
   }
 
@@ -101,11 +135,15 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   protected function defineOptions() {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     $options = parent::defineOptions();
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
-      $options += $plugin->defineOptions();
+      if ($plugin instanceof FullcalendarBase) {
+        $options += $plugin->defineOptions();
+      }
     }
+
     return $options;
   }
 
@@ -113,10 +151,13 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     parent::buildOptionsForm($form, $form_state);
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
-      $plugin->buildOptionsForm($form, $form_state);
+      if ($plugin instanceof FullcalendarBase) {
+        $plugin->buildOptionsForm($form, $form_state);
+      }
     }
   }
 
@@ -127,7 +168,7 @@ class FullCalendar extends StylePluginBase {
     parent::validateOptionsForm($form, $form_state);
 
     // Cast all submitted values to their proper type.
-    // @todo Remove once https://drupal.org/node/1653026 is in.
+    // TODO Remove once https://drupal.org/node/1653026 is in.
     if ($form_state->getValue('style_options')) {
       $this->castNestedValues($form_state->getValue('style_options'), $form);
     }
@@ -164,10 +205,12 @@ class FullCalendar extends StylePluginBase {
       else {
         // Get the form definition for this key.
         $form_value = NestedArray::getValue($form, $parents);
+
         // Check to see if #data_type is specified, if so, cast the value.
         if (isset($form_value['#data_type'])) {
           settype($value, $form_value['#data_type']);
         }
+
         // Remove the current key from $parents to move on to the next key.
         array_pop($parents);
       }
@@ -178,25 +221,32 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     parent::submitOptionsForm($form, $form_state);
+
+    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
     foreach ($this->getPlugins() as $plugin) {
-      $plugin->submitOptionsForm($form, $form_state);
+      if ($plugin instanceof FullcalendarBase) {
+        $plugin->submitOptionsForm($form, $form_state);
+      }
     }
   }
 
   /**
-   * @todo.
+   * Extracts date fields from the view.
    */
   public function parseFields($include_gcal = TRUE) {
     $this->view->initHandlers();
     $labels = $this->displayHandler->getFieldLabels();
+
     $date_fields = [];
+
+    /** @var \Drupal\views\Plugin\views\field\EntityField $field */
     foreach ($this->view->field as $id => $field) {
       if (fullcalendar_field_is_date($field, $include_gcal)) {
         $date_fields[$id] = $labels[$id];
       }
     }
+
     return $date_fields;
   }
 
@@ -205,8 +255,11 @@ class FullCalendar extends StylePluginBase {
    */
   public function validate() {
     if ($this->displayHandler->display['display_plugin'] != 'default' && !$this->parseFields()) {
-      drupal_set_message($this->t('Display "@display" requires at least one date field.', ['@display' => $this->displayHandler->display['display_title']]), 'error');
+      $this->messenger->addWarning($this->t('Display "@display" requires at least one date field.', [
+        '@display' => $this->displayHandler->display['display_title'],
+      ]), 'error');
     }
+
     return parent::validate();
   }
 
@@ -214,14 +267,11 @@ class FullCalendar extends StylePluginBase {
    * {@inheritdoc}
    */
   public function render() {
-    if (empty($this->view->fullcalendar_ajax)) {
-      $this->options['#attached'] = $this->prepareAttached();
-    }
+    $this->options['#attached'] = $this->prepareAttached();
 
     return [
-      '#theme' => $this->themeFunctions(),
-      '#view' => $this->view,
-      '#rows' => $this->prepareEvents(),
+      '#theme'   => $this->themeFunctions(),
+      '#view'    => $this->view,
       '#options' => $this->options,
     ];
   }
@@ -231,76 +281,135 @@ class FullCalendar extends StylePluginBase {
    */
   protected function prepareAttached() {
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar';
+    $attached['library'][] = 'fullcalendar/drupal.fullcalendar';
 
     foreach ($this->getPlugins() as $plugin_id => $plugin) {
       $definition = $plugin->getPluginDefinition();
+
       foreach (['css', 'js'] as $type) {
         if ($definition[$type]) {
-          $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.' . $type;
+          $attached['library'][] = $definition['provider'] . '/drupal.' . $plugin_id . '.' . $type;
         }
       }
     }
 
     if ($this->displayHandler->getOption('use_ajax')) {
-      $attached['attach']['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
+      $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
-    $attached['attach']['drupalSettings']['fullcalendar'] = ['.js-view-dom-id-' . $this->view->dom_id => $this->prepareSettings()];
+    $settings = $this->prepareSettings();
 
-    return $attached['attach'];
+    $attached['drupalSettings']['fullcalendar'] = [
+      '.js-view-dom-id-' . $this->view->dom_id => $settings,
+    ];
+
+    if (!empty($settings['fullcalendar']['modalWindow'])) {
+      // FIXME all of these libraries are needed?
+      $attached['library'][] = 'core/drupal.ajax';
+      $attached['library'][] = 'core/drupal.dialog';
+      $attached['library'][] = 'core/drupal.dialog.ajax';
+    }
+
+    return $attached;
   }
 
   /**
-   * @todo.
+   * Prepare JavaScript settings.
    */
   protected function prepareSettings() {
-    /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    $settings = [];
-    $weights = [];
-    $delta = 0;
-    foreach ($this->getPlugins() as $plugin_id => $plugin) {
-      $definition = $plugin->getPluginDefinition();
-      $plugin->process($settings);
-      if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
-        $weights[$definition['weight']] = $plugin_id;
+    $settings = &drupal_static(__METHOD__, []);
+
+    if (empty($settings)) {
+      $weights = [];
+      $delta = 0;
+
+      /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
+      foreach ($this->getPlugins() as $plugin_id => $plugin) {
+        $definition = $plugin->getPluginDefinition();
+        $plugin->process($settings);
+
+        if (isset($definition['weight']) && !isset($weights[$definition['weight']])) {
+          $weights[$definition['weight']] = $plugin_id;
+        }
+        else {
+          while (isset($weights[$delta])) {
+            $delta++;
+          }
+
+          $weights[$delta] = $plugin_id;
+        }
+      }
+
+      ksort($weights);
+
+      $settings['weights'] = array_values($weights);
+      // TODO
+      $settings['fullcalendar']['disableResizing'] = TRUE;
+
+      // Force to disable dates in the previous or next month in order to get
+      // the (real) first and last day of the current month after using pager in
+      // 'month' view. So, disabling this results a valid date-range for the
+      // current month, instead of the date-range +/- days from the previous and
+      // next month. It's very important, because we set default date-range in
+      // the same way in fullcalendar_views_pre_view().
+      // @see https://fullcalendar.io/docs/display/showNonCurrentDates/
+      $settings['fullcalendar']['showNonCurrentDates'] = FALSE;
+      $settings['fullcalendar']['fixedWeekCount'] = FALSE;
+
+      // Need to reverse this value.
+      if (empty($settings['fullcalendar']['editable'])) {
+        $settings['fullcalendar']['editable'] = TRUE;
       }
       else {
-        while (isset($weights[$delta])) {
-          $delta++;
-        }
-        $weights[$delta] = $plugin_id;
+        $settings['fullcalendar']['editable'] = FALSE;
       }
+
+      $settings['fullcalendar']['locale'] = \Drupal::languageManager()
+        ->getCurrentLanguage()
+        ->getId();
     }
-    ksort($weights);
-    $settings['weights'] = array_values($weights);
-    // @todo.
-    $settings['fullcalendar']['disableResizing'] = TRUE;
+
+    $settings['fullcalendar']['_events'] = $this->prepareEvents();
+
     return $settings;
   }
 
   /**
-   * @todo.
+   * Prepare events for calendar.
+   *
+   * @return array
+   *   Array of events ready for fullcalendar.
+   *
+   * @throws \Exception
    */
   protected function prepareEvents() {
-    /* @var \Drupal\views\Plugin\views\field\Field $field */
     $events = [];
+
     foreach ($this->view->result as $delta => $row) {
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $row->_entity;
+
       // Collect all fields for the customize options.
       $fields = [];
       // Collect only date fields.
       $date_fields = [];
+      // Collect prepared events.
+      $event = [];
+
+      /* @var \Drupal\views\Plugin\views\field\Field $field */
       foreach ($this->view->field as $field_name => $field) {
         $fields[$field_name] = $this->getField($delta, $field_name);
+
         if (fullcalendar_field_is_date($field)) {
-          $field_storage_definitions = \Drupal::entityManager()
-            ->getFieldStorageDefinitions($field->definition['entity_type']);
+          $field_storage_definitions = $this->fieldManager->getFieldStorageDefinitions($field->definition['entity_type']);
           $field_definition = $field_storage_definitions[$field->definition['field_name']];
+
           $date_fields[$field_name] = [
-            'value' => $field->getItems($row),
+            'value'       => $field->getItems($row),
             'field_alias' => $field->field_alias,
-            'field_name' => $field_definition->getName(),
-            'field_info' => $field_definition,
+            'field_name'  => $field_definition->getName(),
+            'field_info'  => $field_definition,
+            'timezone_override'  => $field->options['settings']['timezone_override'],
           ];
         }
       }
@@ -315,73 +424,243 @@ class FullCalendar extends StylePluginBase {
         return $events;
       }
 
-      /** @var \Drupal\Core\Entity\EntityInterface $entity */
-      $entity = $row->_entity;
-      $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
-      $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
-      $classes = array_map([
-        '\Drupal\Component\Utility\Html',
-        'getClass',
-      ], $classes);
-      $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
-
-      $event = [];
       foreach ($date_fields as $field) {
         // Filter fields without value.
         if (empty($field['value'])) {
           continue;
         }
 
+        /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_definition */
+        $field_definition = $field['field_info'];
+        // Get 'min' and 'max' dates appear in the Calendar.
+        $date_range = $this->getExposedDates($field['field_name']);
+
+        // "date_recur" field (with recurring date).
+        if ($field_definition->getType() == 'date_recur') {
+          /** @var \Drupal\date_recur\Plugin\Field\FieldType\DateRecurFieldItemList $field_items */
+          $field_items = $row->_entity->{$field['field_name']};
+
+          $isRecurring = FALSE;
+
+          /** @var \Drupal\date_recur\Plugin\Field\FieldType\DateRecurItem $item */
+          foreach ($field_items as $index => $item) {
+            // Get DateRecur Occurrence Handler.
+            $occurrenceHandler = $item->getOccurrenceHandler();
+
+            // If this field is a DateRecur field.
+            if ($occurrenceHandler->isRecurring()) {
+              // Get a list of occurrences for display.
+              $occurrences = $occurrenceHandler->getOccurrencesForDisplay($date_range['min'], $date_range['max']);
+
+              foreach ($occurrences as $occurrence) {
+                /** @var \DateTime $start */
+                $start = $occurrence['value'];
+                /** @var \DateTime $end */
+                $end = $occurrence['end_value'];
+
+                $event = $this->prepareEvent($entity, $field, $index, $start, $end);
+              }
+
+              $isRecurring = TRUE;
+            }
+          }
+
+          if ($isRecurring === TRUE) {
+            // At this point, all DateRecur occurrences are merged into $rows
+            // so we can continue adding date items with the next field.
+            continue;
+          }
+        }
+
+        // "datetime" and "daterange" fields or "date_recur" field (without
+        // recurring date).
         foreach ($field['value'] as $index => $item) {
-          $start = $item['raw']->value;
-          $end = $item['raw']->end_value;
-
-          $all_day = FALSE;
-
-          // Add a class if the event was in the past or is in the future, based
-          // on the end time. We can't do this in hook_fullcalendar_classes()
-          // because the date hasn't been processed yet.
-          if (($all_day && strtotime($start) < strtotime('today')) || (!$all_day && strtotime($end) < REQUEST_TIME)) {
-            $time_class = 'fc-event-past';
-          }
-          elseif (strtotime($start) > REQUEST_TIME) {
-            $time_class = 'fc-event-future';
-          }
-          else {
-            $time_class = 'fc-event-now';
+          // Start time is required!
+          if (empty($item['raw']->value)) {
+            continue;
           }
 
-          $url = $entity->urlInfo();
-          $url->setOption('attributes', [
-            'data-all-day' => $all_day,
-            'data-start' => $start,
-            'data-end' => $end,
-            'data-editable' => (int) TRUE, //$entity->editable,
-            'data-field' => $field['field_name'],
-            'data-index' => $index,
-            'data-eid' => $entity->id(),
-            'data-entity-type' => $entity->getEntityTypeId(),
-            'data-cn' => $class . ' ' . $time_class,
-            'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
-            'class' => ['fullcalendar-event-details'],
-          ]);
+          $event_start = new DateTime();
+          $event_start->setTimestamp(strtotime($item['raw']->value));
 
-          $event[] = $url->toRenderArray() + [
-              '#type' => 'link',
-              '#title' => $item['raw']->value,
-            ];
+          // Set event timezone override if configured in views.
+          if (!empty($field['timezone_override'])) {
+            $event_start->setTimeZone(new DateTimeZone($field['timezone_override']));
+          }
+
+          $event_end = new DateTime();
+          // By default, we use the start-time + 1 hour as end-time.
+          $event_end->setTimestamp($event_start->getTimestamp() + 3600);
+
+          // If the field has end_value, override default end-time.
+          if (!empty($item['raw']->end_value)) {
+            $event_end->setTimestamp(strtotime($item['raw']->end_value));
+
+            // Set event timezone override if configured in views.
+            if (!empty($field['timezone_override'])) {
+              $event_end->setTimeZone(new DateTimeZone($field['timezone_override']));
+            }
+          }
+
+          $event_start->setTimestamp($event_start->getTimestamp() + $event_start->getOffset());
+          $event_end->setTimestamp($event_end->getTimestamp() + $event_end->getOffset());
+
+          $event = $this->prepareEvent($entity, $field, $index, $event_start, $event_end);
         }
       }
 
       if (!empty($event)) {
-        $events[$delta] = [
-          '#theme' => 'fullcalendar_event',
-          '#event' => $event,
-          '#entity' => $entity,
-        ];
+        $events[$delta] = $event;
       }
     }
 
     return $events;
   }
+
+  /**
+   * Helper method to prepare event.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Event entity.
+   * @param $field
+   *
+   * @param int $delta
+   *   Field delta.
+   * @param \DateTime $event_start
+   *   Start date of the event.
+   * @param \DateTime $event_end
+   *   End date of the event.
+   *
+   * @return array
+   * @throws \Exception
+   */
+  private function prepareEvent($entity, $field, $delta, $event_start, $event_end) {
+    $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
+    $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
+
+    $classes = array_map(['\Drupal\Component\Utility\Html', 'getClass'], $classes);
+    $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
+
+    $palette = $this->moduleHandler->invokeAll('fullcalendar_palette', [$entity]);
+    $this->moduleHandler->alter('fullcalendar_palette', $palette, $entity);
+
+    $request_time = \Drupal::time()->getRequestTime();
+    $current_time = new DateTime();
+    $current_time->setTimestamp($request_time);
+
+    // Get 'min' and 'max' dates appear in the Calendar.
+    $date_range = $this->getExposedDates($field['field_name']);
+
+    // All-day option (for agenda views) is FALSE by default.
+    $all_day = FALSE;
+
+    // If the event starts before and ends after the current date-range
+    // appears in the Calendar, set event to all-day event.
+    if ($event_start <= $date_range['min'] && $event_end >= $date_range['max']) {
+      $all_day = TRUE;
+    }
+
+    // Add a class if the event was in the past or is in the future, based
+    // on the end time. We can't do this in hook_fullcalendar_classes()
+    // because the date hasn't been processed yet.
+    if (($all_day && $event_start < $current_time) || (!$all_day && $event_end < $current_time)) {
+      $time_class = 'fc-event-past';
+    }
+    elseif ($event_start > $current_time) {
+      $time_class = 'fc-event-future';
+    }
+    else {
+      $time_class = 'fc-event-now';
+    }
+
+    if (!empty($settings['fullcalendar']['editable'])) {
+      $editable = $entity->access('update', NULL, TRUE)->isAllowed();
+    }
+    else {
+      $editable = FALSE;
+    }
+
+    return [
+      'allDay' => (int) $all_day,
+      'start' => $this->dateFormatter->format($event_start->getTimestamp(), 'custom', DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+      'end' => $this->dateFormatter->format($event_end->getTimestamp(), 'custom', DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+      'editable' => !empty($editable) ? 'true' : 'false',
+      'field' => $field['field_name'],
+      'index' => $delta,
+      'eid' => $entity->id(),
+      'entity_type' => $entity->getEntityTypeId(),
+      'className' => $class . ' ' . $time_class,
+      'title' => strip_tags(htmlspecialchars_decode($entity->label(), ENT_QUOTES)),
+      'url' => $entity->toUrl('canonical', [
+        'language' => \Drupal::languageManager()->getCurrentLanguage(),
+      ])->toString(),
+      'backgroundColor' => !empty($palette['backgroundColor']) ? $palette['backgroundColor'] : '',
+      'borderColor' => !empty($palette['borderColor']) ? $palette['borderColor'] : '',
+      'textColor' => !empty($palette['textColor']) ? $palette['textColor'] : '',
+    ];
+  }
+
+  /**
+   * Get 'min' and 'max' dates appear in the Calendar.
+   *
+   * @param string $field_name
+   *   Field machine name.
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+  public function getExposedDates($field_name) {
+    $dates = &drupal_static(__METHOD__, []);
+
+    if (empty($dates[$field_name])) {
+      $entity_type = $this->view->getBaseEntityType();
+      $entity_type_id = $entity_type->id();
+
+      $settings = $this->view->style_plugin->options;
+
+      /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+      $field_manager = \Drupal::getContainer()->get('entity_field.manager');
+      /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface[] $field_storages */
+      $field_storages = $field_manager->getFieldStorageDefinitions($entity_type_id);
+      /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_storage */
+      $field_storage = $field_storages[$field_name];
+      $field_value = $field_storage->getName() . '_value';
+
+      $exposed_input = $this->view->getExposedInput();
+
+      // Min and Max dates for exposed filter.
+      $dateMin = new DateTime();
+      $dateMax = new DateTime();
+
+      // First, we try to set initial Min and Max date values based on the
+      // exposed form values.
+      if (isset($exposed_input[$field_value])) {
+        $dateMin->setTimestamp(strtotime($exposed_input[$field_value]['min']));
+        $dateMax->setTimestamp(strtotime($exposed_input[$field_value]['max']));
+      }
+      // If no exposed values set, use user-defined date values.
+      elseif (!empty($settings['date']['month']) && !empty($settings['date']['year'])) {
+        $ts = mktime(0, 0, 0, $settings['date']['month'] + 1, 1, $settings['date']['year']);
+
+        $dateMin->setTimestamp($ts);
+        $dateMax->setTimestamp($ts);
+
+        $dateMin->modify('first day of this month');
+        $dateMax->modify('first day of next month');
+      }
+      // Use default 1 month date-range.
+      else {
+        $dateMin->modify('first day of this month');
+        $dateMax->modify('first day of next month');
+      }
+
+      $dates[$field_name] = [
+        'min' => $dateMin,
+        'max' => $dateMax,
+      ];
+    }
+
+    return $dates[$field_name];
+  }
+
 }

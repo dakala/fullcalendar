@@ -14,11 +14,13 @@ function fullcalendar_views_data() {
   $data['fullcalendar'] = [
     'table' => [
       'group' => t('FullCalendar'),
-      'join' => ['#global' => []],
+      'join'  => [
+        '#global' => [],
+      ],
     ],
-    'gcal' => [
+    'gcal'  => [
       'title' => t('Google Calendar'),
-      'help' => t('Display events from a Google Calendar.'),
+      'help'  => t('Display events from a Google Calendar.'),
       'field' => [
         'id' => 'fullcalendar_gcal',
       ],

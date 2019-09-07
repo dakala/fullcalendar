@@ -11,8 +11,10 @@
 function fullcalendar_legend_theme($existing, $type, $theme, $path) {
   return [
     'fullcalendar_legend' => [
-      'variables' => ['types' => NULL],
-      'file' => 'fullcalendar_legend.theme.inc',
+      'variables' => [
+        'types' => NULL,
+      ],
+      'file'      => 'fullcalendar_legend.theme.inc',
     ],
   ];
 }

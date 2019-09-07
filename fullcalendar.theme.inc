@@ -9,16 +9,10 @@
  * Builds the FullCalendar structure as a render array.
  */
 function template_preprocess_fullcalendar(&$variables) {
-  // If we're using ajax, we're done.
-  if (!empty($variables['view']->fullcalendar_ajax)) {
-    $variables['element'] = $variables['rows'];
-    return;
-  }
-
   $variables['element'] = [
-    '#attached' => $variables['options']['#attached'],
-    'status' => [
-      '#type' => 'container',
+    '#attached'    => $variables['options']['#attached'],
+    'status'       => [
+      '#type'       => 'container',
       '#attributes' => [
         'class' => [
           'fullcalendar-status',
@@ -26,21 +20,21 @@ function template_preprocess_fullcalendar(&$variables) {
       ],
     ],
     'fullcalendar' => [
-      '#type' => 'container',
+      '#type'       => 'container',
       '#attributes' => [
         'class' => [
           'fullcalendar',
         ],
       ],
     ],
-    'content' => [
-      '#type' => 'container',
+    'content'      => [
+      '#type'       => 'container',
       '#attributes' => [
         'class' => [
           'fullcalendar-content',
         ],
       ],
-      'events' => $variables['rows'],
+      'events'      => $variables['rows'],
     ],
   ];
 }
@@ -57,21 +51,22 @@ function theme_fullcalendar($variables) {
  */
 function template_preprocess_fullcalendar_event(&$variables) {
   $variables['element'] = [
-    '#type' => 'container',
+    '#type'       => 'container',
     '#attributes' => [
       'class' => [
         'fullcalendar-event',
       ],
     ],
-    'title' => [
+    'title'       => [
       '#prefix' => '<h3 class="title">',
       '#suffix' => '</h3>',
       '#markup' => $variables['entity']->label(),
     ],
   ];
+
   foreach ($variables['event'] as $instance) {
     $variables['element'][] = [
-      '#type' => 'container',
+      '#type'       => 'container',
       '#attributes' => [
         'class' => [
           'fullcalendar-instance',
