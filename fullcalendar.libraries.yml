@@ -1,39 +1,75 @@
-fullcalendar:
+# @todo: locales
+fullcalendar.core:
   js:
-    /libraries/fullcalendar/lib/moment.min.js: {}
-    /libraries/fullcalendar/fullcalendar.js: {}
-    /libraries/fullcalendar/gcal.js: {}
+    /libraries/fullcalendar/packages/core/main.js: {}
   css:
     theme:
-      /libraries/fullcalendar/fullcalendar.css: { media: screen }
-      /libraries/fullcalendar/fullcalendar.print.css: { media: print }
-  dependencies:
-    - core/jquery
-    - core/jquery.ui
-    - core/jquery.ui.draggable
-
-drupal.fullcalendar:
+      /libraries/fullcalendar/packages/core/main.css: { media: screen }
+fullcalendar.interaction:
   js:
-    assets/js/fullcalendar.library.js: { }
-    assets/js/fullcalendar.views.js: { }
+    /libraries/fullcalendar/packages/interaction/main.js: {}
+fullcalendar.daygrid:
+  js:
+    /libraries/fullcalendar/packages/daygrid/main.js: {}
   css:
     theme:
-      assets/css/fullcalendar.theme.css: { }
-  dependencies:
-    - fullcalendar/fullcalendar
-    - core/drupal
-    - core/drupalSettings
-    - core/jquery
-    - core/jquery.once
-
-drupal.fullcalendar.js:
+      /libraries/fullcalendar/packages/daygrid/main.css: { media: screen }
+fullcalendar.timegrid:
   js:
-    assets/js/fullcalendar.fullcalendar.js: { }
-  dependencies:
-    - fullcalendar/drupal.fullcalendar
-
-drupal.fullcalendar.ajax:
+    /libraries/fullcalendar/packages/timegrid/main.js: {}
+  css:
+    theme:
+      /libraries/fullcalendar/packages/timegrid/main.css: { media: screen }
+fullcalendar.list:
   js:
-    assets/js/fullcalendar.ajax.js: { }
-  dependencies:
-    - fullcalendar/drupal.fullcalendar
+    /libraries/fullcalendar/packages/list/main.js: {}
+  css:
+    theme:
+      /libraries/fullcalendar/packages/list/main.css: { media: screen }
+fullcalendar.bootstrap:
+  js:
+    /libraries/fullcalendar/packages/bootstrap/main.js: {}
+  css:
+    theme:
+      /libraries/fullcalendar/packages/bootstrap/main.css: { media: screen }
+fullcalendar.google-calendar:
+  js:
+    /libraries/fullcalendar/packages/google-calendar/main.js: {}
+fullcalendar.rrule:
+  js:
+    /libraries/fullcalendar/packages/rrule/main.js: {}
+fullcalendar.luxon:
+  js:
+    /libraries/fullcalendar/packages/luxon/main.js: {}
+fullcalendar.moment:
+  js:
+    /libraries/fullcalendar/packages/moment/main.js: {}
+fullcalendar.moment-timezone:
+  js:
+    /libraries/fullcalendar/packages/moment-timezone/main.js: {}
+# premium plugins
+fullcalendar-scheduler.resource-common:
+  js:
+    /libraries/fullcalendar-scheduler/packages-premium/resource-common/main.js: {}
+
+fullcalendar-scheduler.resource-daygrid:
+  js:
+    /libraries/fullcalendar-scheduler/packages-premium/resource-daygrid/main.js: {}
+
+fullcalendar-scheduler.resource-timegrid:
+  js:
+    /libraries/fullcalendar-scheduler/packages-premium/resource-timegrid/main.js: {}
+
+fullcalendar-scheduler.resource-timeline:
+  js:
+    /libraries/fullcalendar-scheduler/packages-premium/resource-timeline/main.js: {}
+  css:
+    theme:
+      /libraries/fullcalendar-scheduler/packages-premium/resource-timeline/main.css: { media: screen }
+
+fullcalendar-scheduler.timeline:
+  js:
+    /libraries/fullcalendar-scheduler/packages-premium/timeline/main.js: {}
+  css:
+    theme:
+      /libraries/fullcalendar-scheduler/packages-premium/timeline/main.css: { media: screen }

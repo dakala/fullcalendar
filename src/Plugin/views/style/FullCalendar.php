@@ -270,30 +270,62 @@ class FullCalendar extends StylePluginBase {
     $this->options['#attached'] = $this->prepareAttached();
 
     return [
-      '#theme'   => $this->themeFunctions(),
-      '#view'    => $this->view,
+      '#theme' => $this->themeFunctions(),
+      '#view' => $this->view,
       '#options' => $this->options,
     ];
   }
 
   /**
    * Load libraries.
+   *
+   * @throws \Exception
    */
   protected function prepareAttached() {
+    // add default libraries
+
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
-    $attached['library'][] = 'fullcalendar/drupal.fullcalendar';
+    $attached['library'][] = 'fullcalendar/fullcalendar.core';
 
-    foreach ($this->getPlugins() as $plugin_id => $plugin) {
-      $definition = $plugin->getPluginDefinition();
+    // @todo: get FC plugins from $this->view->options
+    // $basic_plugins = $this->displayHandler->getOption('basic_plugins');
 
-      foreach (['css', 'js'] as $type) {
-        if ($definition[$type]) {
-          $attached['library'][] = $definition['provider'] . '/drupal.' . $plugin_id . '.' . $type;
-        }
+    $basic_plugins = [
+      'interaction',
+      'daygrid',
+      'timegrid',
+      'list',
+      'bootstrap',
+      'google-calendar',
+      'rrule',
+      'luxon',
+      'moment',
+      'moment-timezone',
+      'timeline',
+    ];
+
+    $basic_plugins = array_unshift($basic_plugins, 'core');
+    foreach ($basic_plugins as $basic_plugin) {
+      if ($basic_plugin == 'timeline') {
+        $attached['library'][] = 'fullcalendar/fullcalendar-scheduler.' . $basic_plugin;
+      }
+      else {
+        $attached['library'][] = 'fullcalendar/fullcalendar.' . $basic_plugin;
       }
     }
 
-    if ($this->displayHandler->getOption('use_ajax')) {
+    if (is_fullcalendar_premium()) {
+      // @todo:
+      // $premium_plugins = $this->displayHandler->getOption('premium_plugins');
+      $premium_plugins = ['daygrid', 'timegrid', 'timeline'];
+
+      if (is_array($premium_plugins)) {
+        $premium_plugins = array_unshift($premium_plugins, 'common');
+        foreach ($premium_plugins as $premium_plugin) {
+          $attached['library'][] = 'fullcalendar/fullcalendar-scheduler.resource-' . $premium_plugin;
+        }
+      }
+
       $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
@@ -303,18 +335,13 @@ class FullCalendar extends StylePluginBase {
       '.js-view-dom-id-' . $this->view->dom_id => $settings,
     ];
 
-    if (!empty($settings['fullcalendar']['modalWindow'])) {
-      // FIXME all of these libraries are needed?
-      $attached['library'][] = 'core/drupal.ajax';
-      $attached['library'][] = 'core/drupal.dialog';
-      $attached['library'][] = 'core/drupal.dialog.ajax';
-    }
-
     return $attached;
   }
 
   /**
    * Prepare JavaScript settings.
+   *
+   * @throws \Exception
    */
   protected function prepareSettings() {
     $settings = &drupal_static(__METHOD__, []);
@@ -405,11 +432,11 @@ class FullCalendar extends StylePluginBase {
           $field_definition = $field_storage_definitions[$field->definition['field_name']];
 
           $date_fields[$field_name] = [
-            'value'       => $field->getItems($row),
+            'value' => $field->getItems($row),
             'field_alias' => $field->field_alias,
-            'field_name'  => $field_definition->getName(),
-            'field_info'  => $field_definition,
-            'timezone_override'  => $field->options['settings']['timezone_override'],
+            'field_name' => $field_definition->getName(),
+            'field_info' => $field_definition,
+            'timezone_override' => $field->options['settings']['timezone_override'],
           ];
         }
       }
@@ -538,7 +565,10 @@ class FullCalendar extends StylePluginBase {
     $classes = $this->moduleHandler->invokeAll('fullcalendar_classes', [$entity]);
     $this->moduleHandler->alter('fullcalendar_classes', $classes, $entity);
 
-    $classes = array_map(['\Drupal\Component\Utility\Html', 'getClass'], $classes);
+    $classes = array_map([
+      '\Drupal\Component\Utility\Html',
+      'getClass',
+    ], $classes);
     $class = (count($classes)) ? implode(' ', array_unique($classes)) : '';
 
     $palette = $this->moduleHandler->invokeAll('fullcalendar_palette', [$entity]);
@@ -637,8 +667,7 @@ class FullCalendar extends StylePluginBase {
       if (isset($exposed_input[$field_value])) {
         $dateMin->setTimestamp(strtotime($exposed_input[$field_value]['min']));
         $dateMax->setTimestamp(strtotime($exposed_input[$field_value]['max']));
-      }
-      // If no exposed values set, use user-defined date values.
+      } // If no exposed values set, use user-defined date values.
       elseif (!empty($settings['date']['month']) && !empty($settings['date']['year'])) {
         $ts = mktime(0, 0, 0, $settings['date']['month'] + 1, 1, $settings['date']['year']);
 
@@ -647,8 +676,7 @@ class FullCalendar extends StylePluginBase {
 
         $dateMin->modify('first day of this month');
         $dateMax->modify('first day of next month');
-      }
-      // Use default 1 month date-range.
+      } // Use default 1 month date-range.
       else {
         $dateMin->modify('first day of this month');
         $dateMax->modify('first day of next month');

@@ -14,7 +14,7 @@ use Drupal\views\Plugin\views\field\EntityField;
 /**
  * The minimum supported version of the FullCalendar plugin.
  */
-define('FULLCALENDAR_MIN_PLUGIN_VERSION', '3.3.0');
+define('FULLCALENDAR_MIN_PLUGIN_VERSION', '4.2.0');
 
 /**
  * Implements hook_help().
@@ -25,7 +25,7 @@ function fullcalendar_help($route_name, RouteMatchInterface $route_match) {
       $output = '';
       $output .= '<h3>' . t('Fullcalendar') . '</h3>';
       $output .= '<p>' . t('The Fullcalendar module is an integration of the <a href="!fullcalendar-uri">Adam Shaw\'s FullCalendar jQuery plugin</a> with Drupal.', [
-          '!fullcalendar-uri' => Url::fromUri('https://github.com/arshaw/fullcalendar'),
+          '!fullcalendar-uri' => Url::fromUri('https://fullcalendar.io'),
         ]) . '</p>';
       return $output;
   }
@@ -33,6 +33,8 @@ function fullcalendar_help($route_name, RouteMatchInterface $route_match) {
 
 /**
  * Implements hook_theme().
+ *
+ * @todo:
  */
 function fullcalendar_theme($existing, $type, $theme, $path) {
   return [
@@ -51,14 +53,11 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  *
  * @return array
  *   An array of valid permissions for the FullCalendar module.
+ *
+ * @todo:
  */
 function fullcalendar_permission() {
-  return [
-    'update any fullcalendar event' => [
-      'title'       => t('Update any FullCalendar event'),
-      'description' => t('Allow user to edit events, ignoring other permissions.'),
-    ],
-  ];
+
 }
 
 /**
@@ -70,12 +69,6 @@ function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
     $entity->bundle(),
   ];
 
-  // @todo: ???
-  // Add a class for the date field being used.
-  if (isset($entity->fullcalendar_date_field)) {
-    $classes[] = "fc-event-field-$entity->fullcalendar_date_field";
-  }
-
   return $classes;
 }
 
@@ -83,6 +76,8 @@ function fullcalendar_fullcalendar_classes(EntityInterface $entity) {
  * Implements hook_form_FORM_ID_alter() for views_ui_edit_display_form().
  *
  * Since we force the query to be distinct, reflect that in the UI.
+ *
+ * @todo:
  */
 function fullcalendar_form_views_ui_edit_display_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $style = $form_state->get('view')
@@ -105,9 +100,12 @@ function fullcalendar_form_views_ui_edit_display_form_alter(&$form, FormStateInt
 }
 
 /**
+ *
  * Implements hook_fullcalendar_editable().
  *
  * Use our access callback as the editable setting.
+ *
+ * @todo:
  */
 function fullcalendar_fullcalendar_editable(EntityInterface $entity, $view) {
   return \Drupal::service('access_check.fullcalendar.update')->check($entity);
@@ -172,7 +170,7 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
 
   if (empty($version)) {
     $version = 0;
-    $pattern = '#FullCalendar v([0-9\.a-z]+)#';
+    $pattern = '#FullCalendar.*v([0-9\.a-z]+)#';
 
     // No file is passed in so use the default location.
     if (!$fullcalendar_path) {
@@ -193,12 +191,14 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  * Returns the path to the FullCalendar plugin.
  */
 function fullcalendar_get_js_path() {
-  $fullcalendar_file = [
-    'none' => 'fullcalendar.js',
-    'min'  => 'fullcalendar.min.js',
-  ];
-
   $config = \Drupal::config('fullcalendar.settings');
 
-  return $config->get('path') . '/' . $fullcalendar_file[$config->get('compression')];
+  return $config->get('path') . '/packages/core/main.js';
+}
+
+function is_fullcalendar_premium() {
+  $config = \Drupal::config('fullcalendar.settings');
+  $license = $config->get('schedulerLicenseKey');
+
+  return strlen($license);
 }

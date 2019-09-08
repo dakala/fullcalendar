@@ -20,7 +20,7 @@ function fullcalendar_requirements($phase) {
         'value'       => t('At least @a', ['@a' => FULLCALENDAR_MIN_PLUGIN_VERSION]),
         'severity'    => REQUIREMENT_ERROR,
         'description' => t('You need to download the <a href=":fullcalendar" target="_blank">FullCalendar plugin</a> and extract the entire contents of the archive into the %path folder of your server.', [
-          ':fullcalendar' => 'http://arshaw.com/fullcalendar/download',
+          ':fullcalendar' => 'https://github.com/fullcalendar/fullcalendar/releases',
           '%path'         => '/libraries',
         ]),
       ];
