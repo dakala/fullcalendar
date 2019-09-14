@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "fullcalendar",
  *   title = @Translation("FullCalendar"),
  *   help = @Translation("Displays items on a calendar."),
- *   theme = "fullcalendar",
+ *   theme = "views_view_fullcalendar",
  *   theme_file = "fullcalendar.theme.inc",
  *   display_types = {"normal"}
  * )
@@ -265,9 +265,17 @@ class FullCalendar extends StylePluginBase {
 
   /**
    * {@inheritdoc}
+   * @throws \Exception
    */
   public function render() {
     $this->options['#attached'] = $this->prepareAttached();
+
+//  0 =>  "fullcalendar__events__page_1"
+//  1 => "fullcalendar__page_1"
+//  2 => "fullcalendar__events__page"
+//  3 => "fullcalendar__page"
+//  4 => "fullcalendar__events"
+//  5 => "fullcalendar"
 
     return [
       '#theme' => $this->themeFunctions(),
@@ -285,6 +293,7 @@ class FullCalendar extends StylePluginBase {
     // add default libraries
 
     /* @var \Drupal\fullcalendar\Plugin\fullcalendar\type\FullCalendar $plugin */
+    $attached['library'][] = 'fullcalendar/drupal.fullcalendar';
     $attached['library'][] = 'fullcalendar/fullcalendar.core';
 
     // @todo: get FC plugins from $this->view->options
@@ -304,7 +313,10 @@ class FullCalendar extends StylePluginBase {
       'timeline',
     ];
 
-    $basic_plugins = array_unshift($basic_plugins, 'core');
+    // @todo: plugins: [ 'dayGrid', 'timeGrid', 'list' ]
+
+    // core is mandatory.
+    array_unshift($basic_plugins, 'core');
     foreach ($basic_plugins as $basic_plugin) {
       if ($basic_plugin == 'timeline') {
         $attached['library'][] = 'fullcalendar/fullcalendar-scheduler.' . $basic_plugin;
@@ -325,8 +337,8 @@ class FullCalendar extends StylePluginBase {
           $attached['library'][] = 'fullcalendar/fullcalendar-scheduler.resource-' . $premium_plugin;
         }
       }
-
-      $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
+//      // @todo:
+//      $attached['library'][] = 'fullcalendar/drupal.fullcalendar.ajax';
     }
 
     $settings = $this->prepareSettings();

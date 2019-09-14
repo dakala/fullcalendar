@@ -73,3 +73,13 @@ fullcalendar-scheduler.timeline:
   css:
     theme:
       /libraries/fullcalendar-scheduler/packages-premium/timeline/main.css: { media: screen }
+
+drupal.fullcalendar:
+  js:
+    assets/js/fullcalendar.library.js: { }
+    assets/js/fullcalendar.views.js: { }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/jquery.once

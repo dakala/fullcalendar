@@ -38,6 +38,12 @@ function fullcalendar_help($route_name, RouteMatchInterface $route_match) {
  */
 function fullcalendar_theme($existing, $type, $theme, $path) {
   return [
+    'fullcalendar' => [
+      'file' => 'fullcalendar.theme.inc',
+    ],
+  ];
+
+  return [
     'fullcalendar_event' => [
       'variables' => [
         'event'  => NULL,
